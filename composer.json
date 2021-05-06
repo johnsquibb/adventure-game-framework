@@ -1,0 +1,12 @@
+{
+  "name": "johnsquibb/aventure-game-framework",
+  "type": "project",
+  "require-dev": {
+    "phpunit/phpunit": "^8"
+  },
+  "autoload": {
+    "psr-4": {
+      "AdventureGame\\": "AdventureGame/"
+    }
+  }
+}
