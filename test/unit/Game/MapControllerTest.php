@@ -5,6 +5,7 @@ namespace AdventureGame\Game;
 use AdventureGame\Game\Exception\InvalidExitException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Item\Container;
+use AdventureGame\Item\Item;
 use AdventureGame\Location\Location;
 use AdventureGame\Location\Portal;
 use PHPUnit\Framework\TestCase;
@@ -16,12 +17,19 @@ class MapControllerTest extends TestCase
         $locations = [];
 
         $mapController = new MapController($locations);
+        $this->expectException(PlayerLocationNotSetException::class);
         $this->assertNull($mapController->getPlayerLocation());
     }
 
     public function testSetPlayerLocation()
     {
-        $location = new Location('test-location', 'Test Location', new Container(), []);
+        $location = new Location(
+            'test-location',
+            'Test Location',
+            'Test Location Description',
+            new Container(),
+            []
+        );
         $locations = [$location];
 
         $mapController = new MapController($locations);
@@ -31,7 +39,13 @@ class MapControllerTest extends TestCase
 
     public function testMovePlayerPlayerLocationNotSet()
     {
-        $location = new Location('test-location', 'Test Location', new Container(), []);
+        $location = new Location(
+            'test-location',
+            'Test Location',
+            'Test Location Description',
+            new Container(),
+            []
+        );
         $locations = [$location];
 
         $mapController = new MapController($locations);
@@ -45,6 +59,7 @@ class MapControllerTest extends TestCase
         $location1 = new Location(
             'test-room-1',
             'Test Room 1',
+            'This is a test room.',
             new Container(),
             [$door1],
         );
@@ -53,6 +68,7 @@ class MapControllerTest extends TestCase
         $location2 = new Location(
             'test-room-2',
             'Test Room 2',
+            'This is another test room.',
             new Container(),
             [$door2],
         );
@@ -75,5 +91,48 @@ class MapControllerTest extends TestCase
         // Try to move to nonexistent room.
         $this->expectException(InvalidExitException::class);
         $mapController->movePlayer('nowhere');
+    }
+
+    public function testTakeItem()
+    {
+        $items = new Container();
+        $item = new Item('test-item', 'Test Item', 'Test Item Description');
+        $items->addItem($item);
+
+        $location = new Location(
+            'test-location',
+            'Test Location',
+            'Test Location Description',
+            $items,
+            []
+        );
+        $locations = [$location];
+
+        $mapController = new MapController($locations);
+        $mapController->setPlayerLocationById($location->id);
+        $this->assertEquals($item, $mapController->takeItemById($item->id));
+        $this->assertNull($mapController->takeItemById($item->id));
+    }
+
+    public function testDropItem()
+    {
+        $inventory = new Container();
+        $item = new Item('test-item', 'Test Item', 'Test Item Description');
+        $inventory->addItem($item);
+
+        $location = new Location(
+            'test-location',
+            'Test Location',
+            'Test Location Description',
+            new Container(),
+            []
+        );
+        $locations = [$location];
+
+        $mapController = new MapController($locations);
+        $mapController->setPlayerLocationById($location->id);
+        $this->assertNull($mapController->takeItemById($item->id));
+        $mapController->dropItem($item);
+        $this->assertEquals($item, $mapController->takeItemById($item->id));
     }
 }

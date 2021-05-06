@@ -12,21 +12,27 @@ class LocationTest extends TestCase
     {
         $id = 'test-room';
         $name = 'The Test Room';
+        $description = 'This is a test room';
+        $items = new Container();
 
-        $room = new Location($id, $name, new Container(), []);
+        $room = new Location($id, $name, $description, $items, []);
         $this->assertEquals($id, $room->id);
         $this->assertEquals($name, $room->name);
+        $this->assertEquals($description, $room->description);
+        $this->assertEquals($items, $room->items);
     }
 
     public function testLocationExits()
     {
         $id = 'test-room';
         $name = 'The Test Room';
+        $description = 'This is a test room';
+        $items = new Container();
 
         $portal = new Portal('test-door', 'north', 'test-room');
         $exits = [$portal];
 
-        $room = new Location($id, $name, new Container(), $exits);
+        $room = new Location($id, $name, $description, $items, $exits);
         $this->assertEquals($id, $room->id);
         $this->assertEquals($name, $room->name);
 
@@ -38,11 +44,12 @@ class LocationTest extends TestCase
     {
         $id = 'test-room';
         $name = 'The Test Room';
+        $description = 'This is a test room';
         $items = new Container();
-        $item = new Item('test-item', 'Test Item');
+        $item = new Item('test-item', 'Test Item', 'Test Item Description');
         $items->addItem($item);
 
-        $room = new Location($id, $name, $items, []);
-        $this->assertEquals($item, $room->items->getItem($item->id));
+        $room = new Location($id, $name, $description, $items, []);
+        $this->assertEquals($item, $room->items->getItemById($item->id));
     }
 }

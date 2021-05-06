@@ -22,10 +22,10 @@ class CharacterTest extends TestCase
         $inventory = new Container();
         $character = new Character($name, $inventory);
 
-        $item = new Item('test-item', 'Test Item');
+        $item = new Item('test-item', 'Test Item', 'Test Item Description');
         $character->inventory->addItem($item);
 
-        $this->assertEquals($item, $character->inventory->getItem($item->id));
+        $this->assertEquals($item, $character->inventory->getItemById($item->id));
     }
 
     public function testGetItemFromPlayerInventory()
@@ -34,11 +34,11 @@ class CharacterTest extends TestCase
         $inventory = new Container();
         $character = new Character($name, $inventory);
 
-        $this->assertNull($character->inventory->getItem('nothing'));
+        $this->assertNull($character->inventory->getItemById('nothing'));
 
-        $item = new Item('test-item', 'Test Item');
+        $item = new Item('test-item', 'Test Item', 'Test Item Description');
         $character->inventory->addItem($item);
 
-        $this->assertEquals($item, $character->inventory->getItem($item->id));
+        $this->assertEquals($item, $character->inventory->getItemById($item->id));
     }
 }

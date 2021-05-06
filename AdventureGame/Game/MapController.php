@@ -4,6 +4,7 @@ namespace AdventureGame\Game;
 
 use AdventureGame\Game\Exception\InvalidExitException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
+use AdventureGame\Item\Item;
 use AdventureGame\Location\Location;
 
 class MapController
@@ -29,11 +30,16 @@ class MapController
 
     /**
      * The current location of the player, if set.
-     * @return Location|null
+     * @return Location
+     * @throws PlayerLocationNotSetException
      */
-    public function getPlayerLocation(): ?Location
+    public function getPlayerLocation(): Location
     {
-        return $this->playerLocation ?? null;
+        if (!isset($this->playerLocation)) {
+            throw new PlayerLocationNotSetException('Player location not set');
+        }
+
+        return $this->playerLocation;
     }
 
     /**
@@ -42,15 +48,42 @@ class MapController
      */
     public function movePlayer(string $direction): void
     {
-        if ($this->getPlayerLocation() === null) {
-            throw new PlayerLocationNotSetException('Player location not set');
-        }
+        $location = $this->getPlayerLocation();
 
-        $portal = $this->playerLocation->getExitInDirection($direction);
+        $portal = $location->getExitInDirection($direction);
         if ($portal === null) {
             throw new InvalidExitException('Invalid exit');
         }
 
         $this->setPlayerLocationById($portal->destinationLocationId);
+    }
+
+    /**
+     * Take an item by id from current player location.
+     * @param string $itemId
+     * @return Item|null
+     * @throws PlayerLocationNotSetException
+     */
+    public function takeItemById(string $itemId): ?Item
+    {
+        $location = $this->getPlayerLocation();
+
+        $item = $location->items->getItemById($itemId);
+        if ($item !== null) {
+            $location->items->removeItemById($item->id);
+        }
+
+        return $item;
+    }
+
+    /**
+     * Drop an item to current player location.
+     * @param Item $item
+     * @throws PlayerLocationNotSetException
+     */
+    public function dropItem(Item $item): void
+    {
+        $location = $this->getPlayerLocation();
+        $location->items->addItem($item);
     }
 }

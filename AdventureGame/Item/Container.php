@@ -20,7 +20,7 @@ class Container
      * @param string $itemId
      * @return Item|null
      */
-    public function getItem(string $itemId): ?Item
+    public function getItemById(string $itemId): ?Item
     {
         foreach ($this->items as $item) {
             if ($item->id === $itemId) {
@@ -29,5 +29,18 @@ class Container
         }
 
         return null;
+    }
+
+    /**
+     * Remove an item by id, if it exists.
+     * @param string $itemId
+     */
+    public function removeItemById(string $itemId): void
+    {
+        foreach ($this->items as $key => $item) {
+            if ($item->id === $itemId) {
+                unset($this->items[$key]);
+            }
+        }
     }
 }

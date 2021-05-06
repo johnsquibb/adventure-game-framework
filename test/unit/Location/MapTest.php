@@ -16,7 +16,12 @@ class MapTest extends TestCase
 
     public function testMapLocations()
     {
-        $location = new Location('test-location', 'Test Location', new Container(), []);
+        $location = new Location(
+            'test-location',
+            'Test Location',
+            'Test Description',
+            new Container(), []
+        );
         $locations = [$location];
 
         $map = new Map('test-map', $locations);
