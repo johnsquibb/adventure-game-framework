@@ -2,7 +2,9 @@
 
 namespace AdventureGame\Command;
 
+use AdventureGame\Game\GameController;
+
 interface CommandInterface
 {
-    public function process(): void;
+    public function process(GameController $gameController): void;
 }

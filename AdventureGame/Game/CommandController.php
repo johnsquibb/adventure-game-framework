@@ -4,5 +4,4 @@ namespace AdventureGame\Command;
 
 class CommandController
 {
-
 }
