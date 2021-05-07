@@ -22,7 +22,12 @@ class PlayerControllerTest extends TestCase
         $player = new Character('test-player', $inventory);
         $playerController = new PlayerController($player);
 
-        $item = new Item('test-item', 'Test Item', 'Test Item Description');
+        $item = new Item(
+            'test-item',
+            'Test Item',
+            'Test Item Description',
+            'test'
+        );
         $playerController->addItemToPlayerInventory($item);
 
         $this->assertEquals($item, $playerController->getItemByIdFromPlayerInventory($item->id));
@@ -35,7 +40,12 @@ class PlayerControllerTest extends TestCase
         $player = new Character('test-player', $inventory);
         $playerController = new PlayerController($player);
 
-        $item = new Item('test-item', 'Test Item', 'Test Item Description');
+        $item = new Item(
+            'test-item',
+            'Test Item',
+            'Test Item Description',
+            'test'
+        );
         $this->assertNull($playerController->getItemByIdFromPlayerInventory($item->id));
 
         $playerController->addItemToPlayerInventory($item);

@@ -88,13 +88,53 @@ class CommandParser
     public function validateTokens(array $tokens): bool
     {
         foreach ($tokens as $token) {
-            if (!in_array($token, $this->verbs)
-                && !in_array($token, $this->nouns)
-                && !in_array($token, $this->articles)
-                && !in_array($token, $this->prepositions)
+            if (!$this->isVerb($token)
+                && !$this->isNoun($token)
+                && !$this->isArticle($token)
+                && !$this->isPreposition($token)
             ) {
                 throw new InvalidCommandException("Invalid token {$token}");
             }
         }
+    }
+
+    /**
+     * Check if token is a verb.
+     * @param string $token true when token is verb, false otherwise
+     * @return bool
+     */
+    public function isVerb(string $token): bool
+    {
+        return in_array($token, $this->verbs);
+    }
+
+    /**
+     * Check if token is a noun.
+     * @param string $token true when token is noun, false otherwise
+     * @return bool
+     */
+    public function isNoun(string $token): bool
+    {
+        return in_array($token, $this->nouns);
+    }
+
+    /**
+     * Check if token is an article.
+     * @param string $token true when token is article, false otherwise
+     * @return bool
+     */
+    public function isArticle(string $token): bool
+    {
+        return in_array($token, $this->articles);
+    }
+
+    /**
+     * Check if token is a preposition.
+     * @param string $token true when token is preposition, false otherwise
+     * @return bool
+     */
+    public function isPreposition(string $token): bool
+    {
+        return in_array($token, $this->prepositions);
     }
 }

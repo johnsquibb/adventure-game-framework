@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class CommandParserTest extends TestCase
 {
-    private function getCommandParser()
+    private function createCommandParser()
     {
         $verbs = ['put'];
         $nouns = ['carrot', 'pot'];
@@ -27,7 +27,7 @@ class CommandParserTest extends TestCase
 
     public function testParseCommand()
     {
-        $commandParser = $this->getCommandParser();
+        $commandParser = $this->createCommandParser();
 
         $expected = ['put', 'the', 'carrot', 'into', 'a', 'pot'];
 
@@ -54,7 +54,7 @@ class CommandParserTest extends TestCase
 
     public function testValidateTokens()
     {
-        $commandParser = $this->getCommandParser();
+        $commandParser = $this->createCommandParser();
 
         $command = 'put MUCH carrot into EVERY pot';
         $tokens = $commandParser->parseCommand($command);
@@ -64,7 +64,7 @@ class CommandParserTest extends TestCase
 
     public function testNormalizeTokens()
     {
-        $commandParser = $this->getCommandParser();
+        $commandParser = $this->createCommandParser();
 
         $expected = ['put', 'the', 'carrot', 'into', 'a', 'pot'];
 
@@ -74,9 +74,21 @@ class CommandParserTest extends TestCase
         $this->assertEquals($expected, $filtered);
     }
 
+    public function testNormalizeTokensOrderDoesNotMatter()
+    {
+        $commandParser = $this->createCommandParser();
+
+        $expected = ['the', 'put', 'pot', 'carrot', 'into', 'a'];
+
+        $command = 'THE put pot carrot into a';
+        $tokens = $commandParser->parseCommand($command);
+        $filtered = $commandParser->normalizeTokens($tokens);
+        $this->assertEquals($expected, $filtered);
+    }
+
     public function testAliasTokens()
     {
-        $commandParser = $this->getCommandParser();
+        $commandParser = $this->createCommandParser();
 
         $expected = ['put', 'the', 'carrot', 'into', 'a', 'pot'];
 
@@ -88,7 +100,7 @@ class CommandParserTest extends TestCase
 
     public function testFilterTokens()
     {
-        $commandParser = $this->getCommandParser();
+        $commandParser = $this->createCommandParser();
 
         $expected = ['put', 'carrot', 'into', 'pot'];
 

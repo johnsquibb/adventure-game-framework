@@ -8,14 +8,14 @@ use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
 use AdventureGame\IO\OutputController;
 use AdventureGame\Location\Direction;
-use AdventureGame\Location\Location;
 
-class VerbCommand implements CommandInterface
+class VerbCommand extends AbstractCommand implements CommandInterface
 {
     public function __construct(
         private string $verb,
-        private OutputController $outputController,
+        OutputController $outputController,
     ) {
+        parent::__construct($outputController);
     }
 
     /**
@@ -75,42 +75,5 @@ class VerbCommand implements CommandInterface
         }
 
         return false;
-    }
-
-    /**
-     * Move player, describe the new location.
-     * @param GameController $gameController
-     * @param $direction
-     * @throws InvalidExitException
-     * @throws PlayerLocationNotSetException
-     */
-    private function movePlayer(GameController $gameController, $direction): void
-    {
-        $gameController->mapController->movePlayer($direction);
-        $this->describePlayerLocation($gameController);
-    }
-
-    /**
-     * Describe the current player location.
-     * @param GameController $gameController
-     * @throws PlayerLocationNotSetException
-     */
-    private function describePlayerLocation(GameController $gameController): void
-    {
-        $lines = $this->describeLocation($gameController->mapController->getPlayerLocation());
-        $this->outputController->addLines($lines);
-    }
-
-    /**
-     * Describe a location.
-     * @param Location $location
-     * @return array
-     */
-    private function describeLocation(Location $location): array
-    {
-        return [
-            $location->name,
-            $location->description,
-        ];
     }
 }

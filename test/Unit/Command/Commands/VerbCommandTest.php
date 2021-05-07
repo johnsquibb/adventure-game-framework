@@ -9,7 +9,7 @@ class VerbCommandTest extends CommandTest
     public function testProcessMovePlayer()
     {
         $gameController = $this->createGameController();
-        $outputController = $this->getOutputController();
+        $outputController = $this->createOutputController();
 
         // Player starting room.
         $location = $gameController->mapController->getPlayerLocation();
@@ -31,7 +31,7 @@ class VerbCommandTest extends CommandTest
     public function testProcessMovePlayerInvalidExit()
     {
         $gameController = $this->createGameController();
-        $outputController = $this->getOutputController();
+        $outputController = $this->createOutputController();
 
         // Player starting room.
         $location = $gameController->mapController->getPlayerLocation();

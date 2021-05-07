@@ -96,7 +96,12 @@ class MapControllerTest extends TestCase
     public function testTakeItem()
     {
         $items = new Container();
-        $item = new Item('test-item', 'Test Item', 'Test Item Description');
+        $item = new Item(
+            'test-item',
+            'Test Item',
+            'Test Item Description',
+            'test'
+        );
         $items->addItem($item);
 
         $location = new Location(
@@ -117,7 +122,12 @@ class MapControllerTest extends TestCase
     public function testDropItem()
     {
         $inventory = new Container();
-        $item = new Item('test-item', 'Test Item', 'Test Item Description');
+        $item = new Item(
+            'test-item',
+            'Test Item',
+            'Test Item Description',
+            'test'
+        );
         $inventory->addItem($item);
 
         $location = new Location(

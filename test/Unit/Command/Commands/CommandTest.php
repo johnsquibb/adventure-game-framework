@@ -3,6 +3,7 @@
 namespace AdventureGame\Command\Commands;
 
 use AdventureGame\Character\Character;
+use AdventureGame\Command\CommandParser;
 use AdventureGame\Game\GameController;
 use AdventureGame\Game\MapController;
 use AdventureGame\Game\PlayerController;
@@ -14,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 abstract class CommandTest extends TestCase
 {
-    protected function getOutputController(): OutputController
+    protected function createOutputController(): OutputController
     {
         return new OutputController();
     }

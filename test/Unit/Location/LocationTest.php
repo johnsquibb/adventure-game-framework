@@ -46,7 +46,12 @@ class LocationTest extends TestCase
         $name = 'The Test Room';
         $description = 'This is a test room';
         $items = new Container();
-        $item = new Item('test-item', 'Test Item', 'Test Item Description');
+        $item = new Item(
+            'test-item',
+            'Test Item',
+            'Test Item Description',
+            'test'
+        );
         $items->addItem($item);
 
         $room = new Location($id, $name, $description, $items, []);

@@ -22,7 +22,12 @@ class CharacterTest extends TestCase
         $inventory = new Container();
         $character = new Character($name, $inventory);
 
-        $item = new Item('test-item', 'Test Item', 'Test Item Description');
+        $item = new Item(
+            'test-item',
+            'Test Item',
+            'Test Item Description',
+            'test'
+        );
         $character->inventory->addItem($item);
 
         $this->assertEquals($item, $character->inventory->getItemById($item->id));
@@ -36,7 +41,12 @@ class CharacterTest extends TestCase
 
         $this->assertNull($character->inventory->getItemById('nothing'));
 
-        $item = new Item('test-item', 'Test Item', 'Test Item Description');
+        $item = new Item(
+            'test-item',
+            'Test Item',
+            'Test Item Description',
+            'test'
+        );
         $character->inventory->addItem($item);
 
         $this->assertEquals($item, $character->inventory->getItemById($item->id));
