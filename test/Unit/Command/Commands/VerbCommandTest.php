@@ -42,4 +42,22 @@ class VerbCommandTest extends CommandTest
         $this->expectException(InvalidExitException::class);
         $command->process($gameController);
     }
+
+    public function testProcessLook()
+    {
+        $gameController = $this->createGameController();
+        $outputController = $this->createOutputController();
+
+        // Player starting room.
+        $location = $gameController->mapController->getPlayerLocation();
+        $this->assertEquals('test-room-1', $location->id);
+
+        // Describe current room.
+        $command = new VerbCommand('look', $outputController);
+        $command->process($gameController);
+        $location = $gameController->mapController->getPlayerLocation();
+        $this->assertEquals('test-room-1', $location->id);
+
+        $this->assertCount(2, $outputController->getLines());
+    }
 }

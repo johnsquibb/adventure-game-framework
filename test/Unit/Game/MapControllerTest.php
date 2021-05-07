@@ -145,4 +145,42 @@ class MapControllerTest extends TestCase
         $mapController->dropItem($item);
         $this->assertEquals($item, $mapController->takeItemById($item->id));
     }
+
+    public function testFindItemsByTag()
+    {
+        $items = new Container();
+        $item = new Item(
+            'test-item-1',
+            'Test Item',
+            'Test Item Description',
+            'test'
+        );
+
+        $location = new Location(
+            'test-location',
+            'Test Location',
+            'Test Location Description',
+            $items,
+            []
+        );
+        $locations = [$location];
+
+        $mapController = new MapController($locations);
+        $mapController->setPlayerLocationById($location->id);
+        $this->assertEmpty($mapController->takeItemsByTag($item->tag));
+
+        $location->items->addItem($item);
+        $this->assertCount(1, $mapController->takeItemsByTag($item->tag));
+
+        $item2 = new Item(
+            'test-item-2',
+            'Test Item',
+            'Test Item Description',
+            'test'
+        );
+
+        $location->items->addItem($item2);
+        $this->assertCount(1, $mapController->takeItemsByTag($item->tag));
+        $this->assertCount(0, $mapController->takeItemsByTag($item->tag));
+    }
 }

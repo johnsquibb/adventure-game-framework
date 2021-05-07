@@ -3,12 +3,12 @@
 namespace AdventureGame\Command\Commands;
 
 use AdventureGame\Character\Character;
-use AdventureGame\Command\CommandParser;
 use AdventureGame\Game\GameController;
 use AdventureGame\Game\MapController;
 use AdventureGame\Game\PlayerController;
 use AdventureGame\IO\OutputController;
 use AdventureGame\Item\Container;
+use AdventureGame\Item\Item;
 use AdventureGame\Location\Location;
 use AdventureGame\Location\Portal;
 use PHPUnit\Framework\TestCase;
@@ -22,12 +22,21 @@ abstract class CommandTest extends TestCase
 
     protected function createMapController(): MapController
     {
+        $container = new Container();
+        $item = new Item(
+            'test-item',
+            'Test Item',
+            'Test Item Description',
+            'test'
+        );
+        $container->addItem($item);
+
         $door1 = new Portal('test-door', 'east', 'test-room-2');
         $location1 = new Location(
             'test-room-1',
             'Test Room 1',
             'This is a test room.',
-            new Container(),
+            $container,
             [$door1],
         );
 

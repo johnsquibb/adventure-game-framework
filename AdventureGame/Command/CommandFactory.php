@@ -17,6 +17,12 @@ class CommandFactory
     ) {
     }
 
+    /**
+     * Factory a command from tokens.
+     * @param array $tokens
+     * @return CommandInterface
+     * @throws InvalidCommandException
+     */
     public function createFromTokens(array $tokens): CommandInterface
     {
         switch (count($tokens)) {
@@ -31,6 +37,12 @@ class CommandFactory
         }
     }
 
+    /**
+     * Create verb command.
+     * @param string $verb
+     * @return CommandInterface
+     * @throws InvalidCommandException
+     */
     private function factoryVerbCommand(string $verb): CommandInterface
     {
         if (!$this->commandParser->isVerb($verb)) {
@@ -40,6 +52,13 @@ class CommandFactory
         return new VerbCommand($verb, $this->outputController);
     }
 
+    /**
+     * Create verb+noun command.
+     * @param string $verb
+     * @param string $noun
+     * @return CommandInterface
+     * @throws InvalidCommandException
+     */
     private function factoryVerbNounCommand(string $verb, string $noun): CommandInterface
     {
         if (!$this->commandParser->isVerb($verb)) {
@@ -53,6 +72,14 @@ class CommandFactory
         return new VerbNounCommand($verb, $noun, $this->outputController);
     }
 
+    /**
+     * Create verb+preposition+noun command.
+     * @param string $verb
+     * @param string $preposition
+     * @param string $noun
+     * @return CommandInterface
+     * @throws InvalidCommandException
+     */
     private function factoryVerbPrepositionNounCommand(
         string $verb,
         string $preposition,
@@ -73,6 +100,15 @@ class CommandFactory
         return new VerbPrepositionNounCommand($verb, $preposition, $noun, $this->outputController);
     }
 
+    /**
+     * Create verb+noun+preposition+noun command.
+     * @param string $verb
+     * @param string $noun1
+     * @param string $preposition
+     * @param string $noun2
+     * @return CommandInterface
+     * @throws InvalidCommandException
+     */
     private function factoryVerbNounPrepositionNounCommand(
         string $verb,
         string $noun1,

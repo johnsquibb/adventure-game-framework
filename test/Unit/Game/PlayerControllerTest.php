@@ -53,4 +53,26 @@ class PlayerControllerTest extends TestCase
         $this->assertEquals($item, $playerController->getItemByIdFromPlayerInventory($item->id));
         $this->assertEquals($item, $inventory->getItemById($item->id));
     }
+
+    public function testGetItemsByTagFromPlayerInventory()
+    {
+        $inventory = new Container();
+        $player = new Character('test-player', $inventory);
+        $playerController = new PlayerController($player);
+
+        $item = new Item(
+            'test-item',
+            'Test Item',
+            'Test Item Description',
+            'test'
+        );
+
+        $this->assertEmpty($playerController->getItemsByTagFromPlayerInventory($item->tag));
+
+        $playerController->addItemToPlayerInventory($item);
+        $this->assertEquals(
+            [$item],
+            $playerController->getItemsByTagFromPlayerInventory($item->tag)
+        );
+    }
 }

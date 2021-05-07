@@ -6,6 +6,7 @@ use AdventureGame\Game\Exception\InvalidExitException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
 use AdventureGame\IO\OutputController;
+use AdventureGame\Item\Item;
 use AdventureGame\Location\Location;
 
 abstract class AbstractCommand
@@ -22,10 +23,35 @@ abstract class AbstractCommand
      * @throws InvalidExitException
      * @throws PlayerLocationNotSetException
      */
-    protected function movePlayer(GameController $gameController, $direction): void
+    protected function movePlayer(GameController $gameController, string $direction): void
     {
         $gameController->mapController->movePlayer($direction);
         $this->describePlayerLocation($gameController);
+    }
+
+    /**
+     * Add an item to player inventory.
+     * @param GameController $gameController
+     * @param Item $item
+     */
+    protected function addItemToPlayerInventory(GameController $gameController, Item $item): void
+    {
+        $gameController->playerController->addItemToPlayerInventory($item);
+        $this->outputController->addLine("Added {$item->name} to inventory");
+    }
+
+    /**
+     * Remove an item from player inventory.
+     * @param GameController $gameController
+     * @param Item $item
+     */
+    protected function removeItemFromPlayerInventory(
+        GameController $gameController,
+        Item $item
+    ): void
+    {
+        $gameController->playerController->removeItemFromPlayerInventory($item);
+        $this->outputController->addLine("Removed {$item->name} from inventory");
     }
 
     /**

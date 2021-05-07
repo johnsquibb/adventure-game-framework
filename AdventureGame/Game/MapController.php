@@ -77,6 +77,25 @@ class MapController
     }
 
     /**
+     * Get all items that match tag.
+     * @param string $tag
+     * @return array
+     * @throws PlayerLocationNotSetException
+     */
+    public function takeItemsByTag(string $tag): array
+    {
+        $location = $this->getPlayerLocation();
+
+        $items = $location->items->getItemsByTag($tag);
+
+        foreach ($items as $item) {
+            $location->items->removeItemById($item->id);
+        }
+
+        return $items;
+    }
+
+    /**
      * Drop an item to current player location.
      * @param Item $item
      * @throws PlayerLocationNotSetException
