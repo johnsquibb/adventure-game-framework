@@ -4,7 +4,7 @@ namespace AdventureGame\Game;
 
 use AdventureGame\Game\Exception\InvalidExitException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
-use AdventureGame\Item\Item;
+use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Location;
 
 class MapController
@@ -61,10 +61,10 @@ class MapController
     /**
      * Take an item by id from current player location.
      * @param string $itemId
-     * @return Item|null
+     * @return ItemInterface|null
      * @throws PlayerLocationNotSetException
      */
-    public function takeItemById(string $itemId): ?Item
+    public function takeItemById(string $itemId): ?ItemInterface
     {
         $location = $this->getPlayerLocation();
 
@@ -97,10 +97,10 @@ class MapController
 
     /**
      * Drop an item to current player location.
-     * @param Item $item
+     * @param ItemInterface $item
      * @throws PlayerLocationNotSetException
      */
-    public function dropItem(Item $item): void
+    public function dropItem(ItemInterface $item): void
     {
         $location = $this->getPlayerLocation();
         $location->items->addItem($item);

@@ -6,7 +6,7 @@ use AdventureGame\Command\CommandInterface;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
 use AdventureGame\IO\OutputController;
-use AdventureGame\Item\Item;
+use AdventureGame\Item\ItemInterface;
 
 /**
  * Class VerbNounCommand processes verb+noun commands, e.g. "take sword" or "drop dish".
@@ -65,7 +65,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         $items = $gameController->mapController->takeItemsByTag($tag);
 
         foreach ($items as $item) {
-            if ($item instanceof Item) {
+            if ($item instanceof ItemInterface) {
                 $this->addItemToPlayerInventory($gameController, $item);
             }
         }
@@ -84,7 +84,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         $items = $gameController->playerController->getItemsByTagFromPlayerInventory($tag);
 
         foreach ($items as $item) {
-            if ($item instanceof Item) {
+            if ($item instanceof ItemInterface) {
                 $this->removeItemFromPlayerInventory($gameController, $item);
                 $gameController->mapController->dropItem($item);
             }

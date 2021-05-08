@@ -6,7 +6,7 @@ use AdventureGame\Game\Exception\InvalidExitException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
 use AdventureGame\IO\OutputController;
-use AdventureGame\Item\Item;
+use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Location;
 
 abstract class AbstractCommand
@@ -32,9 +32,9 @@ abstract class AbstractCommand
     /**
      * Add an item to player inventory.
      * @param GameController $gameController
-     * @param Item $item
+     * @param ItemInterface $item
      */
-    protected function addItemToPlayerInventory(GameController $gameController, Item $item): void
+    protected function addItemToPlayerInventory(GameController $gameController, ItemInterface $item): void
     {
         $gameController->playerController->addItemToPlayerInventory($item);
         $this->outputController->addLine("Added {$item->name} to inventory");
@@ -43,11 +43,11 @@ abstract class AbstractCommand
     /**
      * Remove an item from player inventory.
      * @param GameController $gameController
-     * @param Item $item
+     * @param ItemInterface $item
      */
     protected function removeItemFromPlayerInventory(
         GameController $gameController,
-        Item $item
+        ItemInterface $item
     ): void {
         $gameController->playerController->removeItemFromPlayerInventory($item);
         $this->outputController->addLine("Removed {$item->name} from inventory");
@@ -90,10 +90,10 @@ abstract class AbstractCommand
 
     /**
      * Describe an item.
-     * @param Item $item
+     * @param ItemInterface $item
      * @return void
      */
-    protected function describeItem(Item $item): void
+    protected function describeItem(ItemInterface $item): void
     {
         $this->outputController->addLines(
             [

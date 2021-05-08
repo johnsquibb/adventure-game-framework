@@ -8,9 +8,9 @@ trait ContainerTrait
 
     /**
      * Add an item.
-     * @param Item $item
+     * @param ItemInterface $item
      */
-    public function addItem(Item $item): void
+    public function addItem(ItemInterface $item): void
     {
         $this->items[] = $item;
     }

@@ -4,7 +4,7 @@ namespace AdventureGame\Item;
 
 interface ContainerInterface
 {
-    public function addItem(Item $item): void;
+    public function addItem(ItemInterface $item): void;
 
     public function getItemById(string $itemId): ?ItemInterface;
 

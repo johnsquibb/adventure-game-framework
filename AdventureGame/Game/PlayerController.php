@@ -3,7 +3,7 @@
 namespace AdventureGame\Game;
 
 use AdventureGame\Character\Character;
-use AdventureGame\Item\Item;
+use AdventureGame\Item\ItemInterface;
 
 class PlayerController
 {
@@ -13,18 +13,18 @@ class PlayerController
 
     /**
      * Add an item to player inventory.
-     * @param Item $item
+     * @param ItemInterface $item
      */
-    public function addItemToPlayerInventory(Item $item): void
+    public function addItemToPlayerInventory(ItemInterface $item): void
     {
         $this->player->inventory->addItem($item);
     }
 
     /**
      * Remove an item from player inventory.
-     * @param Item $item
+     * @param ItemInterface $item
      */
-    public function removeItemFromPlayerInventory(Item $item): void
+    public function removeItemFromPlayerInventory(ItemInterface $item): void
     {
         $this->player->inventory->removeItemById($item->id);
     }
@@ -32,9 +32,9 @@ class PlayerController
     /**
      * Get an item by id from player inventory, if it exists.
      * @param string $itemId
-     * @return Item|null
+     * @return ItemInterface|null
      */
-    public function getItemByIdFromPlayerInventory(string $itemId): ?Item
+    public function getItemByIdFromPlayerInventory(string $itemId): ?ItemInterface
     {
         return $this->player->inventory->getItemById($itemId);
     }
