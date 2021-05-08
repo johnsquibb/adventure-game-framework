@@ -7,6 +7,10 @@ use AdventureGame\Command\Commands\VerbNounCommand;
 use AdventureGame\Command\Commands\VerbNounPrepositionNounCommand;
 use AdventureGame\Command\Commands\VerbPrepositionNounCommand;
 use AdventureGame\Command\Exception\InvalidCommandException;
+use AdventureGame\Command\Exception\InvalidNounException;
+use AdventureGame\Command\Exception\InvalidPrepositionException;
+use AdventureGame\Command\Exception\InvalidTokensLengthException;
+use AdventureGame\Command\Exception\InvalidVerbException;
 use AdventureGame\IO\OutputController;
 
 class CommandFactory
@@ -22,6 +26,7 @@ class CommandFactory
      * @param array $tokens
      * @return CommandInterface
      * @throws InvalidCommandException
+     * @throws InvalidTokensLengthException
      */
     public function createFromTokens(array $tokens): CommandInterface
     {
@@ -35,18 +40,20 @@ class CommandFactory
             case 4:
                 return $this->factoryVerbNounPrepositionNounCommand(...$tokens);
         }
+
+        throw new InvalidTokensLengthException('invalid tokens length');
     }
 
     /**
      * Create verb command.
      * @param string $verb
      * @return CommandInterface
-     * @throws InvalidCommandException
+     * @throws InvalidVerbException
      */
     private function factoryVerbCommand(string $verb): CommandInterface
     {
         if (!$this->commandParser->isVerb($verb)) {
-            throw new InvalidCommandException('invalid verb');
+            throw new InvalidVerbException('invalid verb');
         }
 
         return new VerbCommand($verb, $this->outputController);
@@ -57,16 +64,17 @@ class CommandFactory
      * @param string $verb
      * @param string $noun
      * @return CommandInterface
-     * @throws InvalidCommandException
+     * @throws InvalidNounException
+     * @throws InvalidVerbException
      */
     private function factoryVerbNounCommand(string $verb, string $noun): CommandInterface
     {
         if (!$this->commandParser->isVerb($verb)) {
-            throw new InvalidCommandException('invalid verb');
+            throw new InvalidVerbException('invalid verb');
         }
 
         if (!$this->commandParser->isNoun($noun)) {
-            throw new InvalidCommandException('invalid noun');
+            throw new InvalidNounException('invalid noun');
         }
 
         return new VerbNounCommand($verb, $noun, $this->outputController);
@@ -78,7 +86,9 @@ class CommandFactory
      * @param string $preposition
      * @param string $noun
      * @return CommandInterface
-     * @throws InvalidCommandException
+     * @throws InvalidNounException
+     * @throws InvalidPrepositionException
+     * @throws InvalidVerbException
      */
     private function factoryVerbPrepositionNounCommand(
         string $verb,
@@ -86,15 +96,15 @@ class CommandFactory
         string $noun
     ): CommandInterface {
         if (!$this->commandParser->isVerb($verb)) {
-            throw new InvalidCommandException('invalid verb');
+            throw new InvalidVerbException('invalid verb');
         }
 
         if (!$this->commandParser->isPreposition($preposition)) {
-            throw new InvalidCommandException('invalid preposition');
+            throw new InvalidPrepositionException('invalid preposition');
         }
 
         if (!$this->commandParser->isNoun($noun)) {
-            throw new InvalidCommandException('invalid noun');
+            throw new InvalidNounException('invalid noun');
         }
 
         return new VerbPrepositionNounCommand($verb, $preposition, $noun, $this->outputController);
@@ -107,7 +117,9 @@ class CommandFactory
      * @param string $preposition
      * @param string $noun2
      * @return CommandInterface
-     * @throws InvalidCommandException
+     * @throws InvalidNounException
+     * @throws InvalidPrepositionException
+     * @throws InvalidVerbException
      */
     private function factoryVerbNounPrepositionNounCommand(
         string $verb,
@@ -116,15 +128,15 @@ class CommandFactory
         string $noun2
     ): CommandInterface {
         if (!$this->commandParser->isVerb($verb)) {
-            throw new InvalidCommandException('invalid verb');
+            throw new InvalidVerbException('invalid verb');
         }
 
         if (!$this->commandParser->isPreposition($preposition)) {
-            throw new InvalidCommandException('invalid preposition');
+            throw new InvalidPrepositionException('invalid preposition');
         }
 
         if (!$this->commandParser->isNoun($noun1) || !$this->commandParser->isNoun($noun2)) {
-            throw new InvalidCommandException('invalid noun');
+            throw new InvalidNounException('invalid noun');
         }
 
         return new VerbNounPrepositionNounCommand(
