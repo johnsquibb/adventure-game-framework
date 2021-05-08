@@ -15,5 +15,8 @@
     "psr-4": {
       "AdventureGame\\Test\\": "test/"
     }
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit test"
   }
 }
