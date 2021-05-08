@@ -15,7 +15,8 @@ class VerbPrepositionNounCommandTest extends CommandTest
         $command = new VerbPrepositionNounCommand(
             'look', 'at', 'test', $outputController
         );
-        $command->process($gameController);
+        $result = $command->process($gameController);
+        $this->assertTrue($result);
         $this->assertCount(2, $outputController->getLinesAndClear());
 
         // Add another item.
@@ -26,7 +27,20 @@ class VerbPrepositionNounCommandTest extends CommandTest
         $command = new VerbPrepositionNounCommand(
             'look', 'at', 'test', $outputController
         );
-        $command->process($gameController);
+        $result = $command->process($gameController);
+        $this->assertTrue($result);
         $this->assertCount(4, $outputController->getLinesAndClear());
+    }
+
+    public function testProcessNoAction()
+    {
+        $gameController = $this->createGameController();
+        $outputController = $this->createOutputController();
+
+        $command = new VerbPrepositionNounCommand(
+            'north', 'at', 'test', $outputController
+        );
+        $result = $command->process($gameController);
+        $this->assertFalse($result);
     }
 }

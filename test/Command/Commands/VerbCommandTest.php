@@ -18,13 +18,15 @@ class VerbCommandTest extends CommandTest
 
         // Move player east.
         $command = new VerbCommand('east', $outputController);
-        $command->process($gameController);
+        $result = $command->process($gameController);
+        $this->assertTrue($result);
         $location = $gameController->mapController->getPlayerLocation();
         $this->assertEquals('test-room-2', $location->id);
 
         // Move player west.
         $command = new VerbCommand('west', $outputController);
-        $command->process($gameController);
+        $result = $command->process($gameController);
+        $this->assertTrue($result);
         $location = $gameController->mapController->getPlayerLocation();
         $this->assertEquals('test-room-1', $location->id);
     }
@@ -41,7 +43,8 @@ class VerbCommandTest extends CommandTest
         // Try to move player south.
         $command = new VerbCommand('south', $outputController);
         $this->expectException(InvalidExitException::class);
-        $command->process($gameController);
+        $result = $command->process($gameController);
+        $this->assertTrue($result);
     }
 
     public function testProcessLook()
@@ -55,10 +58,26 @@ class VerbCommandTest extends CommandTest
 
         // Describe current room.
         $command = new VerbCommand('look', $outputController);
-        $command->process($gameController);
+        $result = $command->process($gameController);
+        $this->assertTrue($result);
         $location = $gameController->mapController->getPlayerLocation();
         $this->assertEquals('test-room-1', $location->id);
 
         $this->assertCount(2, $outputController->getLines());
+    }
+
+    public function testProcessNoAction()
+    {
+        $gameController = $this->createGameController();
+        $outputController = $this->createOutputController();
+
+        // Player starting room.
+        $location = $gameController->mapController->getPlayerLocation();
+        $this->assertEquals('test-room-1', $location->id);
+
+        // Describe current room.
+        $command = new VerbCommand('run', $outputController);
+        $result = $command->process($gameController);
+        $this->assertFalse($result);
     }
 }

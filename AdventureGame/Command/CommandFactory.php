@@ -6,13 +6,16 @@ use AdventureGame\Command\Commands\VerbCommand;
 use AdventureGame\Command\Commands\VerbNounCommand;
 use AdventureGame\Command\Commands\VerbNounPrepositionNounCommand;
 use AdventureGame\Command\Commands\VerbPrepositionNounCommand;
-use AdventureGame\Command\Exception\InvalidCommandException;
 use AdventureGame\Command\Exception\InvalidNounException;
 use AdventureGame\Command\Exception\InvalidPrepositionException;
 use AdventureGame\Command\Exception\InvalidTokensLengthException;
 use AdventureGame\Command\Exception\InvalidVerbException;
 use AdventureGame\IO\OutputController;
 
+/**
+ * Class CommandFactory builds processable Commands from arrays of token strings.
+ * @package AdventureGame\Command
+ */
 class CommandFactory
 {
     public function __construct(
@@ -25,8 +28,10 @@ class CommandFactory
      * Factory a command from tokens.
      * @param array $tokens
      * @return CommandInterface
-     * @throws InvalidCommandException
+     * @throws InvalidNounException
+     * @throws InvalidPrepositionException
      * @throws InvalidTokensLengthException
+     * @throws InvalidVerbException
      */
     public function createFromTokens(array $tokens): CommandInterface
     {

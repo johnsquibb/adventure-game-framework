@@ -22,11 +22,31 @@ class VerbNounPrepositionNounCommandTest extends CommandTest
             'test-container-item',
             $outputController
         );
-        $command->process($gameController);
+        $result = $command->process($gameController);
+        $this->assertTrue($result);
         $items = $gameController->playerController->getItemsByTagFromPlayerInventory(
             'test-item-in-container'
         );
         $this->assertCount(1, $items);
+    }
+
+    public function testProcessNoAction()
+    {
+        $gameController = $this->createGameController();
+        $outputController = $this->createOutputController();
+
+        $items = $gameController->playerController->getItemsByTagFromPlayerInventory('test');
+        $this->assertCount(0, $items);
+
+        $command = new VerbNounPrepositionNounCommand(
+            'fly',
+            'test-item-in-container',
+            'from',
+            'test-container-item',
+            $outputController
+        );
+        $result = $command->process($gameController);
+        $this->assertFalse($result);
     }
 
     public function testProcessTakeItemFromContainerThenDropItemIntoContainer()
@@ -51,7 +71,8 @@ class VerbNounPrepositionNounCommandTest extends CommandTest
             'test-container-item',
             $outputController
         );
-        $command->process($gameController);
+        $result = $command->process($gameController);
+        $this->assertTrue($result);
         $items = $gameController->playerController->getItemsByTagFromPlayerInventory(
             'test-item-in-container'
         );
@@ -65,7 +86,8 @@ class VerbNounPrepositionNounCommandTest extends CommandTest
             'test-container-item',
             $outputController
         );
-        $command->process($gameController);
+        $result = $command->process($gameController);
+        $this->assertTrue($result);
         $items = $gameController->playerController->getItemsByTagFromPlayerInventory(
             'test-item-in-container'
         );

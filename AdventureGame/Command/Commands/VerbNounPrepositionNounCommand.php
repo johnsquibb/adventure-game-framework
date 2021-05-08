@@ -24,11 +24,12 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
     /**
      * Process verb+noun+preposition+noun action.
      * @param GameController $gameController
+     * @return bool
      * @throws PlayerLocationNotSetException
      */
-    public function process(GameController $gameController): void
+    public function process(GameController $gameController): bool
     {
-        $this->tryContainerItemAction($gameController);
+        return $this->tryContainerItemAction($gameController);
     }
 
     /**

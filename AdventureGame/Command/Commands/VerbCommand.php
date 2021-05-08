@@ -26,12 +26,13 @@ class VerbCommand extends AbstractCommand implements CommandInterface
     /**
      * Process verb action.
      * @param GameController $gameController
+     * @return bool
      * @throws InvalidExitException
      * @throws PlayerLocationNotSetException
      */
-    public function process(GameController $gameController): void
+    public function process(GameController $gameController): bool
     {
-        $this->tryMoveAction($gameController) || $this->tryLookAction($gameController);
+        return $this->tryMoveAction($gameController) || $this->tryLookAction($gameController);
     }
 
     /**

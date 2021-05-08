@@ -10,5 +10,5 @@ use AdventureGame\Game\GameController;
  */
 interface CommandInterface
 {
-    public function process(GameController $gameController): void;
+    public function process(GameController $gameController): bool;
 }

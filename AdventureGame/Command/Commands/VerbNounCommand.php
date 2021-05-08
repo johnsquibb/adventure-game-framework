@@ -25,11 +25,12 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     /**
      * Process verb+noun action.
      * @param GameController $gameController
+     * @return bool
      * @throws PlayerLocationNotSetException
      */
-    public function process(GameController $gameController): void
+    public function process(GameController $gameController): bool
     {
-        $this->tryInventoryAction($gameController);
+        return $this->tryInventoryAction($gameController);
     }
 
     /**

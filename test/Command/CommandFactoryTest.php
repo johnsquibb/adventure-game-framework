@@ -8,7 +8,6 @@ use AdventureGame\Command\Commands\VerbCommand;
 use AdventureGame\Command\Commands\VerbNounCommand;
 use AdventureGame\Command\Commands\VerbNounPrepositionNounCommand;
 use AdventureGame\Command\Commands\VerbPrepositionNounCommand;
-use AdventureGame\Command\Exception\InvalidCommandException;
 use AdventureGame\Command\Exception\InvalidNounException;
 use AdventureGame\Command\Exception\InvalidPrepositionException;
 use AdventureGame\Command\Exception\InvalidTokensLengthException;
