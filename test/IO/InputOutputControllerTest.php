@@ -3,9 +3,9 @@
 namespace AdventureGame\Test\IO;
 
 use AdventureGame\IO\InputOutputControllerInterface;
-use PHPUnit\Framework\TestCase;
+use AdventureGame\Test\FrameworkTest;
 
-abstract class InputOutputControllerTest extends TestCase
+abstract class InputOutputControllerTest extends FrameworkTest
 {
     protected InputOutputControllerInterface $inputOutputController;
 

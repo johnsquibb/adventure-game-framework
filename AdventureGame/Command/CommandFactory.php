@@ -20,7 +20,7 @@ class CommandFactory
 {
     public function __construct(
         private CommandParser $commandParser,
-        private OutputController $outputController
+        public OutputController $outputController
     ) {
     }
 

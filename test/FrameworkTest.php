@@ -3,10 +3,13 @@
 namespace AdventureGame\Test;
 
 use AdventureGame\Character\Character;
+use AdventureGame\Command\CommandFactory;
 use AdventureGame\Command\CommandParser;
+use AdventureGame\Game\CommandController;
 use AdventureGame\Game\GameController;
 use AdventureGame\Game\MapController;
 use AdventureGame\Game\PlayerController;
+use AdventureGame\IO\InputController;
 use AdventureGame\IO\OutputController;
 use AdventureGame\Item\Container;
 use AdventureGame\Item\ContainerItem;
@@ -17,15 +20,32 @@ use PHPUnit\Framework\TestCase;
 
 abstract class FrameworkTest extends TestCase
 {
+    protected function createInputController(): InputController
+    {
+        $commandParser = $this->createCommandParser();
+        $commandController = $this->createCommandController();
+
+        return new InputController($commandParser, $commandController);
+    }
+
     protected function createOutputController(): OutputController
     {
         return new OutputController();
     }
 
+    protected function createCommandController(): CommandController
+    {
+        $gameController = $this->createGameController();
+        $commandParser = $this->createCommandParser();
+        $outputController = $this->createOutputController();
+        $commandFactory = new CommandFactory($commandParser, $outputController);
+        return new CommandController($commandFactory, $gameController);
+    }
+
     protected function createCommandParser(): CommandParser
     {
         $verbs = ['north', 'take', 'look', 'put'];
-        $nouns = ['sword', 'sheath', 'chest'];
+        $nouns = ['sword', 'sheath', 'chest', 'test-container-item', 'test-item-in-container'];
         $articles = [];
         $prepositions = ['at', 'into', 'from'];
         $aliases = [];

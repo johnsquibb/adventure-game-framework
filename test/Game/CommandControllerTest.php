@@ -12,11 +12,7 @@ class CommandControllerTest extends FrameworkTest
 {
     public function testCreateAndProcessCommandFromInvalidTokensLength()
     {
-        $gameController = $this->createGameController();
-        $commandParser = $this->createCommandParser();
-        $outputController = $this->createOutputController();
-        $commandFactory = new CommandFactory($commandParser, $outputController);
-        $commandController = new CommandController($commandFactory, $gameController);
+        $commandController = $this->createCommandController();
 
         $this->expectException(InvalidTokensLengthException::class);
         $commandController->createAndProcessCommandFromTokens([]);
@@ -24,11 +20,7 @@ class CommandControllerTest extends FrameworkTest
 
     public function testCreateAndProcessCommandFromInvalidTokens()
     {
-        $gameController = $this->createGameController();
-        $commandParser = $this->createCommandParser();
-        $outputController = $this->createOutputController();
-        $commandFactory = new CommandFactory($commandParser, $outputController);
-        $commandController = new CommandController($commandFactory, $gameController);
+        $commandController = $this->createCommandController();
 
         $this->expectException(InvalidTokenException::class);
         $commandController->createAndProcessCommandFromTokens(['beep', 'beep', '...']);
@@ -36,11 +28,7 @@ class CommandControllerTest extends FrameworkTest
 
     public function testCreateAndProcessCommandFromTokens()
     {
-        $gameController = $this->createGameController();
-        $commandParser = $this->createCommandParser();
-        $outputController = $this->createOutputController();
-        $commandFactory = new CommandFactory($commandParser, $outputController);
-        $commandController = new CommandController($commandFactory, $gameController);
+        $commandController = $this->createCommandController();
 
         $result = $commandController->createAndProcessCommandFromTokens(
             ['take', 'sword', 'from', 'chest']

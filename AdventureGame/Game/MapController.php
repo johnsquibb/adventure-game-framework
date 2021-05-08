@@ -7,6 +7,10 @@ use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Location;
 
+/**
+ * Class MapController provides methods for interacting with locations on the game map.
+ * @package AdventureGame\Game
+ */
 class MapController
 {
     private ?Location $playerLocation;

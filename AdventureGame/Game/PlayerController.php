@@ -5,6 +5,10 @@ namespace AdventureGame\Game;
 use AdventureGame\Character\Character;
 use AdventureGame\Item\ItemInterface;
 
+/**
+ * Class PlayerController provides methods for player and inventory manipulation.
+ * @package AdventureGame\Game
+ */
 class PlayerController
 {
     public function __construct(private Character $player)

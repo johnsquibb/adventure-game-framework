@@ -82,8 +82,7 @@ class CommandParser
     /**
      * Validate parsed tokens using supported words lists.
      * @param array $tokens
-     * @return bool
-     * @throws InvalidCommandException
+     * @return bool true when all tokens are valid, false when first invalid token is encountered.
      */
     public function validateTokens(array $tokens): bool
     {
@@ -93,9 +92,11 @@ class CommandParser
                 && !$this->isArticle($token)
                 && !$this->isPreposition($token)
             ) {
-                throw new InvalidCommandException("Invalid token {$token}");
+                return false;
             }
         }
+
+        return true;
     }
 
     /**

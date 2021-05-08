@@ -59,8 +59,8 @@ class CommandParserTest extends TestCase
 
         $command = 'put MUCH carrot into EVERY pot';
         $tokens = $commandParser->parseCommand($command);
-        $this->expectException(InvalidCommandException::class);
-        $commandParser->validateTokens($tokens);
+        $isValid = $commandParser->validateTokens($tokens);
+        $this->assertFalse($isValid);
     }
 
     public function testNormalizeTokens()
@@ -109,5 +109,23 @@ class CommandParserTest extends TestCase
         $tokens = $commandParser->parseCommand($command);
         $filtered = $commandParser->filterTokens($tokens);
         $this->assertEquals($expected, $filtered);
+    }
+
+    public function testTokenParsingOrderOfOperations()
+    {
+        $commandParser = $this->createCommandParser();
+
+        $expected = ['put', 'carrot', 'into', 'pot'];
+
+        $command = 'Put the CARROT into a Pot';
+        $tokens = $commandParser->parseCommand($command);
+        $tokens = $commandParser->normalizeTokens($tokens);
+        $tokens = $commandParser->filterTokens($tokens);
+        $tokens = $commandParser->replaceAliases($tokens);
+
+        $this->assertEquals($expected, $tokens);
+
+        $isValid = $commandParser->validateTokens($tokens);
+        $this->assertTrue($isValid);
     }
 }
