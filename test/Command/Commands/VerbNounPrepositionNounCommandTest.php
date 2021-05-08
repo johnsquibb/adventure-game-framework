@@ -4,8 +4,9 @@ namespace AdventureGame\Test\Command\Commands;
 
 use AdventureGame\Command\Commands\VerbNounPrepositionNounCommand;
 use AdventureGame\Item\ContainerInterface;
+use AdventureGame\Test\FrameworkTest;
 
-class VerbNounPrepositionNounCommandTest extends CommandTest
+class VerbNounPrepositionNounCommandTest extends FrameworkTest
 {
     public function testProcessTakeItemFromContainer()
     {

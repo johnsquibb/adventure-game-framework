@@ -3,8 +3,9 @@
 namespace AdventureGame\Test\Command\Commands;
 
 use AdventureGame\Command\Commands\VerbNounCommand;
+use AdventureGame\Test\FrameworkTest;
 
-class VerbNounCommandTest extends CommandTest
+class VerbNounCommandTest extends FrameworkTest
 {
     public function testProcessTakeItem()
     {

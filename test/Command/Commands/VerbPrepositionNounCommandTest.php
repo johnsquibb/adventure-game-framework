@@ -4,8 +4,9 @@ namespace AdventureGame\Test\Command\Commands;
 
 use AdventureGame\Command\Commands\VerbPrepositionNounCommand;
 use AdventureGame\Item\Item;
+use AdventureGame\Test\FrameworkTest;
 
-class VerbPrepositionNounCommandTest extends CommandTest
+class VerbPrepositionNounCommandTest extends FrameworkTest
 {
     public function testProcessLookAtItem()
     {

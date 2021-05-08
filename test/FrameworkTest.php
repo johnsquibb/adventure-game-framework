@@ -1,8 +1,9 @@
 <?php
 
-namespace AdventureGame\Test\Command\Commands;
+namespace AdventureGame\Test;
 
 use AdventureGame\Character\Character;
+use AdventureGame\Command\CommandParser;
 use AdventureGame\Game\GameController;
 use AdventureGame\Game\MapController;
 use AdventureGame\Game\PlayerController;
@@ -14,11 +15,22 @@ use AdventureGame\Location\Location;
 use AdventureGame\Location\Portal;
 use PHPUnit\Framework\TestCase;
 
-abstract class CommandTest extends TestCase
+abstract class FrameworkTest extends TestCase
 {
     protected function createOutputController(): OutputController
     {
         return new OutputController();
+    }
+
+    protected function createCommandParser(): CommandParser
+    {
+        $verbs = ['north', 'take', 'look', 'put'];
+        $nouns = ['sword', 'sheath', 'chest'];
+        $articles = [];
+        $prepositions = ['at', 'into', 'from'];
+        $aliases = [];
+
+        return new CommandParser($verbs, $nouns, $articles, $prepositions, $aliases);
     }
 
     protected function createMapController(): MapController

@@ -4,8 +4,9 @@ namespace AdventureGame\Test\Command\Commands;
 
 use AdventureGame\Command\Commands\VerbCommand;
 use AdventureGame\Game\Exception\InvalidExitException;
+use AdventureGame\Test\FrameworkTest;
 
-class VerbCommandTest extends CommandTest
+class VerbCommandTest extends FrameworkTest
 {
     public function testProcessMovePlayer()
     {

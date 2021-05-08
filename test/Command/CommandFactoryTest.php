@@ -3,7 +3,6 @@
 namespace AdventureGame\Test\Command;
 
 use AdventureGame\Command\CommandFactory;
-use AdventureGame\Command\CommandParser;
 use AdventureGame\Command\Commands\VerbCommand;
 use AdventureGame\Command\Commands\VerbNounCommand;
 use AdventureGame\Command\Commands\VerbNounPrepositionNounCommand;
@@ -13,21 +12,10 @@ use AdventureGame\Command\Exception\InvalidPrepositionException;
 use AdventureGame\Command\Exception\InvalidTokensLengthException;
 use AdventureGame\Command\Exception\InvalidVerbException;
 use AdventureGame\IO\OutputController;
-use PHPUnit\Framework\TestCase;
+use AdventureGame\Test\FrameworkTest;
 
-class CommandFactoryTest extends TestCase
+class CommandFactoryTest extends FrameworkTest
 {
-    private function createCommandParser(): CommandParser
-    {
-        $verbs = ['north', 'take', 'look', 'put'];
-        $nouns = ['sword', 'sheath'];
-        $articles = [];
-        $prepositions = ['at', 'into'];
-        $aliases = [];
-
-        return new CommandParser($verbs, $nouns, $articles, $prepositions, $aliases);
-    }
-
     public function testCreateVerbCommandFromTokens()
     {
         $commandParser = $this->createCommandParser();

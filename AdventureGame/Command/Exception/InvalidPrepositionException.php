@@ -2,9 +2,7 @@
 
 namespace AdventureGame\Command\Exception;
 
-use Exception;
-
-class InvalidPrepositionException extends Exception
+class InvalidPrepositionException extends InvalidTokenException
 {
 
 }
