@@ -1,6 +1,8 @@
 {
   "name": "johnsquibb/aventure-game-framework",
   "type": "project",
+  "description": "A lightweight framework for building text adventures",
+  "license": "MIT",
   "require-dev": {
     "phpunit/phpunit": "^8"
   },
