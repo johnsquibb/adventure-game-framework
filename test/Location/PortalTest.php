@@ -1,7 +1,8 @@
 <?php
 
-namespace AdventureGame\Location;
+namespace AdventureGame\Test\Location;
 
+use AdventureGame\Location\Portal;
 use PHPUnit\Framework\TestCase;
 
 class PortalTest extends TestCase

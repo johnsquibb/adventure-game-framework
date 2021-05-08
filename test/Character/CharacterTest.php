@@ -1,7 +1,8 @@
 <?php
 
-namespace AdventureGame\Character;
+namespace AdventureGame\Test\Character;
 
+use AdventureGame\Character\Character;
 use AdventureGame\Item\Container;
 use AdventureGame\Item\Item;
 use PHPUnit\Framework\TestCase;

@@ -1,6 +1,8 @@
 <?php
 
-namespace AdventureGame\Command\Commands;
+namespace AdventureGame\Test\Command\Commands;
+
+use AdventureGame\Command\Commands\VerbNounCommand;
 
 class VerbNounCommandTest extends CommandTest
 {

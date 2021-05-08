@@ -8,5 +8,10 @@
     "psr-4": {
       "AdventureGame\\": "AdventureGame/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "AdventureGame\\Test\\": "test/"
+    }
   }
 }

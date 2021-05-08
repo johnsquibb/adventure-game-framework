@@ -1,9 +1,10 @@
 <?php
 
-namespace AdventureGame\Game;
+namespace AdventureGame\Test\Game;
 
 use AdventureGame\Game\Exception\InvalidExitException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
+use AdventureGame\Game\MapController;
 use AdventureGame\Item\Container;
 use AdventureGame\Item\Item;
 use AdventureGame\Location\Location;

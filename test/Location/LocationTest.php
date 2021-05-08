@@ -1,9 +1,11 @@
 <?php
 
-namespace AdventureGame\Location;
+namespace AdventureGame\Test\Location;
 
 use AdventureGame\Item\Container;
 use AdventureGame\Item\Item;
+use AdventureGame\Location\Location;
+use AdventureGame\Location\Portal;
 use PHPUnit\Framework\TestCase;
 
 class LocationTest extends TestCase

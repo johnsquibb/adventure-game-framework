@@ -1,7 +1,9 @@
 <?php
 
-namespace AdventureGame\Item;
+namespace AdventureGame\Test\Item;
 
+use AdventureGame\Item\Container;
+use AdventureGame\Item\Item;
 use PHPUnit\Framework\TestCase;
 
 class ContainerTest extends TestCase

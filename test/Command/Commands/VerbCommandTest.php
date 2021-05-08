@@ -1,7 +1,8 @@
 <?php
 
-namespace AdventureGame\Command\Commands;
+namespace AdventureGame\Test\Command\Commands;
 
+use AdventureGame\Command\Commands\VerbCommand;
 use AdventureGame\Game\Exception\InvalidExitException;
 
 class VerbCommandTest extends CommandTest

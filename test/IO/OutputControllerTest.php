@@ -1,7 +1,8 @@
 <?php
 
-namespace AdventureGame\IO;
+namespace AdventureGame\Test\IO;
 
+use AdventureGame\IO\OutputController;
 use PHPUnit\Framework\TestCase;
 
 class OutputControllerTest extends TestCase

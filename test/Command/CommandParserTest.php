@@ -1,7 +1,8 @@
 <?php
 
-namespace AdventureGame\Command;
+namespace AdventureGame\Test\Command;
 
+use AdventureGame\Command\CommandParser;
 use AdventureGame\Command\Exception\InvalidCommandException;
 use PHPUnit\Framework\TestCase;
 

@@ -1,7 +1,9 @@
 <?php
 
-namespace AdventureGame\Command;
+namespace AdventureGame\Test\Command;
 
+use AdventureGame\Command\CommandFactory;
+use AdventureGame\Command\CommandParser;
 use AdventureGame\Command\Commands\VerbCommand;
 use AdventureGame\Command\Commands\VerbNounCommand;
 use AdventureGame\Command\Commands\VerbNounPrepositionNounCommand;

@@ -1,8 +1,10 @@
 <?php
 
-namespace AdventureGame\Location;
+namespace AdventureGame\Test\Location;
 
 use AdventureGame\Item\Container;
+use AdventureGame\Location\Location;
+use AdventureGame\Location\Map;
 use PHPUnit\Framework\TestCase;
 
 class MapTest extends TestCase
