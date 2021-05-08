@@ -2,11 +2,11 @@
 
 namespace AdventureGame\Character;
 
-use AdventureGame\Item\Container;
+use AdventureGame\Item\ContainerInterface;
 
 class Character
 {
-    public function __construct(public string $name, public Container $inventory)
+    public function __construct(public string $name, public ContainerInterface $inventory)
     {
     }
 }

@@ -2,7 +2,7 @@
 
 namespace AdventureGame\Location;
 
-use AdventureGame\Item\Container;
+use AdventureGame\Item\ContainerInterface;
 
 class Location
 {
@@ -10,7 +10,7 @@ class Location
         public string $id,
         public string $name,
         public string $description,
-        public Container $items,
+        public ContainerInterface $items,
         private array $exits,
     ) {
     }
