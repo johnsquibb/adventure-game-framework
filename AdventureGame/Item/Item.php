@@ -2,7 +2,7 @@
 
 namespace AdventureGame\Item;
 
-class Item
+class Item implements ItemInterface
 {
     public function __construct(
         public string $id,
