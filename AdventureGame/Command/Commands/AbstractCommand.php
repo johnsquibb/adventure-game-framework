@@ -21,9 +21,48 @@ abstract class AbstractCommand
     }
 
     /**
+     * Add an item to player inventory.
+     * @param GameController $gameController
+     * @param ItemInterface $item
+     */
+    protected function addItemToPlayerInventory(
+        GameController $gameController,
+        ItemInterface $item
+    ): void {
+        $gameController->playerController->addItemToPlayerInventory($item);
+        $this->outputController->addLine("Added {$item->name} to inventory");
+    }
+
+    /**
+     * Describe a list of items.
+     * @param array $items
+     */
+    protected function describeItems(array $items): void
+    {
+        foreach ($items as $item) {
+            $this->describeItem($item);
+        }
+    }
+
+    /**
+     * Describe an item.
+     * @param ItemInterface $item
+     * @return void
+     */
+    protected function describeItem(ItemInterface $item): void
+    {
+        $this->outputController->addLines(
+            [
+                $item->name,
+                $item->description,
+            ]
+        );
+    }
+
+    /**
      * Move player, describe the new location.
      * @param GameController $gameController
-     * @param $direction
+     * @param string $direction
      * @throws InvalidExitException
      * @throws PlayerLocationNotSetException
      */
@@ -58,19 +97,6 @@ abstract class AbstractCommand
     }
 
     /**
-     * Add an item to player inventory.
-     * @param GameController $gameController
-     * @param ItemInterface $item
-     */
-    protected function addItemToPlayerInventory(
-        GameController $gameController,
-        ItemInterface $item
-    ): void {
-        $gameController->playerController->addItemToPlayerInventory($item);
-        $this->outputController->addLine("Added {$item->name} to inventory");
-    }
-
-    /**
      * Remove an item from player inventory.
      * @param GameController $gameController
      * @param ItemInterface $item
@@ -81,31 +107,5 @@ abstract class AbstractCommand
     ): void {
         $gameController->playerController->removeItemFromPlayerInventory($item);
         $this->outputController->addLine("Removed {$item->name} from inventory");
-    }
-
-    /**
-     * Describe a list of items.
-     * @param array $items
-     */
-    protected function describeItems(array $items): void
-    {
-        foreach ($items as $item) {
-            $this->describeItem($item);
-        }
-    }
-
-    /**
-     * Describe an item.
-     * @param ItemInterface $item
-     * @return void
-     */
-    protected function describeItem(ItemInterface $item): void
-    {
-        $this->outputController->addLines(
-            [
-                $item->name,
-                $item->description,
-            ]
-        );
     }
 }

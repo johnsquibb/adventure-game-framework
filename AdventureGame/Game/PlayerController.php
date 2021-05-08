@@ -21,15 +21,6 @@ class PlayerController
     }
 
     /**
-     * Remove an item from player inventory.
-     * @param ItemInterface $item
-     */
-    public function removeItemFromPlayerInventory(ItemInterface $item): void
-    {
-        $this->player->inventory->removeItemById($item->id);
-    }
-
-    /**
      * Get an item by id from player inventory, if it exists.
      * @param string $itemId
      * @return ItemInterface|null
@@ -47,5 +38,14 @@ class PlayerController
     public function getItemsByTagFromPlayerInventory(string $tag): array
     {
         return $this->player->inventory->getItemsByTag($tag);
+    }
+
+    /**
+     * Remove an item from player inventory.
+     * @param ItemInterface $item
+     */
+    public function removeItemFromPlayerInventory(ItemInterface $item): void
+    {
+        $this->player->inventory->removeItemById($item->id);
     }
 }

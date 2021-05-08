@@ -16,6 +16,17 @@ class MapController
     }
 
     /**
+     * Drop an item to current player location.
+     * @param ItemInterface $item
+     * @throws PlayerLocationNotSetException
+     */
+    public function dropItem(ItemInterface $item): void
+    {
+        $location = $this->getPlayerLocation();
+        $location->items->addItem($item);
+    }
+
+    /**
      * @param string $direction The direction in which to move the player.
      * @throws InvalidExitException|PlayerLocationNotSetException
      */
@@ -93,16 +104,5 @@ class MapController
         }
 
         return $items;
-    }
-
-    /**
-     * Drop an item to current player location.
-     * @param ItemInterface $item
-     * @throws PlayerLocationNotSetException
-     */
-    public function dropItem(ItemInterface $item): void
-    {
-        $location = $this->getPlayerLocation();
-        $location->items->addItem($item);
     }
 }

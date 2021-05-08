@@ -16,36 +16,6 @@ class CommandParser
     }
 
     /**
-     * Parse a command into tokens.
-     * @param string $command
-     * @return array
-     */
-    public function parseCommand(string $command): array
-    {
-        return preg_split("/[\s,]+/", trim($command));
-    }
-
-    /**
-     * Replace any aliases with preferred token.
-     * @param array $tokens
-     * @return array
-     */
-    public function replaceAliases(array $tokens): array
-    {
-        $alias = [];
-
-        foreach ($tokens as $token) {
-            if (array_key_exists($token, $this->aliases)) {
-                $alias[] = $this->aliases[$token];
-            } else {
-                $alias[] = $token;
-            }
-        }
-
-        return $alias;
-    }
-
-    /**
      * Filter tokens by removing irrelevant words.
      * @param array $tokens
      * @return array
@@ -77,6 +47,36 @@ class CommandParser
         }
 
         return $normal;
+    }
+
+    /**
+     * Parse a command into tokens.
+     * @param string $command
+     * @return array
+     */
+    public function parseCommand(string $command): array
+    {
+        return preg_split("/[\s,]+/", trim($command));
+    }
+
+    /**
+     * Replace any aliases with preferred token.
+     * @param array $tokens
+     * @return array
+     */
+    public function replaceAliases(array $tokens): array
+    {
+        $alias = [];
+
+        foreach ($tokens as $token) {
+            if (array_key_exists($token, $this->aliases)) {
+                $alias[] = $this->aliases[$token];
+            } else {
+                $alias[] = $token;
+            }
+        }
+
+        return $alias;
     }
 
     /**
