@@ -48,8 +48,7 @@ abstract class AbstractCommand
     protected function removeItemFromPlayerInventory(
         GameController $gameController,
         Item $item
-    ): void
-    {
+    ): void {
         $gameController->playerController->removeItemFromPlayerInventory($item);
         $this->outputController->addLine("Removed {$item->name} from inventory");
     }
@@ -76,5 +75,31 @@ abstract class AbstractCommand
             $location->name,
             $location->description,
         ];
+    }
+
+    /**
+     * Describe a list of items.
+     * @param array $items
+     */
+    protected function describeItems(array $items): void
+    {
+        foreach ($items as $item) {
+            $this->describeItem($item);
+        }
+    }
+
+    /**
+     * Describe an item.
+     * @param Item $item
+     * @return void
+     */
+    protected function describeItem(Item $item): void
+    {
+        $this->outputController->addLines(
+            [
+                $item->name,
+                $item->description,
+            ]
+        );
     }
 }

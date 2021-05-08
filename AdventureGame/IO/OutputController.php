@@ -27,11 +27,32 @@ class OutputController
     }
 
     /**
+     * Clear lines.
+     * @return void
+     */
+    public function clearLines(): void
+    {
+        $this->lines = [];
+    }
+
+    /**
      * Get lines.
      * @return array
      */
     public function getLines(): array
     {
         return $this->lines;
+    }
+
+    /**
+     * Get lines and clear.
+     * @return array
+     */
+    public function getLinesAndClear(): array
+    {
+        $lines = $this->getLines();
+        $this->clearLines();
+
+        return $lines;
     }
 }

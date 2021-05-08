@@ -3,12 +3,15 @@
 namespace AdventureGame\Command\Commands;
 
 use AdventureGame\Command\CommandInterface;
-use AdventureGame\Game\Exception\InvalidExitException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
 use AdventureGame\IO\OutputController;
 use AdventureGame\Item\Item;
 
+/**
+ * Class VerbNounCommand processes verb+noun commands, e.g. "take sword" or "drop dish".
+ * @package AdventureGame\Command\Commands
+ */
 class VerbNounCommand extends AbstractCommand implements CommandInterface
 {
     public function __construct(
@@ -22,7 +25,6 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     /**
      * Process verb+noun action.
      * @param GameController $gameController
-     * @throws InvalidExitException
      * @throws PlayerLocationNotSetException
      */
     public function process(GameController $gameController): void
@@ -34,7 +36,6 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
      * Try an inventory action on player's inventory at current player location.
      * @param GameController $gameController
      * @return bool true if a take verb was processed, false otherwise.
-     * @throws InvalidExitException
      * @throws PlayerLocationNotSetException
      */
     private function tryInventoryAction(GameController $gameController): bool

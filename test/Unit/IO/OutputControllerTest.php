@@ -32,4 +32,23 @@ class OutputControllerTest extends TestCase
         $outputController->addLines($lines);
         $this->assertEquals($lines, $outputController->getLines());
     }
+
+    public function testClearLines()
+    {
+        $outputController = new OutputController();
+        $lines = ['test', 123];
+        $outputController->addLines($lines);
+        $this->assertEquals($lines, $outputController->getLines());
+        $outputController->clearLines();
+        $this->assertEmpty($outputController->getLines());
+    }
+
+    public function testGetLinesAndClear()
+    {
+        $outputController = new OutputController();
+        $lines = ['test', 123];
+        $outputController->addLines($lines);
+        $this->assertEquals($lines, $outputController->getLinesAndClear());
+        $this->assertEmpty($outputController->getLines());
+    }
 }

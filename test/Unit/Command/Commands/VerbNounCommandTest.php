@@ -2,11 +2,6 @@
 
 namespace AdventureGame\Command\Commands;
 
-use AdventureGame\Game\MapController;
-use AdventureGame\Item\Container;
-use AdventureGame\Location\Location;
-use PHPUnit\Framework\TestCase;
-
 class VerbNounCommandTest extends CommandTest
 {
     public function testProcessTakeItem()

@@ -9,6 +9,11 @@ use AdventureGame\Game\GameController;
 use AdventureGame\IO\OutputController;
 use AdventureGame\Location\Direction;
 
+/**
+ * Class VerbCommand processes single-word verb commands, e.g. "take" or "eat".
+ * It also processes words that imply more complex commands, e.g. "north" for "go north".
+ * @package AdventureGame\Command\Commands
+ */
 class VerbCommand extends AbstractCommand implements CommandInterface
 {
     public function __construct(
