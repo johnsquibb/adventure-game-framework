@@ -28,7 +28,7 @@ class VerbNounCommandTest extends CommandTest
     {
         $gameController = $this->createGameController();
         $outputController = $this->createOutputController();
-        
+
         $items = $gameController->playerController->getItemsByTagFromPlayerInventory('test');
         $this->assertCount(0, $items);
 

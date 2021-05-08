@@ -1,7 +1,10 @@
 <?php
 
-namespace AdventureGame\Command;
+namespace AdventureGame\Game;
 
 class CommandController
 {
+    public function __construct()
+    {
+    }
 }
