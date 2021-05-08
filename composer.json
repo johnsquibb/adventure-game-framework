@@ -8,7 +8,7 @@
   },
   "autoload": {
     "psr-4": {
-      "AdventureGame\\": "AdventureGame/"
+      "AdventureGame\\": "src/"
     }
   },
   "autoload-dev": {
@@ -17,6 +17,7 @@
     }
   },
   "scripts": {
-    "test": "vendor/bin/phpunit test"
+    "test": "vendor/bin/phpunit test",
+    "example": "php examples/hello-cli-game/main.php"
   }
 }

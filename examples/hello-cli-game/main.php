@@ -4,7 +4,7 @@ use AdventureGame\Client\ConsoleClientController;
 use AdventureGame\Platform\PlatformController;
 use AdventureGame\Platform\PlatformFactory;
 
-require_once dirname(dirname(__DIR__)) . '/vendor/composer/autoload_psr4.php';
+require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
 $platformFactory = new PlatformFactory();
 $platformRegistry = $platformFactory->createPlatformRegistry();

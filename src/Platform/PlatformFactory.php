@@ -12,6 +12,7 @@ use AdventureGame\Game\PlayerController;
 use AdventureGame\IO\InputController;
 use AdventureGame\IO\OutputController;
 use AdventureGame\Item\Container;
+use AdventureGame\Item\ContainerItem;
 use AdventureGame\Item\Item;
 use AdventureGame\Location\Location;
 use AdventureGame\Location\Portal;
