@@ -5,7 +5,7 @@ namespace AdventureGame\Test;
 use AdventureGame\Character\Character;
 use AdventureGame\Command\CommandFactory;
 use AdventureGame\Command\CommandParser;
-use AdventureGame\Game\CommandController;
+use AdventureGame\Command\CommandController;
 use AdventureGame\Game\GameController;
 use AdventureGame\Game\MapController;
 use AdventureGame\Game\PlayerController;

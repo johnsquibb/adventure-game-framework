@@ -2,10 +2,8 @@
 
 namespace AdventureGame\Test\Game;
 
-use AdventureGame\Command\CommandFactory;
 use AdventureGame\Command\Exception\InvalidTokenException;
 use AdventureGame\Command\Exception\InvalidTokensLengthException;
-use AdventureGame\Game\CommandController;
 use AdventureGame\Test\FrameworkTest;
 
 class CommandControllerTest extends FrameworkTest

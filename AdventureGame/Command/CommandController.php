@@ -1,13 +1,12 @@
 <?php
 
-namespace AdventureGame\Game;
+namespace AdventureGame\Command;
 
-use AdventureGame\Command\CommandFactory;
-use AdventureGame\Command\CommandInterface;
 use AdventureGame\Command\Exception\InvalidNounException;
 use AdventureGame\Command\Exception\InvalidPrepositionException;
 use AdventureGame\Command\Exception\InvalidTokensLengthException;
 use AdventureGame\Command\Exception\InvalidVerbException;
+use AdventureGame\Game\GameController;
 
 /**
  * Class CommandController creates and processes commands from tokens.
