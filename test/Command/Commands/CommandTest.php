@@ -8,6 +8,7 @@ use AdventureGame\Game\MapController;
 use AdventureGame\Game\PlayerController;
 use AdventureGame\IO\OutputController;
 use AdventureGame\Item\Container;
+use AdventureGame\Item\ContainerItem;
 use AdventureGame\Item\Item;
 use AdventureGame\Location\Location;
 use AdventureGame\Location\Portal;
@@ -23,13 +24,38 @@ abstract class CommandTest extends TestCase
     protected function createMapController(): MapController
     {
         $container = new Container();
-        $item = new Item(
-            'test-item',
-            'Test Item',
-            'Test Item Description',
-            'test'
+        $container->addItem(
+            new Item(
+                'test-item-1',
+                'Test Item 1',
+                'Test Item 1 description',
+                'test'
+            )
         );
-        $container->addItem($item);
+
+        $containerItem = new ContainerItem(
+            'test-container-item',
+            'Test Container Item',
+            'Test container item description',
+            'test-container-item',
+        );
+        $container->addItem($containerItem);
+        $containerItem->addItem(
+            new Item(
+                'test-item-2',
+                'Test Item 2',
+                'Test Item 2 description',
+                'test-item-in-container'
+            )
+        );
+        $containerItem->addItem(
+            new Item(
+                'test-item-3',
+                'Test Item 3',
+                'Test Item 3 description',
+                'test-item-2-in-container'
+            )
+        );
 
         $door1 = new Portal('test-door', 'east', 'test-room-2');
         $location1 = new Location(

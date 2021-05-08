@@ -11,6 +11,8 @@ class VerbNounCommandTest extends CommandTest
         $gameController = $this->createGameController();
         $outputController = $this->createOutputController();
 
+        $itemCount = $gameController->mapController->getItemCount();
+
         $items = $gameController->playerController->getItemsByTagFromPlayerInventory('test');
         $this->assertCount(0, $items);
 
@@ -18,6 +20,7 @@ class VerbNounCommandTest extends CommandTest
         $command->process($gameController);
         $items = $gameController->playerController->getItemsByTagFromPlayerInventory('test');
         $this->assertCount(1, $items);
+        $this->assertEquals($itemCount - 1, $gameController->mapController->getItemCount());
     }
 
     public function testProcessTakeThenDropItem()
@@ -25,6 +28,8 @@ class VerbNounCommandTest extends CommandTest
         $gameController = $this->createGameController();
         $outputController = $this->createOutputController();
 
+        $itemCount = $gameController->mapController->getItemCount();
+
         $items = $gameController->playerController->getItemsByTagFromPlayerInventory('test');
         $this->assertCount(0, $items);
 
@@ -32,10 +37,12 @@ class VerbNounCommandTest extends CommandTest
         $command->process($gameController);
         $items = $gameController->playerController->getItemsByTagFromPlayerInventory('test');
         $this->assertCount(1, $items);
+        $this->assertEquals($itemCount - 1, $gameController->mapController->getItemCount());
 
         $command = new VerbNounCommand('drop', 'test', $outputController);
         $command->process($gameController);
         $items = $gameController->playerController->getItemsByTagFromPlayerInventory('test');
         $this->assertCount(0, $items);
+        $this->assertEquals($itemCount, $gameController->mapController->getItemCount());
     }
 }

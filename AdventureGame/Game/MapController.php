@@ -105,4 +105,14 @@ class MapController
 
         return $items;
     }
+
+    /**
+     * Get count of items in current player location.
+     * @return int
+     * @throws PlayerLocationNotSetException
+     */
+    public function getItemCount(): int
+    {
+        return $this->getPlayerLocation()->items->countItems();
+    }
 }

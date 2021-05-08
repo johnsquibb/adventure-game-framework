@@ -20,6 +20,15 @@ trait ContainerTrait
     }
 
     /**
+     * Return count of items.
+     * @return int the number of $items
+     */
+    public function countItems(): int
+    {
+        return count($this->items);
+    }
+
+    /**
      * Get an item by id, if it exists.
      * @param string $itemId
      * @return ItemInterface|null
@@ -45,6 +54,24 @@ trait ContainerTrait
         $items = [];
         foreach ($this->items as $item) {
             if ($item->tag === $tag) {
+                $items[] = $item;
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * Get all items of a particular type that match a tag.
+     * @param string $type Class type to match
+     * @param string $tag Tag to match
+     * @return array
+     */
+    public function getItemsByTypeAndTag(string $type, string $tag): array
+    {
+        $items = [];
+        foreach ($this->items as $item) {
+            if (is_a($item, $type) && $item->tag === $tag) {
                 $items[] = $item;
             }
         }
