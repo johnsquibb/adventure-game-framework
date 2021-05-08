@@ -7,15 +7,6 @@ class OutputController
     private array $lines = [];
 
     /**
-     * Add a line.
-     * @param string $line
-     */
-    public function addLine(string $line): void
-    {
-        $this->lines[] = $line;
-    }
-
-    /**
      * Add multiple lines.
      * @param array $lines
      */
@@ -27,21 +18,12 @@ class OutputController
     }
 
     /**
-     * Clear lines.
-     * @return void
+     * Add a line.
+     * @param string $line
      */
-    public function clearLines(): void
+    public function addLine(string $line): void
     {
-        $this->lines = [];
-    }
-
-    /**
-     * Get lines.
-     * @return array
-     */
-    public function getLines(): array
-    {
-        return $this->lines;
+        $this->lines[] = $line;
     }
 
     /**
@@ -54,5 +36,23 @@ class OutputController
         $this->clearLines();
 
         return $lines;
+    }
+
+    /**
+     * Get lines.
+     * @return array
+     */
+    public function getLines(): array
+    {
+        return $this->lines;
+    }
+
+    /**
+     * Clear lines.
+     * @return void
+     */
+    public function clearLines(): void
+    {
+        $this->lines = [];
     }
 }

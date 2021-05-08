@@ -2,7 +2,9 @@
 
 namespace AdventureGame\Command\Exception;
 
-class InvalidCommandException extends \Exception
+use Exception;
+
+class InvalidCommandException extends Exception
 {
 
 }

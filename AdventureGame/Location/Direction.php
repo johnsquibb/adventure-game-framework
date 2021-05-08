@@ -2,6 +2,10 @@
 
 namespace AdventureGame\Location;
 
+/**
+ * Class Direction provides constants for player movement in various directions.
+ * @package AdventureGame\Location
+ */
 class Direction
 {
     public const NORTH = 'north';

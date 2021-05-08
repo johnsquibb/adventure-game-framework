@@ -16,16 +16,19 @@ class MapController
     }
 
     /**
-     * Set the current player location by id.
-     * @param string $locationId
+     * @param string $direction The direction in which to move the player.
+     * @throws InvalidExitException|PlayerLocationNotSetException
      */
-    public function setPlayerLocationById(string $locationId)
+    public function movePlayer(string $direction): void
     {
-        foreach ($this->locations as $location) {
-            if ($location instanceof Location && $location->id === $locationId) {
-                $this->playerLocation = $location;
-            }
+        $location = $this->getPlayerLocation();
+
+        $portal = $location->getExitInDirection($direction);
+        if ($portal === null) {
+            throw new InvalidExitException('Invalid exit');
         }
+
+        $this->setPlayerLocationById($portal->destinationLocationId);
     }
 
     /**
@@ -43,19 +46,16 @@ class MapController
     }
 
     /**
-     * @param string $direction The direction in which to move the player.
-     * @throws InvalidExitException|PlayerLocationNotSetException
+     * Set the current player location by id.
+     * @param string $locationId
      */
-    public function movePlayer(string $direction): void
+    public function setPlayerLocationById(string $locationId)
     {
-        $location = $this->getPlayerLocation();
-
-        $portal = $location->getExitInDirection($direction);
-        if ($portal === null) {
-            throw new InvalidExitException('Invalid exit');
+        foreach ($this->locations as $location) {
+            if ($location instanceof Location && $location->id === $locationId) {
+                $this->playerLocation = $location;
+            }
         }
-
-        $this->setPlayerLocationById($portal->destinationLocationId);
     }
 
     /**

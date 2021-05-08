@@ -4,6 +4,10 @@ namespace AdventureGame\Location;
 
 use AdventureGame\Item\ContainerInterface;
 
+/**
+ * Class Location is a place in which players and objects can exist.
+ * @package AdventureGame\Location
+ */
 class Location
 {
     public function __construct(

@@ -2,7 +2,9 @@
 
 namespace AdventureGame\Game\Exception;
 
-class PlayerLocationNotSetException extends \Exception
+use Exception;
+
+class PlayerLocationNotSetException extends Exception
 {
 
 }

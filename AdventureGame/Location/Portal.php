@@ -2,6 +2,10 @@
 
 namespace AdventureGame\Location;
 
+/**
+ * Class Portal provides a directional exit from one Location to another destination.
+ * @package AdventureGame\Location
+ */
 class Portal
 {
     public function __construct(

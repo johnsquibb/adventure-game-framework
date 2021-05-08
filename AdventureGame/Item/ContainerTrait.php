@@ -2,6 +2,10 @@
 
 namespace AdventureGame\Item;
 
+/**
+ * Trait ContainerTrait provides methods for objects implementing ContainerInterface.
+ * @package AdventureGame\Item
+ */
 trait ContainerTrait
 {
     private array $items = [];

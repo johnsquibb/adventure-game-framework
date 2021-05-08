@@ -2,7 +2,9 @@
 
 namespace AdventureGame\Game\Exception;
 
-class InvalidExitException extends \Exception
+use Exception;
+
+class InvalidExitException extends Exception
 {
 
 }

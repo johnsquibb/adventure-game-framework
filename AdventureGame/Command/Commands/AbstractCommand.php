@@ -9,6 +9,10 @@ use AdventureGame\IO\OutputController;
 use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Location;
 
+/**
+ * Class AbstractCommand provides common methods used by other Commands.
+ * @package AdventureGame\Command\Commands
+ */
 abstract class AbstractCommand
 {
     public function __construct(
@@ -27,30 +31,6 @@ abstract class AbstractCommand
     {
         $gameController->mapController->movePlayer($direction);
         $this->describePlayerLocation($gameController);
-    }
-
-    /**
-     * Add an item to player inventory.
-     * @param GameController $gameController
-     * @param ItemInterface $item
-     */
-    protected function addItemToPlayerInventory(GameController $gameController, ItemInterface $item): void
-    {
-        $gameController->playerController->addItemToPlayerInventory($item);
-        $this->outputController->addLine("Added {$item->name} to inventory");
-    }
-
-    /**
-     * Remove an item from player inventory.
-     * @param GameController $gameController
-     * @param ItemInterface $item
-     */
-    protected function removeItemFromPlayerInventory(
-        GameController $gameController,
-        ItemInterface $item
-    ): void {
-        $gameController->playerController->removeItemFromPlayerInventory($item);
-        $this->outputController->addLine("Removed {$item->name} from inventory");
     }
 
     /**
@@ -75,6 +55,32 @@ abstract class AbstractCommand
             $location->name,
             $location->description,
         ];
+    }
+
+    /**
+     * Add an item to player inventory.
+     * @param GameController $gameController
+     * @param ItemInterface $item
+     */
+    protected function addItemToPlayerInventory(
+        GameController $gameController,
+        ItemInterface $item
+    ): void {
+        $gameController->playerController->addItemToPlayerInventory($item);
+        $this->outputController->addLine("Added {$item->name} to inventory");
+    }
+
+    /**
+     * Remove an item from player inventory.
+     * @param GameController $gameController
+     * @param ItemInterface $item
+     */
+    protected function removeItemFromPlayerInventory(
+        GameController $gameController,
+        ItemInterface $item
+    ): void {
+        $gameController->playerController->removeItemFromPlayerInventory($item);
+        $this->outputController->addLine("Removed {$item->name} from inventory");
     }
 
     /**
