@@ -6,6 +6,8 @@ use AdventureGame\Platform\PlatformFactory;
 
 require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
+// Try: `take test-item-in-container from test-container-item`
+
 $platformFactory = new PlatformFactory();
 $platformRegistry = $platformFactory->createPlatformRegistry();
 

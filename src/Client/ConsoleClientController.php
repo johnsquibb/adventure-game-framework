@@ -11,11 +11,11 @@ class ConsoleClientController implements ClientControllerInterface
     public function __construct()
     {
         $this->terminal = new TerminalIO();
+        $this->terminal->clear();
     }
 
     public function getInput(): string
     {
-        // Try: `take test-item-in-container from test-container-item`
         return $this->terminal->read();
     }
 

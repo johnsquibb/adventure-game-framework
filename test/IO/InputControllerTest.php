@@ -19,7 +19,8 @@ class InputControllerTest extends InputOutputControllerTest
         ];
 
         $input = 'take test-item-in-container from test-container-item';
-        $inputController->processInput($input);
+        $result = $inputController->processInput($input);
+        $this->assertTrue($result);
         $lines = $inputController->commandController->commandFactory->outputController->getLines();
         $this->assertEquals($expected, $lines);
     }
