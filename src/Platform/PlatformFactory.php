@@ -17,6 +17,11 @@ use AdventureGame\Item\Item;
 use AdventureGame\Location\Location;
 use AdventureGame\Location\Portal;
 
+/**
+ * Provides factory and initialization for platform components.
+ * Class PlatformFactory
+ * @package AdventureGame\Platform
+ */
 class PlatformFactory
 {
     private array $registry = [];

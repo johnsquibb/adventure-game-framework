@@ -19,5 +19,8 @@
   "scripts": {
     "test": "vendor/bin/phpunit test",
     "example": "php examples/hello-cli-game/main.php"
+  },
+  "require": {
+    "ext-readline": "*"
   }
 }

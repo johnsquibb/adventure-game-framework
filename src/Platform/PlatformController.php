@@ -12,12 +12,11 @@ class PlatformController
     }
 
     public function run(ClientControllerInterface $clientController): void {
-        while (true) {
+        for (; ;) {
             $input = $clientController->getInput();
             $this->platformRegistry->inputController->processInput($input);
             $lines = $this->platformRegistry->outputController->getLinesAndClear();
-            var_dump($lines);exit;
-            exit;
+            $clientController->setOutput($lines);
         }
     }
 }
