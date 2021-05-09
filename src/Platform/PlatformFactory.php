@@ -19,55 +19,110 @@ use AdventureGame\Location\Portal;
 
 class PlatformFactory
 {
+    private array $registry = [];
+
     public function createPlatformRegistry(): PlatformRegistry
     {
         $platformRegistry = new PlatformRegistry();
 
-        $platformRegistry->outputController = $this->createOutputController();
-        $platformRegistry->inputController = $this->createInputController();
-        $platformRegistry->commandController = $this->createCommandController();
-        $platformRegistry->gameController = $this->createGameController();
-        $platformRegistry->mapController = $this->createMapController();
-        $platformRegistry->playerController = $this->createPlayerController();
+        $platformRegistry->outputController = $this->getOutputController();
+        $platformRegistry->inputController = $this->getInputController();
+        $platformRegistry->commandController = $this->getCommandController();
+        $platformRegistry->gameController = $this->getGameController();
+        $platformRegistry->mapController = $this->getMapController();
+        $platformRegistry->playerController = $this->getPlayerController();
 
         return $platformRegistry;
     }
 
-    protected function createInputController(): InputController
+    private function getRegisteredObject(string $className): ?object
     {
-        $commandParser = $this->createCommandParser();
-        $commandController = $this->createCommandController();
-
-        return new InputController($commandParser, $commandController);
+        return $this->registry[$className] ?? null;
     }
 
-    protected function createOutputController(): OutputController
+    private function registerObject(object $object): void
     {
-        return new OutputController();
+        $this->registry[$object::class] = $object;
     }
 
-    protected function createCommandController(): CommandController
+    private function getCommandParser(): CommandParser
     {
-        $gameController = $this->createGameController();
-        $commandParser = $this->createCommandParser();
-        $outputController = $this->createOutputController();
-        $commandFactory = new CommandFactory($commandParser, $outputController);
-        return new CommandController($commandFactory, $gameController);
-    }
-
-    protected function createCommandParser(): CommandParser
-    {
+        // TODO load from configuration file.
         $verbs = ['north', 'take', 'look', 'put'];
         $nouns = ['sword', 'sheath', 'chest', 'test-container-item', 'test-item-in-container'];
         $articles = [];
         $prepositions = ['at', 'into', 'from'];
         $aliases = [];
 
-        return new CommandParser($verbs, $nouns, $articles, $prepositions, $aliases);
+        $object = $this->getRegisteredObject(CommandParser::class);
+        if ($object === null) {
+            $object = new CommandParser($verbs, $nouns, $articles, $prepositions, $aliases);
+            $this->registerObject($object);
+        }
+
+        return $object;
     }
 
-    protected function createMapController(): MapController
+    private function getInputController(): InputController
     {
+        $object = $this->getRegisteredObject(InputController::class);
+        if ($object === null) {
+            $object = new InputController($this->getCommandParser(), $this->getCommandController());
+            $this->registerObject($object);
+        }
+
+        return $object;
+    }
+
+    private function getOutputController(): OutputController
+    {
+        $object = $this->getRegisteredObject(OutputController::class);
+        if ($object === null) {
+            $object = new OutputController();
+            $this->registerObject($object);
+        }
+
+        return $object;
+    }
+
+    private function getGameController(): GameController
+    {
+        $object = $this->getRegisteredObject(GameController::class);
+        if ($object === null) {
+            $mapController = $this->getMapController();
+            $playerController = $this->getPlayerController();
+            $object = new GameController($mapController, $playerController);
+            $this->registerObject($object);
+        }
+
+        return $object;
+    }
+
+    private function getCommandController(): CommandController
+    {
+        $object = $this->getRegisteredObject(CommandController::class);
+        if ($object === null) {
+            $object = new CommandController($this->getCommandFactory(), $this->getGameController());
+            $this->registerObject($object);
+        }
+
+        return $object;
+    }
+
+    private function getCommandFactory(): CommandFactory
+    {
+        $object = $this->getRegisteredObject(CommandFactory::class);
+        if ($object === null) {
+            $object = new CommandFactory($this->getCommandParser(), $this->getOutputController());
+            $this->registerObject($object);
+        }
+
+        return $object;
+    }
+
+    private function getMapController(): MapController
+    {
+        // TODO load from configuration file.
         $container = new Container();
         $container->addItem(
             new Item(
@@ -122,25 +177,30 @@ class PlatformFactory
 
         $locations = [$location1, $location2];
 
-        // Spawn player in room 1
-        $mapController = new MapController($locations);
-        $mapController->setPlayerLocationById($location1->id);
+        $object = $this->getRegisteredObject(MapController::class);
+        if ($object === null) {
+            $object = new MapController($locations);
+            // Spawn player in room 1
+            $object->setPlayerLocationById($location1->id);
+            $this->registerObject($object);
+        }
 
-        return $mapController;
+        return $object;
     }
 
-    protected function createPlayerController(): PlayerController
+    private function getPlayerController(): PlayerController
     {
-        $player = new Character('test-player', new Container());
+        // TODO load from configuration.
+        $playerName = 'test-player';
+        $inventory = new Container();
 
-        return new PlayerController($player);
-    }
+        $object = $this->getRegisteredObject(PlayerController::class);
+        if ($object === null) {
+            $player = new Character($playerName, $inventory);
+            $object = new PlayerController($player);
+            $this->registerObject($object);
+        }
 
-    protected function createGameController(): GameController
-    {
-        $mapController = $this->createMapController();
-        $playerController = $this->createPlayerController();
-
-        return new GameController($mapController, $playerController);
+        return $object;
     }
 }

@@ -33,7 +33,7 @@ class InputController extends InputOutputController implements InputOutputContro
      * @throws InvalidTokensLengthException
      * @throws InvalidVerbException
      */
-    public function processInput(string $input)
+    public function processInput(string $input): void
     {
         $tokens = $this->convertInputToTokens($input);
         $this->commandController->createAndProcessCommandFromTokens($tokens);
