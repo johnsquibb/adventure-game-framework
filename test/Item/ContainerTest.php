@@ -126,4 +126,18 @@ class ContainerTest extends TestCase
         $container->removeItemById($item->id);
         $this->assertNull($container->getItemById($item->id));
     }
+
+    public function testGetItems()
+    {
+        $container = new Container();
+        $item = new Item(
+            'test-item',
+            'Test Item',
+            'Test Item Description',
+            'test'
+        );
+
+        $container->addItem($item);
+        $this->assertEquals([$item], $container->getItems());
+    }
 }

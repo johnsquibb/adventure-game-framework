@@ -77,6 +77,7 @@ class VerbCommand extends AbstractCommand implements CommandInterface
         switch ($this->verb) {
             case 'look':
                 $this->describePlayerLocation($gameController);
+                $this->describePlayerLocationItems($gameController);
                 return true;
         }
 

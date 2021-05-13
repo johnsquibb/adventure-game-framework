@@ -91,4 +91,13 @@ trait ContainerTrait
             }
         }
     }
+
+    /**
+     * Return all items.
+     * @return array
+     */
+    public function getItems(): array
+    {
+        return $this->items;
+    }
 }

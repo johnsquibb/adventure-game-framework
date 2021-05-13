@@ -53,10 +53,10 @@ class PlatformFactory
     private function getCommandParser(): CommandParser
     {
         // TODO load from configuration file.
-        $verbs = ['north', 'take', 'look', 'put'];
-        $nouns = ['sword', 'sheath', 'chest', 'test-container-item', 'test-item-in-container'];
-        $articles = [];
-        $prepositions = ['at', 'into', 'from'];
+        $verbs = ['north', 'east', 'south', 'west', 'n', 'e', 's', 'w', 'take', 'drop', 'look', 'put'];
+        $nouns = ['sword', 'chest'];
+        $articles = ['the'];
+        $prepositions = ['at', 'inside', 'into', 'from'];
         $aliases = [];
 
         $object = $this->getRegisteredObject(CommandParser::class);
@@ -128,54 +128,48 @@ class PlatformFactory
     private function getMapController(): MapController
     {
         // TODO load from configuration file.
+
+        $chest = new ContainerItem(
+            'treasure-chest-1',
+            'Treasure Chest',
+            'A chest containing valuable treasure.',
+            'chest',
+        );
+        $chest->addItem(
+            new Item(
+                'sword-of-poking',
+                'The Sword of Poking',
+                'An average sword, made for poking aggressive beasts.',
+                'sword'
+            )
+        );
+        $chest->addItem(
+            new Item(
+                'potion-of-healing-1',
+                'Potion of Healing I',
+                'A potion that restores life.',
+                'potion'
+            )
+        );
+
+        // TODO maybe we just add container ability to room directly?
         $container = new Container();
-        $container->addItem(
-            new Item(
-                'test-item-1',
-                'Test Item 1',
-                'Test Item 1 description',
-                'test'
-            )
-        );
+        $container->addItem($chest);
 
-        $containerItem = new ContainerItem(
-            'test-container-item',
-            'Test Container Item',
-            'Test container item description',
-            'test-container-item',
-        );
-        $container->addItem($containerItem);
-        $containerItem->addItem(
-            new Item(
-                'test-item-2',
-                'Test Item 2',
-                'Test Item 2 description',
-                'test-item-in-container'
-            )
-        );
-        $containerItem->addItem(
-            new Item(
-                'test-item-3',
-                'Test Item 3',
-                'Test Item 3 description',
-                'test-item-2-in-container'
-            )
-        );
-
-        $door1 = new Portal('test-door', 'east', 'test-room-2');
+        $door1 = new Portal('door-to-east', 'east', 'room-east-of-spawn');
         $location1 = new Location(
-            'test-room-1',
-            'Test Room 1',
-            'This is a test room.',
+            'spawn',
+            'Player Spawn',
+            'This is the starting room.',
             $container,
             [$door1],
         );
 
-        $door2 = new Portal('test-door', 'west', 'test-room-1');
+        $door2 = new Portal('door-to-west', 'west', 'spawn');
         $location2 = new Location(
-            'test-room-2',
-            'Test Room 2',
-            'This is another test room.',
+            'room-east-of-spawn',
+            'Room East of Spawn',
+            'There is nothing special about this room. It is just an ordinary room with walls.',
             new Container(),
             [$door2],
         );

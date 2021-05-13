@@ -6,6 +6,9 @@ use AdventureGame\Command\CommandInterface;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
 use AdventureGame\IO\OutputController;
+use AdventureGame\Item\Container;
+use AdventureGame\Item\ContainerInterface;
+use AdventureGame\Item\Item;
 
 /**
  * Class VerbPrepositionNounCommand processes verb+preposition+noun commands, e.g. "look at spoon".
@@ -43,7 +46,18 @@ class VerbPrepositionNounCommand extends AbstractCommand implements CommandInter
     {
         switch ($this->verb) {
             case 'look':
-                return $this->tryLookAtItemsAtPlayerLocationAction($gameController, $this->noun);
+                switch ($this->preposition) {
+                    case 'at':
+                        return $this->tryLookAtItemsByTagAtPlayerLocationAction(
+                            $gameController,
+                            $this->noun
+                        );
+                    case 'inside':
+                        return $this->tryLookInsideContainersByTagAtPlayerLocationAction(
+                            $gameController,
+                            $this->noun
+                        );
+                }
         }
 
         return false;
@@ -56,7 +70,7 @@ class VerbPrepositionNounCommand extends AbstractCommand implements CommandInter
      * @return bool returns true when a look at item action is processed, false otherwise.
      * @throws PlayerLocationNotSetException
      */
-    private function tryLookAtItemsAtPlayerLocationAction(
+    private function tryLookAtItemsByTagAtPlayerLocationAction(
         GameController $gameController,
         string $tag
     ): bool {
@@ -64,6 +78,30 @@ class VerbPrepositionNounCommand extends AbstractCommand implements CommandInter
         if (count($items)) {
             $this->describeItems($items);
             return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Try to look inside the first container matching tag in the current player location.
+     * @param GameController $gameController
+     * @param string $tag
+     * @return bool returns true when a look at item action is processed, false otherwise.
+     * @throws PlayerLocationNotSetException
+     */
+    private function tryLookInsideContainersByTagAtPlayerLocationAction(
+        GameController $gameController,
+        string $tag
+    ): bool {
+        $items = $gameController->mapController->getPlayerLocation()->items->getItemsByTag($tag);
+        if (count($items)) {
+            foreach ($items as $container) {
+                if ($container instanceof ContainerInterface) {
+                    $this->listContainerItems($container);
+                    return true;
+                }
+            }
         }
 
         return false;

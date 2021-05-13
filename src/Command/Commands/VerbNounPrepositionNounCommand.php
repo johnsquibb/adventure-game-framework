@@ -49,6 +49,7 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
                 );
                 return true;
             case 'drop':
+            case 'put':
                 $this->dropItemsByTagIntoFirstContainerByTagAtPlayerLocation(
                     $gameController,
                     $this->noun1,

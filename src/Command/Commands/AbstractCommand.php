@@ -6,6 +6,8 @@ use AdventureGame\Game\Exception\InvalidExitException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
 use AdventureGame\IO\OutputController;
+use AdventureGame\Item\ContainerInterface;
+use AdventureGame\Item\ContainerItem;
 use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Location;
 
@@ -31,6 +33,35 @@ abstract class AbstractCommand
     ): void {
         $gameController->playerController->addItemToPlayerInventory($item);
         $this->outputController->addLine("Added {$item->name} to inventory");
+    }
+
+    /**
+     * Describe a list of items inside a container.
+     * @param ContainerItem $container
+     */
+    protected function listContainerItems(ContainerItem $container): void
+    {
+        $this->outputController->addLines(
+            ["You see the following items inside " . $container->name . ": "],
+        );
+
+        foreach ($container->getItems() as $item) {
+            $this->listItem($item);
+        }
+    }
+
+    /**
+     * List an item's name.
+     * @param ItemInterface $item
+     * @return void
+     */
+    protected function listItem(ItemInterface $item): void
+    {
+        $this->outputController->addLines(
+            [
+                $item->name,
+            ]
+        );
     }
 
     /**
@@ -79,21 +110,55 @@ abstract class AbstractCommand
      */
     protected function describePlayerLocation(GameController $gameController): void
     {
-        $lines = $this->describeLocation($gameController->mapController->getPlayerLocation());
-        $this->outputController->addLines($lines);
+        $this->describeLocation($gameController->mapController->getPlayerLocation());
     }
 
     /**
      * Describe a location.
      * @param Location $location
-     * @return array
+     * @return void
      */
-    protected function describeLocation(Location $location): array
+    protected function describeLocation(Location $location): void
     {
-        return [
-            $location->name,
-            $location->description,
-        ];
+        $this->outputController->addLines(
+            [
+                $location->name,
+                $location->description,
+            ]
+        );
+    }
+
+    /**
+     * Describe items at the current player location.
+     * @param GameController $gameController
+     * @throws PlayerLocationNotSetException
+     */
+    protected function describePlayerLocationItems(GameController $gameController): void
+    {
+        $this->describeLocationItems($gameController->mapController->getPlayerLocation());
+    }
+
+    /**
+     * Describe items at Location.
+     * @param Location $location
+     * @return void
+     */
+    protected function describeLocationItems(Location $location): void
+    {
+        $items = $location->items->getItems();
+        if (count($items) === 0) {
+            return;
+        }
+
+        $this->outputController->addLines(
+            [
+                'You see the following items:',
+            ]
+        );
+
+        foreach ($items as $item) {
+            $this->describeItem($item);
+        }
     }
 
     /**
