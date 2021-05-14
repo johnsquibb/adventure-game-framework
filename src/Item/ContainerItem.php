@@ -3,8 +3,8 @@
 namespace AdventureGame\Item;
 
 /**
- * Class ContainerItem is an item that can contain other items. Suitable for objects that can be
- * taken, dropped, or stored inside another container.
+ * Class ContainerItem is an item that can contain other items. Use for containers that can be
+ * identified and interacted with.
  * @package AdventureGame\Item
  */
 class ContainerItem extends Item implements ContainerInterface, ItemInterface

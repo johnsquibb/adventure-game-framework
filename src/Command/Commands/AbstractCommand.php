@@ -6,10 +6,10 @@ use AdventureGame\Game\Exception\InvalidExitException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
 use AdventureGame\IO\OutputController;
-use AdventureGame\Item\ContainerInterface;
 use AdventureGame\Item\ContainerItem;
 use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Location;
+use AdventureGame\Location\Portal;
 
 /**
  * Class AbstractCommand provides common methods used by other Commands.
@@ -129,16 +129,6 @@ abstract class AbstractCommand
     }
 
     /**
-     * Describe items at the current player location.
-     * @param GameController $gameController
-     * @throws PlayerLocationNotSetException
-     */
-    protected function describePlayerLocationItems(GameController $gameController): void
-    {
-        $this->describeLocationItems($gameController->mapController->getPlayerLocation());
-    }
-
-    /**
      * Describe items at Location.
      * @param Location $location
      * @return void
@@ -172,5 +162,59 @@ abstract class AbstractCommand
     ): void {
         $gameController->playerController->removeItemFromPlayerInventory($item);
         $this->outputController->addLine("Removed {$item->name} from inventory");
+    }
+
+    /**
+     * Describe items at the current player location.
+     * @param GameController $gameController
+     * @throws PlayerLocationNotSetException
+     */
+    protected function describePlayerLocationItems(GameController $gameController): void
+    {
+        $this->describeLocationItems($gameController->mapController->getPlayerLocation());
+    }
+
+    /**
+     * List exits for a location.
+     * @param Location $location
+     */
+    protected function listLocationExits(Location $location): void
+    {
+        $this->outputController->addLines(
+            [
+                'You see the following exits: ',
+            ]
+        );
+
+        foreach ($location->exits as $exit) {
+            $this->listExit($exit);
+        }
+    }
+
+    /**
+     * List an exit.
+     * @param Portal $exit
+     */
+    protected function listExit(Portal $exit): void
+    {
+        $this->outputController->addLines(
+            [
+                $exit->name
+            ]
+        );
+    }
+
+    /**
+     * Describe an exit.
+     * @param Portal $exit
+     */
+    protected function describeExit(Portal $exit): void
+    {
+        $this->outputController->addLines(
+            [
+                $exit->name,
+                $exit->description,
+            ]
+        );
     }
 }

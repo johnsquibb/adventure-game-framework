@@ -15,7 +15,7 @@ class Location
         public string $name,
         public string $description,
         public ContainerInterface $items,
-        private array $exits,
+        public array $exits,
     ) {
     }
 

@@ -3,7 +3,8 @@
 namespace AdventureGame\Item;
 
 /**
- * Class Container is an object that contains items. Suitable for objects that are immovable.
+ * Class Container is an object that contains items. Use for containers that don't need to be
+ * identified by tag or interacted with directly.
  * @package AdventureGame\Item
  */
 class Container implements ContainerInterface

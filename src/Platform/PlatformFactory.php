@@ -53,8 +53,21 @@ class PlatformFactory
     private function getCommandParser(): CommandParser
     {
         // TODO load from configuration file.
-        $verbs = ['north', 'east', 'south', 'west', 'n', 'e', 's', 'w', 'take', 'drop', 'look', 'put'];
-        $nouns = ['sword', 'chest'];
+        $verbs = [
+            'north',
+            'east',
+            'south',
+            'west',
+            'n',
+            'e',
+            's',
+            'w',
+            'take',
+            'drop',
+            'look',
+            'put'
+        ];
+        $nouns = ['sword', 'chest', 'door', 'potion'];
         $articles = ['the'];
         $prepositions = ['at', 'inside', 'into', 'from'];
         $aliases = [];
@@ -156,31 +169,43 @@ class PlatformFactory
         $container = new Container();
         $container->addItem($chest);
 
-        $door1 = new Portal('door-to-east', 'east', 'room-east-of-spawn');
-        $location1 = new Location(
+        $doorFromSpawnToEastRoom = new Portal(
+            'door-from-spawn-to-east-room',
+            'Wooden Door',
+            'A heavy wooden door leading back to spawn.',
+            'east',
+            'room-east-of-spawn'
+        );
+        $spawnRoom = new Location(
             'spawn',
             'Player Spawn',
             'This is the starting room.',
             $container,
-            [$door1],
+            [$doorFromSpawnToEastRoom],
         );
 
-        $door2 = new Portal('door-to-west', 'west', 'spawn');
-        $location2 = new Location(
+        $doorFromEastRoomToSpawn = new Portal(
+            'door-from-east-room-to-spawn',
+            'Wooden Door',
+            'A heavy wooden door leading to the east.',
+            'west',
+            'spawn'
+        );
+        $roomEastOfSpawn = new Location(
             'room-east-of-spawn',
             'Room East of Spawn',
             'There is nothing special about this room. It is just an ordinary room with walls.',
             new Container(),
-            [$door2],
+            [$doorFromEastRoomToSpawn],
         );
 
-        $locations = [$location1, $location2];
+        $locations = [$spawnRoom, $roomEastOfSpawn];
 
         $object = $this->getRegisteredObject(MapController::class);
         if ($object === null) {
             $object = new MapController($locations);
             // Spawn player in room 1
-            $object->setPlayerLocationById($location1->id);
+            $object->setPlayerLocationById($spawnRoom->id);
             $this->registerObject($object);
         }
 
