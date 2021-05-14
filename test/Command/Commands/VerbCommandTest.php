@@ -64,7 +64,7 @@ class VerbCommandTest extends FrameworkTest
         $location = $gameController->mapController->getPlayerLocation();
         $this->assertEquals('test-room-1', $location->id);
 
-        $this->assertCount(7, $outputController->getLines());
+        $this->assertCount(9, $outputController->getLines());
     }
 
     public function testProcessNoAction()

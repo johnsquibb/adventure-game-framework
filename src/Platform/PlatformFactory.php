@@ -147,13 +147,15 @@ class PlatformFactory
             'Treasure Chest',
             'A chest containing valuable treasure.',
             'chest',
+            true,
         );
         $chest->addItem(
             new Item(
                 'sword-of-poking',
                 'The Sword of Poking',
                 'An average sword, made for poking aggressive beasts.',
-                'sword'
+                'sword',
+                false,
             )
         );
         $chest->addItem(
@@ -161,7 +163,8 @@ class PlatformFactory
                 'potion-of-healing-1',
                 'Potion of Healing I',
                 'A potion that restores life.',
-                'potion'
+                'potion',
+                false,
             )
         );
 

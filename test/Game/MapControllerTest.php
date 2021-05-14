@@ -56,7 +56,13 @@ class MapControllerTest extends TestCase
 
     public function testMovePlayer()
     {
-        $door1 = new Portal('test-door', 'east', 'test-room-2');
+        $door1 = new Portal(
+            'test-door',
+            '',
+            '',
+            'east',
+            'test-room-2'
+        );
         $location1 = new Location(
             'test-room-1',
             'Test Room 1',
@@ -65,7 +71,13 @@ class MapControllerTest extends TestCase
             [$door1],
         );
 
-        $door2 = new Portal('test-door', 'west', 'test-room-1');
+        $door2 = new Portal(
+            'test-door',
+            '',
+            '',
+            'west',
+            'test-room-1'
+        );
         $location2 = new Location(
             'test-room-2',
             'Test Room 2',

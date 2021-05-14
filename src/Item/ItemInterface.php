@@ -8,5 +8,4 @@ namespace AdventureGame\Item;
  */
 interface ItemInterface
 {
-
 }

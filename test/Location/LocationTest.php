@@ -31,7 +31,13 @@ class LocationTest extends TestCase
         $description = 'This is a test room';
         $items = new Container();
 
-        $portal = new Portal('test-door', 'north', 'test-room');
+        $portal = new Portal(
+            'test-door',
+            '',
+            '',
+            'north',
+            'test-room'
+        );
         $exits = [$portal];
 
         $room = new Location($id, $name, $description, $items, $exits);

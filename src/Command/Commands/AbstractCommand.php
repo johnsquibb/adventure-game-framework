@@ -110,7 +110,9 @@ abstract class AbstractCommand
      */
     protected function describePlayerLocation(GameController $gameController): void
     {
-        $this->describeLocation($gameController->mapController->getPlayerLocation());
+        $location = $gameController->mapController->getPlayerLocation();
+        $this->describeLocation($location);
+        $this->listLocationExits($location);
     }
 
     /**
