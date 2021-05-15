@@ -4,11 +4,12 @@ namespace AdventureGame\Test\Item;
 
 use AdventureGame\Item\Container;
 use AdventureGame\Item\ContainerItem;
+use AdventureGame\Item\Item;
 use PHPUnit\Framework\TestCase;
 
 class ContainerItemTest extends TestCase
 {
-    public function testCreateItem()
+    public function testCreateContainerItem()
     {
         $id = 'test-item';
         $name = 'Test Item';
@@ -20,6 +21,18 @@ class ContainerItemTest extends TestCase
         $this->assertEquals($name, $item->getName());
         $this->assertEquals($description, $item->getDescription());
         $this->assertEquals($tag, $item->getTag());
+    }
+
+    public function testContainerItemAccessible()
+    {
+        $item = new ContainerItem('','','','');
+
+        $this->assertFalse($item->getAccessible());
+        $item->setAccessible(true);
+        $this->assertTrue($item->getAccessible());
+
+        $item->setAccessible(false);
+        $this->assertFalse($item->getAccessible());
     }
 
     public function testAddContainerItemToContainer()

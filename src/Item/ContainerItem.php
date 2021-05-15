@@ -9,7 +9,7 @@ use AdventureGame\Traits\ContainerTrait;
  * identified and interacted with.
  * @package AdventureGame\Item
  */
-class ContainerItem extends Item implements ContainerInterface, ItemInterface
+class ContainerItem extends Item implements ContainerItemInterface
 {
     use ContainerTrait;
 }

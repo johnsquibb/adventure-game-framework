@@ -20,4 +20,16 @@ class ItemTest extends TestCase
         $this->assertEquals($description, $item->getDescription());
         $this->assertEquals($tag, $item->getTag());
     }
+
+    public function testItemAccessible()
+    {
+        $item = new Item('','','','');
+
+        $this->assertFalse($item->getAccessible());
+        $item->setAccessible(true);
+        $this->assertTrue($item->getAccessible());
+
+        $item->setAccessible(false);
+        $this->assertFalse($item->getAccessible());
+    }
 }
