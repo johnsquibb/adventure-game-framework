@@ -1,6 +1,8 @@
 <?php
 
-namespace AdventureGame\Item;
+namespace AdventureGame\Traits;
+
+use AdventureGame\Item\ItemInterface;
 
 /**
  * Trait ContainerTrait provides methods for objects implementing ContainerInterface.

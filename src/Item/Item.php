@@ -2,6 +2,11 @@
 
 namespace AdventureGame\Item;
 
+use AdventureGame\Traits\DescriptionTrait;
+use AdventureGame\Traits\IdentityTrait;
+use AdventureGame\Traits\NameTrait;
+use AdventureGame\Traits\TagTrait;
+
 /**
  * Class Item is an object that can be taken, dropped, or stored in a container.
  * @package AdventureGame\Item

@@ -1,6 +1,6 @@
 <?php
 
-namespace AdventureGame\Item;
+namespace AdventureGame\Traits;
 
 trait TagTrait
 {

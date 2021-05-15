@@ -2,7 +2,7 @@
 
 namespace AdventureGame\Location;
 
-use AdventureGame\Item\IdentityTrait;
+use AdventureGame\Traits\IdentityTrait;
 
 /**
  * Class Map is a collection of Locations that are interrelated.

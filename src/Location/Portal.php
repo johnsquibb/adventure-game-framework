@@ -2,9 +2,9 @@
 
 namespace AdventureGame\Location;
 
-use AdventureGame\Item\DescriptionTrait;
-use AdventureGame\Item\IdentityTrait;
-use AdventureGame\Item\NameTrait;
+use AdventureGame\Traits\DescriptionTrait;
+use AdventureGame\Traits\IdentityTrait;
+use AdventureGame\Traits\NameTrait;
 
 /**
  * Class Portal provides a directional exit from one Location to another destination.

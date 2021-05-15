@@ -3,9 +3,9 @@
 namespace AdventureGame\Location;
 
 use AdventureGame\Item\ContainerInterface;
-use AdventureGame\Item\DescriptionTrait;
-use AdventureGame\Item\IdentityTrait;
-use AdventureGame\Item\NameTrait;
+use AdventureGame\Traits\DescriptionTrait;
+use AdventureGame\Traits\IdentityTrait;
+use AdventureGame\Traits\NameTrait;
 
 /**
  * Class Location is a place in which players and objects can exist.

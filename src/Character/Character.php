@@ -3,7 +3,7 @@
 namespace AdventureGame\Character;
 
 use AdventureGame\Item\ContainerInterface;
-use AdventureGame\Item\NameTrait;
+use AdventureGame\Traits\NameTrait;
 
 /**
  * Class Character is a player (PC), or non-player (NPC) that exists within the game.
