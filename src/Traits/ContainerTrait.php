@@ -10,6 +10,8 @@ use AdventureGame\Item\ItemInterface;
  */
 trait ContainerTrait
 {
+    use LockableTrait;
+
     private array $items = [];
 
     /**

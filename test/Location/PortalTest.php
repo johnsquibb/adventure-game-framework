@@ -40,5 +40,8 @@ class PortalTest extends TestCase
 
         $door->setLocked(false);
         $this->assertFalse($door->getLocked());
+
+        $door->setKeyEntityId('theKey');
+        $this->assertEquals('theKey', $door->getKeyEntityId());
     }
 }

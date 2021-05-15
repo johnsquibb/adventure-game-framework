@@ -11,4 +11,8 @@ interface LockableInterface
     public function getLocked(): bool;
 
     public function setLocked(bool $locked): void;
+
+    public function getKeyEntityId(): string;
+
+    public function setKeyEntityId(string $keyEntityId): void;
 }
