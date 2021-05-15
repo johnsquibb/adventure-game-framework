@@ -200,4 +200,25 @@ class ContainerItemTest extends TestCase
         $container->removeItemById($item->getId());
         $this->assertNull($container->getItemById($item->getId()));
     }
+
+    public function testContainerItemLockable()
+    {
+        $container = new ContainerItem(
+            'test-containerItem',
+            'Test ContainerItem',
+            'Test ContainerItem Description',
+            'test-container'
+        );
+
+        $this->assertFalse($container->getLocked());
+
+        $container->setLocked(true);
+        $this->assertTrue($container->getLocked());
+
+        $container->setLocked(false);
+        $this->assertFalse($container->getLocked());
+
+        $container->setKeyEntityId('theKey');
+        $this->assertEquals('theKey', $container->getKeyEntityId());
+    }
 }
