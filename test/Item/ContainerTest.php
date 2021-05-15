@@ -21,7 +21,7 @@ class ContainerTest extends TestCase
             'test'
         );
         $container->addItem($item);
-        $this->assertEquals($item, $container->getItemById($item->id));
+        $this->assertEquals($item, $container->getItemById($item->getId()));
     }
 
     public function testCountItems()
@@ -49,7 +49,7 @@ class ContainerTest extends TestCase
             'test'
         );
         $container->addItem($item);
-        $this->assertEquals($item, $container->getItemById($item->id));
+        $this->assertEquals($item, $container->getItemById($item->getId()));
     }
 
     public function testGetItemsByTag()
@@ -65,7 +65,7 @@ class ContainerTest extends TestCase
         );
         $container->addItem($item);
 
-        $this->assertEquals([$item], $container->getItemsByTag($item->tag));
+        $this->assertEquals([$item], $container->getItemsByTag($item->getTag()));
 
         $item2 = new Item(
             'test-item-2',
@@ -75,7 +75,7 @@ class ContainerTest extends TestCase
         );
         $container->addItem($item2);
 
-        $this->assertEquals([$item, $item2], $container->getItemsByTag($item->tag));
+        $this->assertEquals([$item, $item2], $container->getItemsByTag($item->getTag()));
     }
 
     public function testGetItemsByTypeAndTag()
@@ -101,12 +101,12 @@ class ContainerTest extends TestCase
 
         $this->assertEquals([$item, $item2], $container->getItemsByTypeAndTag(
             ItemInterface::class,
-            $item->tag)
+            $item->getTag())
         );
 
         $this->assertEquals([$item2], $container->getItemsByTypeAndTag(
             ContainerInterface::class,
-            $item->tag)
+            $item->getTag())
         );
     }
 
@@ -121,10 +121,10 @@ class ContainerTest extends TestCase
         );
 
         $container->addItem($item);
-        $this->assertEquals($item, $container->getItemById($item->id));
+        $this->assertEquals($item, $container->getItemById($item->getId()));
 
-        $container->removeItemById($item->id);
-        $this->assertNull($container->getItemById($item->id));
+        $container->removeItemById($item->getId());
+        $this->assertNull($container->getItemById($item->getId()));
     }
 
     public function testGetItems()

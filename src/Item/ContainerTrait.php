@@ -36,7 +36,7 @@ trait ContainerTrait
     public function getItemById(string $itemId): ?ItemInterface
     {
         foreach ($this->items as $item) {
-            if ($item->id === $itemId) {
+            if ($item->getId() === $itemId) {
                 return $item;
             }
         }
@@ -53,7 +53,7 @@ trait ContainerTrait
     {
         $items = [];
         foreach ($this->items as $item) {
-            if ($item->tag === $tag) {
+            if ($item->getTag() === $tag) {
                 $items[] = $item;
             }
         }
@@ -71,7 +71,7 @@ trait ContainerTrait
     {
         $items = [];
         foreach ($this->items as $item) {
-            if (is_a($item, $type) && $item->tag === $tag) {
+            if (is_a($item, $type) && $item->getTag() === $tag) {
                 $items[] = $item;
             }
         }
@@ -86,7 +86,7 @@ trait ContainerTrait
     public function removeItemById(string $itemId): void
     {
         foreach ($this->items as $key => $item) {
-            if ($item->id === $itemId) {
+            if ($item->getId() === $itemId) {
                 unset($this->items[$key]);
             }
         }

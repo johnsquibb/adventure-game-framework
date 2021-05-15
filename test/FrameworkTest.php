@@ -123,7 +123,7 @@ abstract class FrameworkTest extends TestCase
 
         // Spawn player in room 1
         $mapController = new MapController($locations);
-        $mapController->setPlayerLocationById($location1->id);
+        $mapController->setPlayerLocationById($location1->getId());
 
         return $mapController;
     }

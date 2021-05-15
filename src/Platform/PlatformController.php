@@ -39,21 +39,21 @@ class PlatformController
         }
     }
 
-    private function invalidExitMessage()
+    private function invalidExitMessage(): array
     {
         return [
             "Can't go that way.",
         ];
     }
 
-    private function invalidCommandMessage()
+    private function invalidCommandMessage(): array
     {
         return [
             "Can't do that here.",
         ];
     }
 
-    private function noCommandProcessedMessage()
+    private function noCommandProcessedMessage(): array
     {
         return [
             "Can't do that.",

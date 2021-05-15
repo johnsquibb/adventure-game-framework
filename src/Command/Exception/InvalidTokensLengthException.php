@@ -2,6 +2,8 @@
 
 namespace AdventureGame\Command\Exception;
 
-class InvalidTokensLengthException extends \Exception
+use Exception;
+
+class InvalidTokensLengthException extends Exception
 {
 }

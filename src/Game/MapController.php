@@ -67,7 +67,7 @@ class MapController
     public function setPlayerLocationById(string $locationId)
     {
         foreach ($this->locations as $location) {
-            if ($location instanceof Location && $location->id === $locationId) {
+            if ($location instanceof Location && $location->getId() === $locationId) {
                 $this->playerLocation = $location;
             }
         }
@@ -85,7 +85,7 @@ class MapController
 
         $item = $location->items->getItemById($itemId);
         if ($item !== null) {
-            $location->items->removeItemById($item->id);
+            $location->items->removeItemById($item->getId());
         }
 
         return $item;
@@ -104,7 +104,7 @@ class MapController
         $items = $location->items->getItemsByTag($tag);
 
         foreach ($items as $item) {
-            $location->items->removeItemById($item->id);
+            $location->items->removeItemById($item->getId());
         }
 
         return $items;

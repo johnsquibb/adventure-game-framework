@@ -147,7 +147,6 @@ class PlatformFactory
             'Treasure Chest',
             'A chest containing valuable treasure.',
             'chest',
-            true,
         );
         $chest->addItem(
             new Item(
@@ -155,7 +154,6 @@ class PlatformFactory
                 'The Sword of Poking',
                 'An average sword, made for poking aggressive beasts.',
                 'sword',
-                false,
             )
         );
         $chest->addItem(
@@ -164,7 +162,6 @@ class PlatformFactory
                 'Potion of Healing I',
                 'A potion that restores life.',
                 'potion',
-                false,
             )
         );
 
@@ -207,8 +204,9 @@ class PlatformFactory
         $object = $this->getRegisteredObject(MapController::class);
         if ($object === null) {
             $object = new MapController($locations);
+
             // Spawn player in room 1
-            $object->setPlayerLocationById($spawnRoom->id);
+            $object->setPlayerLocationById($spawnRoom->getId());
             $this->registerObject($object);
         }
 

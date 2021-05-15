@@ -16,10 +16,10 @@ class PortalTest extends TestCase
         $destinationLocationId = 'test-room';
 
         $door = new Portal($id, $name, $description, $direction, $destinationLocationId);
-        $this->assertEquals($id, $door->id);
+        $this->assertEquals($id, $door->getId());
         $this->assertEquals($direction, $door->direction);
         $this->assertEquals($destinationLocationId, $door->destinationLocationId);
-        $this->assertEquals($name, $door->name);
-        $this->assertEquals($description, $door->description);
+        $this->assertEquals($name, $door->getName());
+        $this->assertEquals($description, $door->getDescription());
     }
 }

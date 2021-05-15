@@ -3,6 +3,7 @@
 namespace AdventureGame\Character;
 
 use AdventureGame\Item\ContainerInterface;
+use AdventureGame\Item\NameTrait;
 
 /**
  * Class Character is a player (PC), or non-player (NPC) that exists within the game.
@@ -10,7 +11,10 @@ use AdventureGame\Item\ContainerInterface;
  */
 class Character
 {
-    public function __construct(public string $name, public ContainerInterface $inventory)
+    use NameTrait;
+
+    public function __construct(string $name, public ContainerInterface $inventory)
     {
+        $this->name = $name;
     }
 }

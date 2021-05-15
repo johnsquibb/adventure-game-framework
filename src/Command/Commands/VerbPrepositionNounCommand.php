@@ -6,9 +6,7 @@ use AdventureGame\Command\CommandInterface;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
 use AdventureGame\IO\OutputController;
-use AdventureGame\Item\Container;
 use AdventureGame\Item\ContainerInterface;
-use AdventureGame\Item\Item;
 
 /**
  * Class VerbPrepositionNounCommand processes verb+preposition+noun commands, e.g. "look at spoon".

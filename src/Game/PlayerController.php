@@ -50,6 +50,6 @@ class PlayerController
      */
     public function removeItemFromPlayerInventory(ItemInterface $item): void
     {
-        $this->player->inventory->removeItemById($item->id);
+        $this->player->inventory->removeItemById($item->getId());
     }
 }

@@ -2,14 +2,19 @@
 
 namespace AdventureGame\Location;
 
+use AdventureGame\Item\IdentityTrait;
+
 /**
  * Class Map is a collection of Locations that are interrelated.
  * @package AdventureGame\Location
  */
 class Map
 {
-    public function __construct(public string $id, private array $locations)
+    use IdentityTrait;
+
+    public function __construct(string $id, private array $locations)
     {
+        $this->id = $id;
     }
 
     /**
@@ -20,7 +25,7 @@ class Map
     public function getLocationById(string $id): ?Location
     {
         foreach ($this->locations as $location) {
-            if ($location->id === $id) {
+            if ($location->getId() === $id) {
                 return $location;
             }
         }

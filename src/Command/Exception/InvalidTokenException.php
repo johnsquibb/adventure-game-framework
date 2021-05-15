@@ -2,7 +2,9 @@
 
 namespace AdventureGame\Command\Exception;
 
-abstract class InvalidTokenException extends \Exception
+use Exception;
+
+abstract class InvalidTokenException extends Exception
 {
 
 }

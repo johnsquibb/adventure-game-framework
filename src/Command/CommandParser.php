@@ -2,8 +2,6 @@
 
 namespace AdventureGame\Command;
 
-use AdventureGame\Command\Exception\InvalidCommandException;
-
 class CommandParser
 {
     public function __construct(

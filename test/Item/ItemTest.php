@@ -15,9 +15,9 @@ class ItemTest extends TestCase
         $tag = 'test';
         $item = new Item($id, $name, $description, $tag);
 
-        $this->assertEquals($id, $item->id);
-        $this->assertEquals($name, $item->name);
-        $this->assertEquals($description, $item->description);
-        $this->assertEquals($tag, $item->tag);
+        $this->assertEquals($id, $item->getId());
+        $this->assertEquals($name, $item->getName());
+        $this->assertEquals($description, $item->getDescription());
+        $this->assertEquals($tag, $item->getTag());
     }
 }

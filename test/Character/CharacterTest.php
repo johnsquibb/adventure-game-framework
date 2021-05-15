@@ -14,7 +14,7 @@ class CharacterTest extends TestCase
         $name = 'test-character';
         $inventory = new Container();
         $character = new Character($name, $inventory);
-        $this->assertEquals($name, $character->name);
+        $this->assertEquals($name, $character->getName());
     }
 
     public function testAddItemToPlayerInventory()
@@ -31,7 +31,7 @@ class CharacterTest extends TestCase
         );
         $character->inventory->addItem($item);
 
-        $this->assertEquals($item, $character->inventory->getItemById($item->id));
+        $this->assertEquals($item, $character->inventory->getItemById($item->getId()));
     }
 
     public function testGetItemFromPlayerInventory()
@@ -50,6 +50,6 @@ class CharacterTest extends TestCase
         );
         $character->inventory->addItem($item);
 
-        $this->assertEquals($item, $character->inventory->getItemById($item->id));
+        $this->assertEquals($item, $character->inventory->getItemById($item->getId()));
     }
 }

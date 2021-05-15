@@ -13,7 +13,7 @@ class MapTest extends TestCase
     {
         $id = 'test-map';
         $map = new Map($id, []);
-        $this->assertEquals($id, $map->id);
+        $this->assertEquals($id, $map->getId());
     }
 
     public function testMapLocations()
@@ -27,6 +27,6 @@ class MapTest extends TestCase
         $locations = [$location];
 
         $map = new Map('test-map', $locations);
-        $this->assertEquals($location, $map->getLocationById($location->id));
+        $this->assertEquals($location, $map->getLocationById($location->getId()));
     }
 }

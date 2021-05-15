@@ -80,7 +80,7 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
             foreach ($items as $item) {
                 if ($item instanceof ItemInterface) {
                     $this->addItemToPlayerInventory($gameController, $item);
-                    $container->removeItemById($item->id);
+                    $container->removeItemById($item->getId());
                 }
             }
         }

@@ -8,11 +8,20 @@ namespace AdventureGame\Item;
  */
 class Item implements ItemInterface
 {
+    use IdentityTrait;
+    use NameTrait;
+    use DescriptionTrait;
+    use TagTrait;
+
     public function __construct(
-        public string $id,
-        public string $name,
-        public string $description,
-        public string $tag
+        string $id,
+        string $name,
+        string $description,
+        string $tag
     ) {
+        $this->id = $id;
+        $this->name = $name;
+        $this->description = $description;
+        $this->tag = $tag;
     }
 }

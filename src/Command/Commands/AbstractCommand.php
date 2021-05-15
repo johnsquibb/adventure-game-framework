@@ -6,6 +6,7 @@ use AdventureGame\Game\Exception\InvalidExitException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
 use AdventureGame\IO\OutputController;
+use AdventureGame\Item\ContainerInterface;
 use AdventureGame\Item\ContainerItem;
 use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Location;
@@ -32,17 +33,17 @@ abstract class AbstractCommand
         ItemInterface $item
     ): void {
         $gameController->playerController->addItemToPlayerInventory($item);
-        $this->outputController->addLine("Added {$item->name} to inventory");
+        $this->outputController->addLine("Added {$item->getName()} to inventory");
     }
 
     /**
      * Describe a list of items inside a container.
      * @param ContainerItem $container
      */
-    protected function listContainerItems(ContainerItem $container): void
+    protected function listContainerItems(ContainerInterface $container): void
     {
         $this->outputController->addLines(
-            ["You see the following items inside " . $container->name . ": "],
+            ["You see the following items inside " . $container->getName() . ": "],
         );
 
         foreach ($container->getItems() as $item) {
@@ -59,7 +60,7 @@ abstract class AbstractCommand
     {
         $this->outputController->addLines(
             [
-                $item->name,
+                $item->getName(),
             ]
         );
     }
@@ -84,8 +85,8 @@ abstract class AbstractCommand
     {
         $this->outputController->addLines(
             [
-                $item->name,
-                $item->description,
+                $item->getName(),
+                $item->getDescription(),
             ]
         );
     }
@@ -124,8 +125,8 @@ abstract class AbstractCommand
     {
         $this->outputController->addLines(
             [
-                $location->name,
-                $location->description,
+                $location->getName(),
+                $location->getDescription(),
             ]
         );
     }
@@ -163,7 +164,7 @@ abstract class AbstractCommand
         ItemInterface $item
     ): void {
         $gameController->playerController->removeItemFromPlayerInventory($item);
-        $this->outputController->addLine("Removed {$item->name} from inventory");
+        $this->outputController->addLine("Removed {$item->getName()} from inventory");
     }
 
     /**
@@ -201,7 +202,7 @@ abstract class AbstractCommand
     {
         $this->outputController->addLines(
             [
-                $exit->name
+                $exit->getName()
             ]
         );
     }
@@ -214,8 +215,8 @@ abstract class AbstractCommand
     {
         $this->outputController->addLines(
             [
-                $exit->name,
-                $exit->description,
+                $exit->getName(),
+                $exit->getDescription(),
             ]
         );
     }

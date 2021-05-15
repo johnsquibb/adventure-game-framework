@@ -3,6 +3,9 @@
 namespace AdventureGame\Location;
 
 use AdventureGame\Item\ContainerInterface;
+use AdventureGame\Item\DescriptionTrait;
+use AdventureGame\Item\IdentityTrait;
+use AdventureGame\Item\NameTrait;
 
 /**
  * Class Location is a place in which players and objects can exist.
@@ -10,13 +13,20 @@ use AdventureGame\Item\ContainerInterface;
  */
 class Location
 {
+    use IdentityTrait;
+    use NameTrait;
+    use DescriptionTrait;
+
     public function __construct(
-        public string $id,
-        public string $name,
-        public string $description,
+        string $id,
+        string $name,
+        string $description,
         public ContainerInterface $items,
         public array $exits,
     ) {
+        $this->id = $id;
+        $this->name = $name;
+        $this->description = $description;
     }
 
     /**
