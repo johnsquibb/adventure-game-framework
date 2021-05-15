@@ -2,6 +2,7 @@
 
 namespace AdventureGame\Location;
 
+use AdventureGame\Entity\EntityInterface;
 use AdventureGame\Traits\DescriptionTrait;
 use AdventureGame\Traits\IdentityTrait;
 use AdventureGame\Traits\NameTrait;
@@ -10,7 +11,7 @@ use AdventureGame\Traits\NameTrait;
  * Class Portal provides a directional exit from one Location to another destination.
  * @package AdventureGame\Location
  */
-class Portal
+class Portal implements EntityInterface
 {
     use IdentityTrait;
     use NameTrait;

@@ -65,6 +65,15 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     ): void {
         $items = $gameController->mapController->takeItemsByTag($tag);
 
+        if (empty($items)) {
+            $this->outputController->addLines(
+                [
+                    "You don't see anything like that here."
+                ]
+            );
+            return;
+        }
+
         foreach ($items as $item) {
             if ($item instanceof ItemInterface) {
                 $this->addItemToPlayerInventory($gameController, $item);

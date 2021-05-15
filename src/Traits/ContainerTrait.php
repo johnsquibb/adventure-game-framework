@@ -47,6 +47,15 @@ trait ContainerTrait
     }
 
     /**
+     * Return all items.
+     * @return array
+     */
+    public function getItems(): array
+    {
+        return $this->items;
+    }
+
+    /**
      * Get all items that match a tag.
      * @param string $tag
      * @return array
@@ -92,14 +101,5 @@ trait ContainerTrait
                 unset($this->items[$key]);
             }
         }
-    }
-
-    /**
-     * Return all items.
-     * @return array
-     */
-    public function getItems(): array
-    {
-        return $this->items;
     }
 }

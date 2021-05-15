@@ -14,11 +14,11 @@ interface ContainerInterface
 
     public function getItemById(string $itemId): ?ItemInterface;
 
+    public function getItems(): array;
+
     public function getItemsByTag(string $tag): array;
 
     public function getItemsByTypeAndTag(string $type, string $tag): array;
 
     public function removeItemById(string $itemId): void;
-
-    public function getItems(): array;
 }

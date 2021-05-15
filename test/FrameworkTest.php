@@ -56,14 +56,15 @@ abstract class FrameworkTest extends TestCase
     protected function createMapController(): MapController
     {
         $container = new Container();
-        $container->addItem(
-            new Item(
-                'test-item-1',
-                'Test Item 1',
-                'Test Item 1 description',
-                'test'
-            )
+
+        $item = new Item(
+            'test-item-1',
+            'Test Item 1',
+            'Test Item 1 description',
+            'test'
         );
+        $item->setAccessible(true);
+        $container->addItem($item);
 
         $containerItem = new ContainerItem(
             'test-container-item',
@@ -72,22 +73,24 @@ abstract class FrameworkTest extends TestCase
             'test-container-item',
         );
         $container->addItem($containerItem);
-        $containerItem->addItem(
-            new Item(
-                'test-item-2',
-                'Test Item 2',
-                'Test Item 2 description',
-                'test-item-in-container'
-            )
+
+        $item = new Item(
+            'test-item-2',
+            'Test Item 2',
+            'Test Item 2 description',
+            'test-item-in-container'
         );
-        $containerItem->addItem(
-            new Item(
-                'test-item-3',
-                'Test Item 3',
-                'Test Item 3 description',
-                'test-item-2-in-container'
-            )
+        $item->setAccessible(true);
+        $containerItem->addItem($item);
+
+        $item = new Item(
+            'test-item-3',
+            'Test Item 3',
+            'Test Item 3 description',
+            'test-item-2-in-container'
         );
+        $item->setAccessible(true);
+        $containerItem->addItem($item);
 
         $door1 = new Portal(
             'test-door',

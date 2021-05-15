@@ -31,6 +31,30 @@ class MapController
     }
 
     /**
+     * The current location of the player, if set.
+     * @return Location
+     * @throws PlayerLocationNotSetException
+     */
+    public function getPlayerLocation(): Location
+    {
+        if (!isset($this->playerLocation)) {
+            throw new PlayerLocationNotSetException('Player location not set');
+        }
+
+        return $this->playerLocation;
+    }
+
+    /**
+     * Get count of items in current player location.
+     * @return int
+     * @throws PlayerLocationNotSetException
+     */
+    public function getItemCount(): int
+    {
+        return $this->getPlayerLocation()->items->countItems();
+    }
+
+    /**
      * @param string $direction The direction in which to move the player.
      * @throws InvalidExitException|PlayerLocationNotSetException
      */
@@ -44,20 +68,6 @@ class MapController
         }
 
         $this->setPlayerLocationById($portal->destinationLocationId);
-    }
-
-    /**
-     * The current location of the player, if set.
-     * @return Location
-     * @throws PlayerLocationNotSetException
-     */
-    public function getPlayerLocation(): Location
-    {
-        if (!isset($this->playerLocation)) {
-            throw new PlayerLocationNotSetException('Player location not set');
-        }
-
-        return $this->playerLocation;
     }
 
     /**
@@ -108,15 +118,5 @@ class MapController
         }
 
         return $items;
-    }
-
-    /**
-     * Get count of items in current player location.
-     * @return int
-     * @throws PlayerLocationNotSetException
-     */
-    public function getItemCount(): int
-    {
-        return $this->getPlayerLocation()->items->countItems();
     }
 }

@@ -37,30 +37,15 @@ abstract class AbstractCommand
     }
 
     /**
-     * Describe a list of items inside a container.
-     * @param ContainerItem $container
+     * Describe an exit.
+     * @param Portal $exit
      */
-    protected function listContainerItems(ContainerInterface $container): void
-    {
-        $this->outputController->addLines(
-            ["You see the following items inside " . $container->getName() . ": "],
-        );
-
-        foreach ($container->getItems() as $item) {
-            $this->listItem($item);
-        }
-    }
-
-    /**
-     * List an item's name.
-     * @param ItemInterface $item
-     * @return void
-     */
-    protected function listItem(ItemInterface $item): void
+    protected function describeExit(Portal $exit): void
     {
         $this->outputController->addLines(
             [
-                $item->getName(),
+                $exit->getName(),
+                $exit->getDescription(),
             ]
         );
     }
@@ -87,6 +72,71 @@ abstract class AbstractCommand
             [
                 $item->getName(),
                 $item->getDescription(),
+            ]
+        );
+    }
+
+    /**
+     * Describe items at the current player location.
+     * @param GameController $gameController
+     * @throws PlayerLocationNotSetException
+     */
+    protected function describePlayerLocationItems(GameController $gameController): void
+    {
+        $this->describeLocationItems($gameController->mapController->getPlayerLocation());
+    }
+
+    /**
+     * Describe items at Location.
+     * @param Location $location
+     * @return void
+     */
+    protected function describeLocationItems(Location $location): void
+    {
+        $items = $location->items->getItems();
+        if (count($items) === 0) {
+            return;
+        }
+
+        $this->outputController->addLines(
+            [
+                'You see the following items:',
+            ]
+        );
+
+        foreach ($items as $item) {
+            $this->describeItem($item);
+        }
+    }
+
+    /**
+     * Describe a list of items inside a container.
+     * @param ContainerItem $container
+     */
+    protected function listContainerItems(ContainerInterface $container): void
+    {
+        $this->outputController->addLines(
+            ["You see the following items inside " . $container->getName() . ": "],
+        );
+
+        foreach ($container->getItems() as $item) {
+            if ($item instanceof ItemInterface) {
+                $item->setAccessible(true);
+                $this->listItem($item);
+            }
+        }
+    }
+
+    /**
+     * List an item's name.
+     * @param ItemInterface $item
+     * @return void
+     */
+    protected function listItem(ItemInterface $item): void
+    {
+        $this->outputController->addLines(
+            [
+                $item->getName(),
             ]
         );
     }
@@ -132,52 +182,6 @@ abstract class AbstractCommand
     }
 
     /**
-     * Describe items at Location.
-     * @param Location $location
-     * @return void
-     */
-    protected function describeLocationItems(Location $location): void
-    {
-        $items = $location->items->getItems();
-        if (count($items) === 0) {
-            return;
-        }
-
-        $this->outputController->addLines(
-            [
-                'You see the following items:',
-            ]
-        );
-
-        foreach ($items as $item) {
-            $this->describeItem($item);
-        }
-    }
-
-    /**
-     * Remove an item from player inventory.
-     * @param GameController $gameController
-     * @param ItemInterface $item
-     */
-    protected function removeItemFromPlayerInventory(
-        GameController $gameController,
-        ItemInterface $item
-    ): void {
-        $gameController->playerController->removeItemFromPlayerInventory($item);
-        $this->outputController->addLine("Removed {$item->getName()} from inventory");
-    }
-
-    /**
-     * Describe items at the current player location.
-     * @param GameController $gameController
-     * @throws PlayerLocationNotSetException
-     */
-    protected function describePlayerLocationItems(GameController $gameController): void
-    {
-        $this->describeLocationItems($gameController->mapController->getPlayerLocation());
-    }
-
-    /**
      * List exits for a location.
      * @param Location $location
      */
@@ -208,16 +212,15 @@ abstract class AbstractCommand
     }
 
     /**
-     * Describe an exit.
-     * @param Portal $exit
+     * Remove an item from player inventory.
+     * @param GameController $gameController
+     * @param ItemInterface $item
      */
-    protected function describeExit(Portal $exit): void
-    {
-        $this->outputController->addLines(
-            [
-                $exit->getName(),
-                $exit->getDescription(),
-            ]
-        );
+    protected function removeItemFromPlayerInventory(
+        GameController $gameController,
+        ItemInterface $item
+    ): void {
+        $gameController->playerController->removeItemFromPlayerInventory($item);
+        $this->outputController->addLine("Removed {$item->getName()} from inventory");
     }
 }

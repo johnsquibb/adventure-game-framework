@@ -77,35 +77,29 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
 
         if ($container) {
             $items = $container->getItemsByTag($itemTag);
+
+            if (empty($items)) {
+                $this->outputController->addLines(
+                    [
+                        "You don't see anything like that here."
+                    ]
+                );
+                return;
+            }
+
             foreach ($items as $item) {
                 if ($item instanceof ItemInterface) {
-                    $this->addItemToPlayerInventory($gameController, $item);
-                    $container->removeItemById($item->getId());
+                    if ($item->getAccessible()) {
+                        $this->addItemToPlayerInventory($gameController, $item);
+                        $container->removeItemById($item->getId());
+                    } else {
+                        $this->outputController->addLines(
+                            [
+                                "You haven't discovered anything like that here."
+                            ]
+                        );
+                    }
                 }
-            }
-        }
-    }
-
-    /**
-     * Drop all items matching tag from player inventory into the first container matching another
-     * tag at current player location.
-     * @param GameController $gameController
-     * @param string $itemTag
-     * @param string $containerTag
-     * @throws PlayerLocationNotSetException
-     */
-    private function dropItemsByTagIntoFirstContainerByTagAtPlayerLocation(
-        GameController $gameController,
-        string $itemTag,
-        string $containerTag,
-    ): void {
-        $container = $this->getFirstContainerByTagAtPlayerLocation($gameController, $containerTag);
-
-        if ($container) {
-            $items = $gameController->playerController->getItemsByTagFromPlayerInventory($itemTag);
-            foreach ($items as $item) {
-                $container->addItem($item);
-                $this->removeItemFromPlayerInventory($gameController, $item);
             }
         }
     }
@@ -133,5 +127,29 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
         }
 
         return null;
+    }
+
+    /**
+     * Drop all items matching tag from player inventory into the first container matching another
+     * tag at current player location.
+     * @param GameController $gameController
+     * @param string $itemTag
+     * @param string $containerTag
+     * @throws PlayerLocationNotSetException
+     */
+    private function dropItemsByTagIntoFirstContainerByTagAtPlayerLocation(
+        GameController $gameController,
+        string $itemTag,
+        string $containerTag,
+    ): void {
+        $container = $this->getFirstContainerByTagAtPlayerLocation($gameController, $containerTag);
+
+        if ($container) {
+            $items = $gameController->playerController->getItemsByTagFromPlayerInventory($itemTag);
+            foreach ($items as $item) {
+                $container->addItem($item);
+                $this->removeItemFromPlayerInventory($gameController, $item);
+            }
+        }
     }
 }

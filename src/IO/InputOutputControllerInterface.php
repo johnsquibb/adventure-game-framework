@@ -5,21 +5,22 @@ namespace AdventureGame\IO;
 interface InputOutputControllerInterface
 {
     /**
+     * Add a line.
+     * @param string $line
+     */
+    public function addLine(string $line): void;
+
+    /**
      * Add multiple lines.
      * @param array $lines
      */
     public function addLines(array $lines): void;
 
     /**
-     * Add a line.
-     * @param string $line
+     * Clear lines.
+     * @return void
      */
-    public function addLine(string $line): void;
-    /**
-     * Get lines and clear.
-     * @return array
-     */
-    public function getLinesAndClear(): array;
+    public function clearLines(): void;
 
     /**
      * Get lines.
@@ -28,8 +29,8 @@ interface InputOutputControllerInterface
     public function getLines(): array;
 
     /**
-     * Clear lines.
-     * @return void
+     * Get lines and clear.
+     * @return array
      */
-    public function clearLines(): void;
+    public function getLinesAndClear(): array;
 }

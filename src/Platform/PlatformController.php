@@ -39,10 +39,10 @@ class PlatformController
         }
     }
 
-    private function invalidExitMessage(): array
+    private function noCommandProcessedMessage(): array
     {
         return [
-            "Can't go that way.",
+            "Can't do that.",
         ];
     }
 
@@ -53,10 +53,10 @@ class PlatformController
         ];
     }
 
-    private function noCommandProcessedMessage(): array
+    private function invalidExitMessage(): array
     {
         return [
-            "Can't do that.",
+            "Can't go that way.",
         ];
     }
 }

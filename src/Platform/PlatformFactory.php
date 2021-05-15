@@ -40,6 +40,17 @@ class PlatformFactory
         return $platformRegistry;
     }
 
+    private function getOutputController(): OutputController
+    {
+        $object = $this->getRegisteredObject(OutputController::class);
+        if ($object === null) {
+            $object = new OutputController();
+            $this->registerObject($object);
+        }
+
+        return $object;
+    }
+
     private function getRegisteredObject(string $className): ?object
     {
         return $this->registry[$className] ?? null;
@@ -48,6 +59,17 @@ class PlatformFactory
     private function registerObject(object $object): void
     {
         $this->registry[$object::class] = $object;
+    }
+
+    private function getInputController(): InputController
+    {
+        $object = $this->getRegisteredObject(InputController::class);
+        if ($object === null) {
+            $object = new InputController($this->getCommandParser(), $this->getCommandController());
+            $this->registerObject($object);
+        }
+
+        return $object;
     }
 
     private function getCommandParser(): CommandParser
@@ -81,41 +103,6 @@ class PlatformFactory
         return $object;
     }
 
-    private function getInputController(): InputController
-    {
-        $object = $this->getRegisteredObject(InputController::class);
-        if ($object === null) {
-            $object = new InputController($this->getCommandParser(), $this->getCommandController());
-            $this->registerObject($object);
-        }
-
-        return $object;
-    }
-
-    private function getOutputController(): OutputController
-    {
-        $object = $this->getRegisteredObject(OutputController::class);
-        if ($object === null) {
-            $object = new OutputController();
-            $this->registerObject($object);
-        }
-
-        return $object;
-    }
-
-    private function getGameController(): GameController
-    {
-        $object = $this->getRegisteredObject(GameController::class);
-        if ($object === null) {
-            $mapController = $this->getMapController();
-            $playerController = $this->getPlayerController();
-            $object = new GameController($mapController, $playerController);
-            $this->registerObject($object);
-        }
-
-        return $object;
-    }
-
     private function getCommandController(): CommandController
     {
         $object = $this->getRegisteredObject(CommandController::class);
@@ -138,6 +125,19 @@ class PlatformFactory
         return $object;
     }
 
+    private function getGameController(): GameController
+    {
+        $object = $this->getRegisteredObject(GameController::class);
+        if ($object === null) {
+            $mapController = $this->getMapController();
+            $playerController = $this->getPlayerController();
+            $object = new GameController($mapController, $playerController);
+            $this->registerObject($object);
+        }
+
+        return $object;
+    }
+
     private function getMapController(): MapController
     {
         // TODO load from configuration file.
@@ -148,26 +148,22 @@ class PlatformFactory
             'A chest containing valuable treasure.',
             'chest',
         );
-        $chest->addItem(
-            new Item(
-                'sword-of-poking',
-                'The Sword of Poking',
-                'An average sword, made for poking aggressive beasts.',
-                'sword',
-            )
+
+        $swordOfPoking = new Item(
+            'sword-of-poking',
+            'The Sword of Poking',
+            'An average sword, made for poking aggressive beasts.',
+            'sword',
         );
-        $chest->addItem(
-            new Item(
-                'potion-of-healing-1',
-                'Potion of Healing I',
-                'A potion that restores life.',
-                'potion',
-            )
+        $potionOfHealing1 = new Item(
+            'potion-of-healing-1',
+            'Potion of Healing I',
+            'A potion that restores life.',
+            'potion',
         );
 
-        // TODO maybe we just add container ability to room directly?
-        $container = new Container();
-        $container->addItem($chest);
+        $chest->addItem($swordOfPoking);
+        $chest->addItem($potionOfHealing1);
 
         $doorFromSpawnToEastRoom = new Portal(
             'door-from-spawn-to-east-room',
@@ -180,9 +176,10 @@ class PlatformFactory
             'spawn',
             'Player Spawn',
             'This is the starting room.',
-            $container,
+            new Container(),
             [$doorFromSpawnToEastRoom],
         );
+        $spawnRoom->items->addItem($chest);
 
         $doorFromEastRoomToSpawn = new Portal(
             'door-from-east-room-to-spawn',

@@ -2,13 +2,13 @@
 
 namespace AdventureGame\IO;
 
+use AdventureGame\Command\CommandController;
 use AdventureGame\Command\CommandParser;
 use AdventureGame\Command\Exception\InvalidCommandException;
 use AdventureGame\Command\Exception\InvalidNounException;
 use AdventureGame\Command\Exception\InvalidPrepositionException;
 use AdventureGame\Command\Exception\InvalidTokensLengthException;
 use AdventureGame\Command\Exception\InvalidVerbException;
-use AdventureGame\Command\CommandController;
 
 /**
  * Class InputController handles input text.

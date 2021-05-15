@@ -2,12 +2,12 @@
 
 namespace AdventureGame\Item;
 
-use AdventureGame\Entity\InteractionEntityInterface;
+use AdventureGame\Entity\AccessibleEntityInterface;
 
 /**
  * Interface ItemInterface defines methods for objects that behave like items.
  * @package AdventureGame\Item
  */
-interface ItemInterface extends InteractionEntityInterface
+interface ItemInterface extends AccessibleEntityInterface
 {
 }
