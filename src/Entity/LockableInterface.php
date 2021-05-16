@@ -8,15 +8,15 @@ namespace AdventureGame\Entity;
  */
 interface LockableInterface extends MutableInterface
 {
-    public function getMutable(): bool;
-
-    public function setMutable(bool $lockable): void;
+    public function getKeyEntityId(): string;
 
     public function getLocked(): bool;
 
-    public function setLocked(bool $locked): void;
-
-    public function getKeyEntityId(): string;
+    public function getMutable(): bool;
 
     public function setKeyEntityId(string $keyEntityId): void;
+
+    public function setLocked(bool $locked): void;
+
+    public function setMutable(bool $lockable): void;
 }

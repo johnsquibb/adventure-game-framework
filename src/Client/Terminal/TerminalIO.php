@@ -39,16 +39,6 @@ final class TerminalIO
         $this->writeLine("Usage: {$line}");
     }
 
-    public function waitForAnyInput(): void
-    {
-        readline();
-    }
-
-    public function warn(string $line): void
-    {
-        $this->writeLine("Warn: {$line}");
-    }
-
     public function writeLine(string $line): void
     {
         $this->write($line);
@@ -58,5 +48,15 @@ final class TerminalIO
     public function write(string $string): void
     {
         echo $string;
+    }
+
+    public function waitForAnyInput(): void
+    {
+        readline();
+    }
+
+    public function warn(string $line): void
+    {
+        $this->writeLine("Warn: {$line}");
     }
 }

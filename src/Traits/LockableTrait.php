@@ -9,6 +9,16 @@ trait LockableTrait
     private bool $locked = false;
     private string $keyEntityId = '';
 
+    public function getKeyEntityId(): string
+    {
+        return $this->keyEntityId;
+    }
+
+    public function setKeyEntityId(string $keyEntityId): void
+    {
+        $this->keyEntityId = $keyEntityId;
+    }
+
     public function getLocked(): bool
     {
         return $this->locked;
@@ -19,16 +29,6 @@ trait LockableTrait
         if ($this->mutable) {
             $this->locked = $locked;
         }
-    }
-
-    public function getKeyEntityId(): string
-    {
-        return $this->keyEntityId;
-    }
-
-    public function setKeyEntityId(string $keyEntityId): void
-    {
-        $this->keyEntityId = $keyEntityId;
     }
 
     public function getMutable(): bool

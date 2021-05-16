@@ -72,7 +72,9 @@ class VerbPrepositionNounCommand extends AbstractCommand implements CommandInter
         GameController $gameController,
         string $tag
     ): bool {
-        $items = $gameController->mapController->getPlayerLocation()->getContainer()->getItemsByTag($tag);
+        $items = $gameController->mapController->getPlayerLocation()->getContainer()->getItemsByTag(
+            $tag
+        );
         if (count($items)) {
             $this->describeItems($items);
             return true;
@@ -92,7 +94,9 @@ class VerbPrepositionNounCommand extends AbstractCommand implements CommandInter
         GameController $gameController,
         string $tag
     ): bool {
-        $items = $gameController->mapController->getPlayerLocation()->getContainer()->getItemsByTag($tag);
+        $items = $gameController->mapController->getPlayerLocation()->getContainer()->getItemsByTag(
+            $tag
+        );
         if (count($items)) {
             foreach ($items as $container) {
                 if ($container instanceof ContainerInterface) {

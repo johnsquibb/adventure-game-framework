@@ -32,6 +32,31 @@ class Location implements EntityInterface
     }
 
     /**
+     * Get container for location.
+     * @return ContainerInterface
+     */
+    public function getContainer(): ContainerInterface
+    {
+        return $this->container;
+    }
+
+    /**
+     * Get first exit by tag, if it exists.
+     * @param string $tag
+     * @return Portal|null
+     */
+    public function getExitByTag(string $tag): ?Portal
+    {
+        foreach ($this->exits as $exit) {
+            if (is_a($exit, TaggableEntityInterface::class) && $exit->getTag() === $tag) {
+                return $exit;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Get exit in specified direction, if it exists.
      * @param string $direction
      * @return Portal|null
@@ -54,30 +79,5 @@ class Location implements EntityInterface
     public function getExits(): array
     {
         return $this->exits;
-    }
-
-    /**
-     * Get first exit by tag, if it exists.
-     * @param string $tag
-     * @return Portal|null
-     */
-    public function getExitByTag(string $tag): ?Portal
-    {
-        foreach ($this->exits as $exit) {
-            if (is_a($exit, TaggableEntityInterface::class) && $exit->getTag() === $tag) {
-                return $exit;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Get container for location.
-     * @return ContainerInterface
-     */
-    public function getContainer(): ContainerInterface
-    {
-        return $this->container;
     }
 }

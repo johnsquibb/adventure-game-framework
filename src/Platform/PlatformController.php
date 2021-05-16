@@ -20,7 +20,6 @@ class PlatformController
         $clientController->setOutput($this->processInput('look'));
 
         for (; ;) {
-
             $input = $clientController->getInput();
 
             $lines = $this->processInput($input);

@@ -66,34 +66,6 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
     }
 
     /**
-     * Try an action using a key from player inventory at current player location.
-     * @param GameController $gameController
-     * @return bool true if a key action was processed, false otherwise.
-     * @throws PlayerLocationNotSetException
-     */
-    private function tryKeyAction(GameController $gameController): bool
-    {
-        switch ($this->verb) {
-            case 'unlock':
-                $this->unlockEntitiesByTagAtUsingKeyByTagAtPlayerLocation(
-                    $gameController,
-                    $this->noun1,
-                    $this->noun2
-                );
-                return true;
-            case 'lock':
-                $this->lockEntitiesByTagAtUsingKeyByTagAtPlayerLocation(
-                    $gameController,
-                    $this->noun1,
-                    $this->noun2
-                );
-                return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Take all the items by tag from container matching another tag at the current player location.
      * @param GameController $gameController
      * @param string $itemTag
@@ -183,6 +155,34 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
                 $this->removeItemFromPlayerInventory($gameController, $item);
             }
         }
+    }
+
+    /**
+     * Try an action using a key from player inventory at current player location.
+     * @param GameController $gameController
+     * @return bool true if a key action was processed, false otherwise.
+     * @throws PlayerLocationNotSetException
+     */
+    private function tryKeyAction(GameController $gameController): bool
+    {
+        switch ($this->verb) {
+            case 'unlock':
+                $this->unlockEntitiesByTagAtUsingKeyByTagAtPlayerLocation(
+                    $gameController,
+                    $this->noun1,
+                    $this->noun2
+                );
+                return true;
+            case 'lock':
+                $this->lockEntitiesByTagAtUsingKeyByTagAtPlayerLocation(
+                    $gameController,
+                    $this->noun1,
+                    $this->noun2
+                );
+                return true;
+        }
+
+        return false;
     }
 
     /**

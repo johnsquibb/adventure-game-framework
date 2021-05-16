@@ -10,7 +10,6 @@ use AdventureGame\IO\OutputController;
 use AdventureGame\Item\ContainerItem;
 use AdventureGame\Item\ContainerItemInterface;
 use AdventureGame\Item\ItemInterface;
-use AdventureGame\Location\Direction;
 use AdventureGame\Location\Portal;
 
 /**
@@ -79,26 +78,6 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     }
 
     /**
-     * Try an action using a key from player inventory at current player location.
-     * @param GameController $gameController
-     * @return bool true if a key action was processed, false otherwise.
-     * @throws PlayerLocationNotSetException
-     */
-    private function tryKeyAction(GameController $gameController): bool
-    {
-        switch ($this->verb) {
-            case 'unlock':
-                $this->unlockEntitiesByTagAtPlayerLocation($gameController, $this->noun);
-                return true;
-            case 'lock':
-                $this->lockEntitiesByTagAtPlayerLocation($gameController, $this->noun);
-                return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Take all items matching tag at current player location into player inventory.
      * @param GameController $gameController
      * @param string $tag
@@ -147,6 +126,26 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     }
 
     /**
+     * Try an action using a key from player inventory at current player location.
+     * @param GameController $gameController
+     * @return bool true if a key action was processed, false otherwise.
+     * @throws PlayerLocationNotSetException
+     */
+    private function tryKeyAction(GameController $gameController): bool
+    {
+        switch ($this->verb) {
+            case 'unlock':
+                $this->unlockEntitiesByTagAtPlayerLocation($gameController, $this->noun);
+                return true;
+            case 'lock':
+                $this->lockEntitiesByTagAtPlayerLocation($gameController, $this->noun);
+                return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Unlock entities by tag at player location.
      * @param GameController $gameController
      * @param string $noun
@@ -186,6 +185,52 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         }
     }
 
+    /**
+     * Unlock a portal if the player has the key in inventory.
+     * @param GameController $gameController
+     * @param Portal $portal
+     */
+    protected function unlockPortalWithAnyAvailableKey(
+        GameController $gameController,
+        Portal $portal
+    ): void {
+        $keyId = $portal->getKeyEntityId();
+
+        $key = $gameController->playerController->getItemByIdFromPlayerInventory($keyId);
+        if ($key instanceof ItemInterface) {
+            $this->unlockEntityWithKey($portal, $key);
+        } else {
+            $this->outputController->addLines(
+                [
+                    "You don't have the required key.",
+                ]
+            );
+        }
+    }
+
+    /**
+     * Unlock containerItems if the player has the key in inventory.
+     * @param GameController $gameController
+     * @param ContainerItemInterface $containerItem
+     */
+    protected function unlockContainerItemWithAnyAvailableKey(
+        GameController $gameController,
+        ContainerItemInterface $containerItem
+    ): void {
+        $keyId = $containerItem->getKeyEntityId();
+
+        $key = $gameController->playerController->getItemByIdFromPlayerInventory($keyId);
+        if ($key instanceof ItemInterface) {
+            $this->unlockEntityWithKey($containerItem, $key);
+        } else {
+            $this->outputController->addLines(
+                [
+                    "You don't have the required key.",
+                ]
+            );
+        }
+    }
+
     private function lockEntitiesByTagAtPlayerLocation(GameController $gameController, string $noun)
     {
         $location = $gameController->mapController->getPlayerLocation();
@@ -221,19 +266,19 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     }
 
     /**
-     * Unlock containerItems if the player has the key in inventory.
+     * Unlock a portal if the player has the key in inventory.
      * @param GameController $gameController
-     * @param ContainerItemInterface $containerItem
+     * @param Portal $portal
      */
-    protected function unlockContainerItemWithAnyAvailableKey(
+    protected function lockPortalWithAnyAvailableKey(
         GameController $gameController,
-        ContainerItemInterface $containerItem
+        Portal $portal
     ): void {
-        $keyId = $containerItem->getKeyEntityId();
+        $keyId = $portal->getKeyEntityId();
 
         $key = $gameController->playerController->getItemByIdFromPlayerInventory($keyId);
         if ($key instanceof ItemInterface) {
-            $this->unlockEntityWithKey($containerItem, $key);
+            $this->lockEntityWithKey($portal, $key);
         } else {
             $this->outputController->addLines(
                 [
@@ -257,52 +302,6 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         $key = $gameController->playerController->getItemByIdFromPlayerInventory($keyId);
         if ($key instanceof ItemInterface) {
             $this->lockEntityWithKey($containerItem, $key);
-        } else {
-            $this->outputController->addLines(
-                [
-                    "You don't have the required key.",
-                ]
-            );
-        }
-    }
-
-    /**
-     * Unlock a portal if the player has the key in inventory.
-     * @param GameController $gameController
-     * @param Portal $portal
-     */
-    protected function unlockPortalWithAnyAvailableKey(
-        GameController $gameController,
-        Portal $portal
-    ): void {
-        $keyId = $portal->getKeyEntityId();
-
-        $key = $gameController->playerController->getItemByIdFromPlayerInventory($keyId);
-        if ($key instanceof ItemInterface) {
-            $this->unlockEntityWithKey($portal, $key);
-        } else {
-            $this->outputController->addLines(
-                [
-                    "You don't have the required key.",
-                ]
-            );
-        }
-    }
-
-    /**
-     * Unlock a portal if the player has the key in inventory.
-     * @param GameController $gameController
-     * @param Portal $portal
-     */
-    protected function lockPortalWithAnyAvailableKey(
-        GameController $gameController,
-        Portal $portal
-    ): void {
-        $keyId = $portal->getKeyEntityId();
-
-        $key = $gameController->playerController->getItemByIdFromPlayerInventory($keyId);
-        if ($key instanceof ItemInterface) {
-            $this->lockEntityWithKey($portal, $key);
         } else {
             $this->outputController->addLines(
                 [

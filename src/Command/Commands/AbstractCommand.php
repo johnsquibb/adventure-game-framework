@@ -11,7 +11,6 @@ use AdventureGame\Game\GameController;
 use AdventureGame\IO\OutputController;
 use AdventureGame\Item\ContainerInterface;
 use AdventureGame\Item\ContainerItem;
-use AdventureGame\Item\ContainerItemInterface;
 use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Location;
 use AdventureGame\Location\Portal;
@@ -91,16 +90,6 @@ abstract class AbstractCommand
     }
 
     /**
-     * List items at the current player location.
-     * @param GameController $gameController
-     * @throws PlayerLocationNotSetException
-     */
-    protected function listPlayerLocationItems(GameController $gameController): void
-    {
-        $this->listLocationItems($gameController->mapController->getPlayerLocation());
-    }
-
-    /**
      * Describe items at Location.
      * @param Location $location
      * @return void
@@ -142,6 +131,33 @@ abstract class AbstractCommand
     }
 
     /**
+     * List items at the current player location.
+     * @param GameController $gameController
+     * @throws PlayerLocationNotSetException
+     */
+    protected function listPlayerLocationItems(GameController $gameController): void
+    {
+        $this->listLocationItems($gameController->mapController->getPlayerLocation());
+    }
+
+    /**
+     * List items for a location.
+     * @param Location $location
+     */
+    protected function listLocationItems(Location $location): void
+    {
+        $this->outputController->addLines(
+            [
+                'You see the following items: ',
+            ]
+        );
+
+        foreach ($location->getContainer()->getItems() as $item) {
+            $this->listItem($item);
+        }
+    }
+
+    /**
      * List an item's name.
      * @param ItemInterface $item
      * @return void
@@ -153,6 +169,19 @@ abstract class AbstractCommand
                 $item->getName(),
             ]
         );
+    }
+
+    protected function lockEntityWithKey(EntityInterface $entity, ItemInterface $key): void
+    {
+        if (is_a($entity, LockableInterface::class)) {
+            $entity->setLocked(true);
+
+            $this->outputController->addLines(
+                [
+                    "Locked {$entity->getName()} with {$key->getName()}.",
+                ]
+            );
+        }
     }
 
     /**
@@ -226,23 +255,6 @@ abstract class AbstractCommand
     }
 
     /**
-     * List items for a location.
-     * @param Location $location
-     */
-    protected function listLocationItems(Location $location): void
-    {
-        $this->outputController->addLines(
-            [
-                'You see the following items: ',
-            ]
-        );
-
-        foreach ($location->getContainer()->getItems() as $item) {
-            $this->listItem($item);
-        }
-    }
-
-    /**
      * List an exit.
      * @param Portal $exit
      */
@@ -276,19 +288,6 @@ abstract class AbstractCommand
             $this->outputController->addLines(
                 [
                     "Unlocked {$entity->getName()} with {$key->getName()}.",
-                ]
-            );
-        }
-    }
-
-    protected function lockEntityWithKey(EntityInterface $entity, ItemInterface $key): void
-    {
-        if (is_a($entity, LockableInterface::class)) {
-            $entity->setLocked(true);
-
-            $this->outputController->addLines(
-                [
-                    "Locked {$entity->getName()} with {$key->getName()}.",
                 ]
             );
         }

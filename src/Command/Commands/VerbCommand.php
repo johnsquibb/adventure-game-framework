@@ -3,12 +3,9 @@
 namespace AdventureGame\Command\Commands;
 
 use AdventureGame\Command\CommandInterface;
-use AdventureGame\Game\Exception\ExitIsLockedException;
-use AdventureGame\Game\Exception\InvalidExitException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
 use AdventureGame\IO\OutputController;
-use AdventureGame\Location\Direction;
 
 /**
  * Class VerbCommand processes single-word verb commands, e.g. "take" or "eat".
