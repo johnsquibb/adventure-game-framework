@@ -140,20 +140,4 @@ class ContainerTest extends TestCase
         $container->addItem($item);
         $this->assertEquals([$item], $container->getItems());
     }
-
-    public function testContainerLockable()
-    {
-        $container = new Container();
-
-        $this->assertFalse($container->getLocked());
-
-        $container->setLocked(true);
-        $this->assertTrue($container->getLocked());
-
-        $container->setLocked(false);
-        $this->assertFalse($container->getLocked());
-
-        $container->setKeyEntityId('theKey');
-        $this->assertEquals('theKey', $container->getKeyEntityId());
-    }
 }

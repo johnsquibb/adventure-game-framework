@@ -61,7 +61,7 @@ class MapControllerTest extends TestCase
             '',
             '',
             'east',
-            'test-room-2'
+            'east', 'test-room-2'
         );
         $location1 = new Location(
             'test-room-1',
@@ -76,7 +76,7 @@ class MapControllerTest extends TestCase
             '',
             '',
             'west',
-            'test-room-1'
+            'west', 'test-room-1'
         );
         $location2 = new Location(
             'test-room-2',
@@ -182,7 +182,7 @@ class MapControllerTest extends TestCase
         $mapController->setPlayerLocationById($location->getId());
         $this->assertEmpty($mapController->takeItemsByTag($item->getTag()));
 
-        $location->items->addItem($item);
+        $location->getContainer()->addItem($item);
         $this->assertCount(1, $mapController->takeItemsByTag($item->getTag()));
 
         $item2 = new Item(
@@ -192,7 +192,7 @@ class MapControllerTest extends TestCase
             'test'
         );
 
-        $location->items->addItem($item2);
+        $location->getContainer()->addItem($item2);
         $this->assertCount(1, $mapController->takeItemsByTag($item->getTag()));
         $this->assertCount(0, $mapController->takeItemsByTag($item->getTag()));
     }

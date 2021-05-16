@@ -210,8 +210,15 @@ class ContainerItemTest extends TestCase
             'test-container'
         );
 
+        $this->assertFalse($container->getMutable());
         $this->assertFalse($container->getLocked());
 
+        // Immutable, can't change locked state.
+        $container->setLocked(true);
+        $this->assertFalse($container->getLocked());
+
+        // Mutable, now can changed locked state.
+        $container->setMutable(true);
         $container->setLocked(true);
         $this->assertTrue($container->getLocked());
 

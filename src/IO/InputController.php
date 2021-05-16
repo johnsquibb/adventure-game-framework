@@ -48,7 +48,8 @@ class InputController extends InputOutputController implements InputOutputContro
      */
     private function convertInputToTokens(string $input): array
     {
-        $tokens = $this->commandParser->parseCommand($input);
+        $command = $this->commandParser->applySubstitutions($input);
+        $tokens = $this->commandParser->parseCommand($command);
         $tokens = $this->commandParser->normalizeTokens($tokens);
         $tokens = $this->commandParser->filterTokens($tokens);
         $tokens = $this->commandParser->replaceAliases($tokens);

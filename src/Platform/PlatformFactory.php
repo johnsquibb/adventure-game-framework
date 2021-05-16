@@ -76,27 +76,51 @@ class PlatformFactory
     {
         // TODO load from configuration file.
         $verbs = [
+            'go',
+            'take',
+            'drop',
+            'look',
+            'put',
+            'lock',
+            'unlock',
+        ];
+        $nouns = [
+            'sword',
+            'chest',
+            'door',
+            'potion',
+            'key',
             'north',
             'east',
             'south',
             'west',
-            'n',
-            'e',
-            's',
-            'w',
-            'take',
-            'drop',
-            'look',
-            'put'
         ];
-        $nouns = ['sword', 'chest', 'door', 'potion'];
         $articles = ['the'];
-        $prepositions = ['at', 'inside', 'into', 'from'];
-        $aliases = [];
+        $prepositions = ['at', 'inside', 'into', 'from', 'with'];
+        $aliases = [
+            'move' => 'go',
+        ];
+        $substitutions = [
+            'n' => 'go north',
+            'e' => 'go east',
+            's' => 'go south',
+            'w' => 'go west',
+            'north' => 'go north',
+            'east' => 'go east',
+            'south' => 'go south',
+            'west' => 'go west',
+        ];
 
         $object = $this->getRegisteredObject(CommandParser::class);
         if ($object === null) {
-            $object = new CommandParser($verbs, $nouns, $articles, $prepositions, $aliases);
+            $object = new CommandParser(
+                $verbs,
+                $nouns,
+                $articles,
+                $prepositions,
+                $aliases,
+                $substitutions
+            );
             $this->registerObject($object);
         }
 
@@ -161,17 +185,29 @@ class PlatformFactory
             'A potion that restores life.',
             'potion',
         );
+        $keyToDoorWoodenDoor = new Item(
+            'keyToWoodenDoor',
+            'Key to Wooden Door',
+            'A metal key that unlocks the wooden door at spawn.',
+            'key'
+        );
 
         $chest->addItem($swordOfPoking);
         $chest->addItem($potionOfHealing1);
+        $chest->addItem($keyToDoorWoodenDoor);
 
         $doorFromSpawnToEastRoom = new Portal(
             'door-from-spawn-to-east-room',
             'Wooden Door',
             'A heavy wooden door leading back to spawn.',
-            'east',
-            'room-east-of-spawn'
+            'door',
+            'east', 'room-east-of-spawn'
         );
+
+        $doorFromSpawnToEastRoom->setMutable(true);
+        $doorFromSpawnToEastRoom->setLocked(true);
+        $doorFromSpawnToEastRoom->setKeyEntityId($keyToDoorWoodenDoor->getId());
+
         $spawnRoom = new Location(
             'spawn',
             'Player Spawn',
@@ -179,14 +215,14 @@ class PlatformFactory
             new Container(),
             [$doorFromSpawnToEastRoom],
         );
-        $spawnRoom->items->addItem($chest);
+        $spawnRoom->getContainer()->addItem($chest);
 
         $doorFromEastRoomToSpawn = new Portal(
             'door-from-east-room-to-spawn',
             'Wooden Door',
             'A heavy wooden door leading to the east.',
-            'west',
-            'spawn'
+            'door',
+            'west', 'spawn'
         );
         $roomEastOfSpawn = new Location(
             'room-east-of-spawn',

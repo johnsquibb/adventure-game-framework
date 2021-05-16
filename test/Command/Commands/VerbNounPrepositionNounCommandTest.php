@@ -56,7 +56,7 @@ class VerbNounPrepositionNounCommandTest extends FrameworkTest
         $outputController = $this->createOutputController();
 
         /** @var ContainerInterface $container */
-        $container = $gameController->mapController->getPlayerLocation()->items
+        $container = $gameController->mapController->getPlayerLocation()->getContainer()
             ->getItemById('test-container-item');
         $itemCount = $container->countItems();
 

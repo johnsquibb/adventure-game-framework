@@ -4,6 +4,8 @@ namespace AdventureGame\Traits;
 
 trait LockableTrait
 {
+    use MutableTrait;
+
     private bool $locked = false;
     private string $keyEntityId = '';
 
@@ -14,7 +16,9 @@ trait LockableTrait
 
     public function setLocked(bool $locked): void
     {
-        $this->locked = $locked;
+        if ($this->mutable) {
+            $this->locked = $locked;
+        }
     }
 
     public function getKeyEntityId(): string
@@ -25,5 +29,15 @@ trait LockableTrait
     public function setKeyEntityId(string $keyEntityId): void
     {
         $this->keyEntityId = $keyEntityId;
+    }
+
+    public function getMutable(): bool
+    {
+        return $this->mutable;
+    }
+
+    public function setMutable(bool $mutable): void
+    {
+        $this->mutable = $mutable;
     }
 }

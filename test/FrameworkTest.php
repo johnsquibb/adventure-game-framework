@@ -50,7 +50,7 @@ abstract class FrameworkTest extends TestCase
         $prepositions = ['at', 'into', 'from'];
         $aliases = [];
 
-        return new CommandParser($verbs, $nouns, $articles, $prepositions, $aliases);
+        return new CommandParser($verbs, $nouns, $articles, $prepositions, $aliases, []);
     }
 
     protected function createMapController(): MapController
@@ -97,7 +97,7 @@ abstract class FrameworkTest extends TestCase
             'Wooden Door',
             'A door leading to the east',
             'east',
-            'test-room-2'
+            'east', 'test-room-2'
         );
         $location1 = new Location(
             'test-room-1',
@@ -112,7 +112,7 @@ abstract class FrameworkTest extends TestCase
             '',
             '',
             'west',
-            'test-room-1'
+            'west', 'test-room-1'
         );
         $location2 = new Location(
             'test-room-2',

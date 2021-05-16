@@ -4,6 +4,9 @@ namespace AdventureGame\Platform;
 
 use AdventureGame\Client\ClientControllerInterface;
 use AdventureGame\Command\Exception\InvalidCommandException;
+use AdventureGame\Command\Exception\InvalidNounException;
+use AdventureGame\Command\Exception\InvalidTokenException;
+use AdventureGame\Command\Exception\InvalidVerbException;
 use AdventureGame\Game\Exception\InvalidExitException;
 
 class PlatformController
@@ -32,9 +35,9 @@ class PlatformController
                 return $this->noCommandProcessedMessage();
             }
             return $this->platformRegistry->outputController->getLinesAndClear();
-        } catch (InvalidCommandException $e) {
+        } catch (InvalidCommandException | InvalidTokenException) {
             return $this->invalidCommandMessage();
-        } catch (InvalidExitException $e) {
+        } catch (InvalidExitException) {
             return $this->invalidExitMessage();
         }
     }

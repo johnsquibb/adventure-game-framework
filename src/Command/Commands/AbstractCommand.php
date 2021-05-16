@@ -2,12 +2,16 @@
 
 namespace AdventureGame\Command\Commands;
 
+use AdventureGame\Entity\EntityInterface;
+use AdventureGame\Entity\LockableInterface;
+use AdventureGame\Game\Exception\ExitIsLockedException;
 use AdventureGame\Game\Exception\InvalidExitException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
 use AdventureGame\IO\OutputController;
 use AdventureGame\Item\ContainerInterface;
 use AdventureGame\Item\ContainerItem;
+use AdventureGame\Item\ContainerItemInterface;
 use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Location;
 use AdventureGame\Location\Portal;
@@ -93,7 +97,7 @@ abstract class AbstractCommand
      */
     protected function describeLocationItems(Location $location): void
     {
-        $items = $location->items->getItems();
+        $items = $location->getContainer()->getItems();
         if (count($items) === 0) {
             return;
         }
@@ -150,8 +154,20 @@ abstract class AbstractCommand
      */
     protected function movePlayer(GameController $gameController, string $direction): void
     {
-        $gameController->mapController->movePlayer($direction);
-        $this->describePlayerLocation($gameController);
+        try {
+            $gameController->mapController->movePlayer($direction);
+            $this->describePlayerLocation($gameController);
+        } catch (ExitIsLockedException $e) {
+            $portal = $gameController->mapController
+                ->getPlayerLocation()
+                ->getExitInDirection($direction);
+
+            $this->outputController->addLines(
+                [
+                    "{$portal->getName()} is locked!"
+                ]
+            );
+        }
     }
 
     /**
@@ -193,7 +209,7 @@ abstract class AbstractCommand
             ]
         );
 
-        foreach ($location->exits as $exit) {
+        foreach ($location->getExits() as $exit) {
             $this->listExit($exit);
         }
     }
@@ -222,5 +238,31 @@ abstract class AbstractCommand
     ): void {
         $gameController->playerController->removeItemFromPlayerInventory($item);
         $this->outputController->addLine("Removed {$item->getName()} from inventory");
+    }
+
+    protected function unlockEntityWithKey(EntityInterface $entity, ItemInterface $key): void
+    {
+        if (is_a($entity, LockableInterface::class)) {
+            $entity->setLocked(false);
+
+            $this->outputController->addLines(
+                [
+                    "Unlocked {$entity->getName()} with {$key->getName()}.",
+                ]
+            );
+        }
+    }
+
+    protected function lockEntityWithKey(EntityInterface $entity, ItemInterface $key): void
+    {
+        if (is_a($entity, LockableInterface::class)) {
+            $entity->setLocked(true);
+
+            $this->outputController->addLines(
+                [
+                    "Locked {$entity->getName()} with {$key->getName()}.",
+                ]
+            );
+        }
     }
 }

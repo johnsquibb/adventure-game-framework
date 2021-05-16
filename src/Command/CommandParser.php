@@ -10,7 +10,24 @@ class CommandParser
         private array $articles,
         private array $prepositions,
         private array $aliases,
+        private array $substitutions,
     ) {
+    }
+
+    /**
+     * Apply substitutions for first literal match against input.
+     * @param string $input
+     * @return string
+     */
+    public function applySubstitutions(string $input): string
+    {
+        foreach ($this->substitutions as $match => $substitution) {
+            if ($input === $match) {
+                return $substitution;
+            }
+        }
+
+        return $input;
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace AdventureGame\Test\Command;
 
 use AdventureGame\Command\CommandParser;
-use AdventureGame\Command\Exception\InvalidCommandException;
 use PHPUnit\Framework\TestCase;
 
 class CommandParserTest extends TestCase
@@ -22,8 +21,13 @@ class CommandParserTest extends TestCase
             'an' => 'a',
             'in' => 'into',
         ];
+        $substitutions = [
+            'n' => 'go north',
+        ];
 
-        return new CommandParser($verbs, $nouns, $articles, $prepositions, $aliases);
+        return new CommandParser(
+            $verbs, $nouns, $articles, $prepositions, $aliases, $substitutions
+        );
     }
 
     public function testParseCommand()
@@ -127,5 +131,15 @@ class CommandParserTest extends TestCase
 
         $isValid = $commandParser->validateTokens($tokens);
         $this->assertTrue($isValid);
+    }
+
+    public function testApplySubstitutions()
+    {
+        $commandParser = $this->createCommandParser();
+
+        $expected = 'go north';
+        $input = 'n';
+        $command = $commandParser->applySubstitutions($input);
+        $this->assertEquals($expected, $command);
     }
 }

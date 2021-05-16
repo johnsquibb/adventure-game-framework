@@ -2,6 +2,7 @@
 
 namespace AdventureGame\Game;
 
+use AdventureGame\Game\Exception\ExitIsLockedException;
 use AdventureGame\Game\Exception\InvalidExitException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Item\ItemInterface;
@@ -27,7 +28,7 @@ class MapController
     public function dropItem(ItemInterface $item): void
     {
         $location = $this->getPlayerLocation();
-        $location->items->addItem($item);
+        $location->getContainer()->addItem($item);
     }
 
     /**
@@ -51,12 +52,12 @@ class MapController
      */
     public function getItemCount(): int
     {
-        return $this->getPlayerLocation()->items->countItems();
+        return $this->getPlayerLocation()->getContainer()->countItems();
     }
 
     /**
      * @param string $direction The direction in which to move the player.
-     * @throws InvalidExitException|PlayerLocationNotSetException
+     * @throws InvalidExitException|PlayerLocationNotSetException|ExitIsLockedException
      */
     public function movePlayer(string $direction): void
     {
@@ -65,6 +66,10 @@ class MapController
         $portal = $location->getExitInDirection($direction);
         if ($portal === null) {
             throw new InvalidExitException('Invalid exit');
+        }
+
+        if ($portal->getLocked() === true) {
+            throw new ExitIsLockedException();
         }
 
         $this->setPlayerLocationById($portal->destinationLocationId);
@@ -93,9 +98,9 @@ class MapController
     {
         $location = $this->getPlayerLocation();
 
-        $item = $location->items->getItemById($itemId);
+        $item = $location->getContainer()->getItemById($itemId);
         if ($item !== null) {
-            $location->items->removeItemById($item->getId());
+            $location->getContainer()->removeItemById($item->getId());
         }
 
         return $item;
@@ -111,10 +116,10 @@ class MapController
     {
         $location = $this->getPlayerLocation();
 
-        $items = $location->items->getItemsByTag($tag);
+        $items = $location->getContainer()->getItemsByTag($tag);
 
         foreach ($items as $item) {
-            $location->items->removeItemById($item->getId());
+            $location->getContainer()->removeItemById($item->getId());
         }
 
         return $items;
