@@ -84,6 +84,7 @@ class PlatformFactory
             'lock',
             'unlock',
         ];
+
         $nouns = [
             'sword',
             'chest',
@@ -95,11 +96,15 @@ class PlatformFactory
             'south',
             'west',
         ];
+
         $articles = ['the'];
+
         $prepositions = ['at', 'inside', 'into', 'from', 'with'];
+
         $aliases = [
             'move' => 'go',
         ];
+
         $substitutions = [
             'n' => 'go north',
             'e' => 'go east',
@@ -167,20 +172,20 @@ class PlatformFactory
         // TODO load from configuration file.
 
         $chest = new ContainerItem(
-            'treasure-chest-1',
+            'treasureChest',
             'Treasure Chest',
             'A chest containing valuable treasure.',
             'chest',
         );
 
         $swordOfPoking = new Item(
-            'sword-of-poking',
+            'swordOfPoking',
             'The Sword of Poking',
             'An average sword, made for poking aggressive beasts.',
             'sword',
         );
         $potionOfHealing1 = new Item(
-            'potion-of-healing-1',
+            'potionOfHealing1',
             'Potion of Healing I',
             'A potion that restores life.',
             'potion',
@@ -197,46 +202,93 @@ class PlatformFactory
         $chest->addItem($keyToDoorWoodenDoor);
 
         $doorFromSpawnToEastRoom = new Portal(
-            'door-from-spawn-to-east-room',
+            'doorFromSpawnToEastRoom',
             'Wooden Door',
             'A heavy wooden door leading back to spawn.',
             'door',
-            'east', 'room-east-of-spawn'
+            'east', 'roomEastOfSpawn'
         );
 
         $doorFromSpawnToEastRoom->setMutable(true);
         $doorFromSpawnToEastRoom->setLocked(true);
         $doorFromSpawnToEastRoom->setKeyEntityId($keyToDoorWoodenDoor->getId());
 
-        $spawnRoom = new Location(
-            'spawn',
-            'Player Spawn',
-            'This is the starting room.',
-            new Container(),
-            [$doorFromSpawnToEastRoom],
-        );
-        $spawnRoom->getContainer()->addItem($chest);
-
         $doorFromEastRoomToSpawn = new Portal(
-            'door-from-east-room-to-spawn',
+            'doorFromEastRoomToSpawn',
             'Wooden Door',
             'A heavy wooden door leading to the east.',
             'door',
             'west', 'spawn'
         );
+
+        $doorFromEastRoomToSpawn->setKeyEntityId($keyToDoorWoodenDoor->getId());
+
         $roomEastOfSpawn = new Location(
-            'room-east-of-spawn',
+            'roomEastOfSpawn',
             'Room East of Spawn',
             'There is nothing special about this room. It is just an ordinary room with walls.',
             new Container(),
             [$doorFromEastRoomToSpawn],
         );
 
-        $locations = [$spawnRoom, $roomEastOfSpawn];
+        $entryFromSpawnToHallway = new Portal(
+            'entryFromSpawnToHallway',
+            'Hallway Entrance',
+            'An entrance to a hallway leading south.',
+            'hallway',
+            'south', 'hallwayLeadingSouthFromSpawn'
+        );
+
+        $entryFromHallwayToSpawn = new Portal(
+            'entryFromSpawnToHallway',
+            'Hallway Entrance',
+            'An entrance to a hallway leading north.',
+            'hallway',
+            'north', 'spawn'
+        );
+
+        $doorFromHallwayToCourtyard = new Portal(
+            'doorFromHallwayToCourtyard',
+            'Front door',
+            'A door with a window, through which you can see an exterior courtyard.',
+            'door',
+            'south', 'courtyard'
+        );
+
+        $keyToCellarDoor = new Item(
+            'keyToCellarDoor',
+            'Key to Cellar',
+            'A small that unlocks the door to the cellar.',
+            'key'
+        );
+
+        $hallwayLeadingSouth = new Location(
+            'hallwayLeadingSouthFromSpawn',
+            'Hallway Leading South',
+            'A hallway that leads south from spawn with a single exit to exterior courtyard',
+            new Container(),
+            [$doorFromHallwayToCourtyard, $entryFromHallwayToSpawn]
+        );
+        $hallwayLeadingSouth->getContainer()->addItem($keyToCellarDoor);
+
+        $spawnRoom = new Location(
+            'spawn',
+            'Player Spawn',
+            'This is the starting room.',
+            new Container(),
+            [$doorFromSpawnToEastRoom, $entryFromSpawnToHallway],
+        );
+        $spawnRoom->getContainer()->addItem($chest);
 
         $object = $this->getRegisteredObject(MapController::class);
         if ($object === null) {
-            $object = new MapController($locations);
+            $object = new MapController(
+                [
+                    $spawnRoom,
+                    $roomEastOfSpawn,
+                    $hallwayLeadingSouth
+                ]
+            );
 
             // Spawn player in room 1
             $object->setPlayerLocationById($spawnRoom->getId());

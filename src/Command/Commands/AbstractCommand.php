@@ -91,6 +91,16 @@ abstract class AbstractCommand
     }
 
     /**
+     * List items at the current player location.
+     * @param GameController $gameController
+     * @throws PlayerLocationNotSetException
+     */
+    protected function listPlayerLocationItems(GameController $gameController): void
+    {
+        $this->listLocationItems($gameController->mapController->getPlayerLocation());
+    }
+
+    /**
      * Describe items at Location.
      * @param Location $location
      * @return void
@@ -180,6 +190,7 @@ abstract class AbstractCommand
         $location = $gameController->mapController->getPlayerLocation();
         $this->describeLocation($location);
         $this->listLocationExits($location);
+        $this->listLocationItems($location);
     }
 
     /**
@@ -211,6 +222,23 @@ abstract class AbstractCommand
 
         foreach ($location->getExits() as $exit) {
             $this->listExit($exit);
+        }
+    }
+
+    /**
+     * List items for a location.
+     * @param Location $location
+     */
+    protected function listLocationItems(Location $location): void
+    {
+        $this->outputController->addLines(
+            [
+                'You see the following items: ',
+            ]
+        );
+
+        foreach ($location->getContainer()->getItems() as $item) {
+            $this->listItem($item);
         }
     }
 

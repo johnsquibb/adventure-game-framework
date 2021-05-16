@@ -4,9 +4,7 @@ namespace AdventureGame\Platform;
 
 use AdventureGame\Client\ClientControllerInterface;
 use AdventureGame\Command\Exception\InvalidCommandException;
-use AdventureGame\Command\Exception\InvalidNounException;
 use AdventureGame\Command\Exception\InvalidTokenException;
-use AdventureGame\Command\Exception\InvalidVerbException;
 use AdventureGame\Game\Exception\InvalidExitException;
 
 class PlatformController
@@ -18,7 +16,11 @@ class PlatformController
 
     public function run(ClientControllerInterface $clientController): void
     {
+        // On game load, show the current location.
+        $clientController->setOutput($this->processInput('look'));
+
         for (; ;) {
+
             $input = $clientController->getInput();
 
             $lines = $this->processInput($input);
@@ -31,6 +33,7 @@ class PlatformController
     {
         try {
             $result = $this->platformRegistry->inputController->processInput($input);
+
             if ($result === false) {
                 return $this->noCommandProcessedMessage();
             }
