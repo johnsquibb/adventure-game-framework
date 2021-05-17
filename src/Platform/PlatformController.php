@@ -6,37 +6,40 @@ use AdventureGame\Client\ClientControllerInterface;
 use AdventureGame\Command\Exception\InvalidCommandException;
 use AdventureGame\Command\Exception\InvalidTokenException;
 use AdventureGame\Game\Exception\InvalidExitException;
+use AdventureGame\Response\Response;
 
 class PlatformController
 {
     public function __construct(
-        public PlatformRegistry $platformRegistry,
+        private PlatformRegistry $platformRegistry
     ) {
     }
 
     public function run(ClientControllerInterface $clientController): void
     {
         // On game load, show the current location.
-        $clientController->setOutput($this->processInput('look'));
+        $response = $this->processInput('look');
+        $clientController->setResponse($response);
 
         for (; ;) {
             $input = $clientController->getInput();
-
-            $lines = $this->processInput($input);
-
-            $clientController->setOutput($lines);
+            if (!empty($input)) {
+                $response = $this->processInput($input);
+                $clientController->setResponse($response);
+            }
         }
     }
 
-    private function processInput(string $input): array
+    private function processInput(string $input): Response
     {
         try {
-            $result = $this->platformRegistry->inputController->processInput($input);
+            $response = $this->platformRegistry->inputController->processInput($input);
 
-            if ($result === false) {
+            if ($response === null) {
                 return $this->noCommandProcessedMessage();
             }
-            return $this->platformRegistry->outputController->getLinesAndClear();
+
+            return $response;
         } catch (InvalidCommandException | InvalidTokenException) {
             return $this->invalidCommandMessage();
         } catch (InvalidExitException) {
@@ -44,24 +47,27 @@ class PlatformController
         }
     }
 
-    private function noCommandProcessedMessage(): array
+    private function noCommandProcessedMessage(): Response
     {
-        return [
-            "Can't do that.",
-        ];
+        $response = new Response();
+
+        $response->addMessage("You can't do that.");
+        return $response;
     }
 
-    private function invalidCommandMessage(): array
+    private function invalidCommandMessage(): Response
     {
-        return [
-            "Can't do that here.",
-        ];
+        $response = new Response();
+
+        $response->addMessage("That can't be done here.");
+        return $response;
     }
 
-    private function invalidExitMessage(): array
+    private function invalidExitMessage(): Response
     {
-        return [
-            "Can't go that way.",
-        ];
+        $response = new Response();
+
+        $response->addMessage("Unable to go that way.");
+        return $response;
     }
 }

@@ -7,27 +7,62 @@ use PHPUnit\Framework\TestCase;
 
 class CommandParserTest extends TestCase
 {
-    private function createCommandParser()
+    public function testAliasTokens()
     {
-        $verbs = ['put'];
-        $nouns = ['carrot', 'pot'];
-        $articles = ['the', 'a'];
-        $prepositions = ['into'];
-        $aliases = [
-            'place' => 'put',
-            'that' => 'the',
-            'vegetable' => 'carrot',
-            'oven' => 'pot',
-            'an' => 'a',
-            'in' => 'into',
-        ];
-        $substitutions = [
-            'n' => 'go north',
-        ];
+        $commandParser = $this->createCommandParser();
 
-        return new CommandParser(
-            $verbs, $nouns, $articles, $prepositions, $aliases, $substitutions
-        );
+        $expected = ['put', 'the', 'carrot', 'into', 'a', 'pot'];
+
+        $command = 'place that vegetable in an oven';
+        $tokens = $commandParser->parseCommand($command);
+        $filtered = $commandParser->replaceAliases($tokens);
+        $this->assertEquals($expected, $filtered);
+    }
+
+    public function testApplySubstitutions()
+    {
+        $commandParser = $this->createCommandParser();
+
+        $expected = 'go north';
+        $input = 'n';
+        $command = $commandParser->applySubstitutions($input);
+        $this->assertEquals($expected, $command);
+    }
+
+    public function testFilterTokens()
+    {
+        $commandParser = $this->createCommandParser();
+
+        $expected = ['put', 'carrot', 'into', 'pot'];
+
+        $command = 'put the carrot into a pot';
+        $tokens = $commandParser->parseCommand($command);
+        $filtered = $commandParser->filterTokens($tokens);
+        $this->assertEquals($expected, $filtered);
+    }
+
+    public function testNormalizeTokens()
+    {
+        $commandParser = $this->createCommandParser();
+
+        $expected = ['put', 'the', 'carrot', 'into', 'a', 'pot'];
+
+        $command = 'Put THE Carrot into A POT';
+        $tokens = $commandParser->parseCommand($command);
+        $filtered = $commandParser->normalizeTokens($tokens);
+        $this->assertEquals($expected, $filtered);
+    }
+
+    public function testNormalizeTokensOrderDoesNotMatter()
+    {
+        $commandParser = $this->createCommandParser();
+
+        $expected = ['the', 'put', 'pot', 'carrot', 'into', 'a'];
+
+        $command = 'THE put pot carrot into a';
+        $tokens = $commandParser->parseCommand($command);
+        $filtered = $commandParser->normalizeTokens($tokens);
+        $this->assertEquals($expected, $filtered);
     }
 
     public function testParseCommand()
@@ -57,62 +92,27 @@ class CommandParserTest extends TestCase
         $this->assertEquals($expected, $tokens);
     }
 
-    public function testValidateTokens()
+    private function createCommandParser()
     {
-        $commandParser = $this->createCommandParser();
+        $verbs = ['put'];
+        $nouns = ['carrot', 'pot'];
+        $articles = ['the', 'a'];
+        $prepositions = ['into'];
+        $aliases = [
+            'place' => 'put',
+            'that' => 'the',
+            'vegetable' => 'carrot',
+            'oven' => 'pot',
+            'an' => 'a',
+            'in' => 'into',
+        ];
+        $substitutions = [
+            'n' => 'go north',
+        ];
 
-        $command = 'put MUCH carrot into EVERY pot';
-        $tokens = $commandParser->parseCommand($command);
-        $isValid = $commandParser->validateTokens($tokens);
-        $this->assertFalse($isValid);
-    }
-
-    public function testNormalizeTokens()
-    {
-        $commandParser = $this->createCommandParser();
-
-        $expected = ['put', 'the', 'carrot', 'into', 'a', 'pot'];
-
-        $command = 'Put THE Carrot into A POT';
-        $tokens = $commandParser->parseCommand($command);
-        $filtered = $commandParser->normalizeTokens($tokens);
-        $this->assertEquals($expected, $filtered);
-    }
-
-    public function testNormalizeTokensOrderDoesNotMatter()
-    {
-        $commandParser = $this->createCommandParser();
-
-        $expected = ['the', 'put', 'pot', 'carrot', 'into', 'a'];
-
-        $command = 'THE put pot carrot into a';
-        $tokens = $commandParser->parseCommand($command);
-        $filtered = $commandParser->normalizeTokens($tokens);
-        $this->assertEquals($expected, $filtered);
-    }
-
-    public function testAliasTokens()
-    {
-        $commandParser = $this->createCommandParser();
-
-        $expected = ['put', 'the', 'carrot', 'into', 'a', 'pot'];
-
-        $command = 'place that vegetable in an oven';
-        $tokens = $commandParser->parseCommand($command);
-        $filtered = $commandParser->replaceAliases($tokens);
-        $this->assertEquals($expected, $filtered);
-    }
-
-    public function testFilterTokens()
-    {
-        $commandParser = $this->createCommandParser();
-
-        $expected = ['put', 'carrot', 'into', 'pot'];
-
-        $command = 'put the carrot into a pot';
-        $tokens = $commandParser->parseCommand($command);
-        $filtered = $commandParser->filterTokens($tokens);
-        $this->assertEquals($expected, $filtered);
+        return new CommandParser(
+            $verbs, $nouns, $articles, $prepositions, $aliases, $substitutions
+        );
     }
 
     public function testTokenParsingOrderOfOperations()
@@ -133,13 +133,13 @@ class CommandParserTest extends TestCase
         $this->assertTrue($isValid);
     }
 
-    public function testApplySubstitutions()
+    public function testValidateTokens()
     {
         $commandParser = $this->createCommandParser();
 
-        $expected = 'go north';
-        $input = 'n';
-        $command = $commandParser->applySubstitutions($input);
-        $this->assertEquals($expected, $command);
+        $command = 'put MUCH carrot into EVERY pot';
+        $tokens = $commandParser->parseCommand($command);
+        $isValid = $commandParser->validateTokens($tokens);
+        $this->assertFalse($isValid);
     }
 }

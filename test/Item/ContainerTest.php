@@ -52,6 +52,20 @@ class ContainerTest extends TestCase
         $this->assertEquals($item, $container->getItemById($item->getId()));
     }
 
+    public function testGetItems()
+    {
+        $container = new Container();
+        $item = new Item(
+            'test-item',
+            'Test Item',
+            'Test Item Description',
+            'test'
+        );
+
+        $container->addItem($item);
+        $this->assertEquals([$item], $container->getItems());
+    }
+
     public function testGetItemsByTag()
     {
         $container = new Container();
@@ -99,14 +113,20 @@ class ContainerTest extends TestCase
         );
         $container->addItem($item2);
 
-        $this->assertEquals([$item, $item2], $container->getItemsByTypeAndTag(
-            ItemInterface::class,
-            $item->getTag())
+        $this->assertEquals(
+            [$item, $item2],
+            $container->getItemsByTypeAndTag(
+                ItemInterface::class,
+                $item->getTag()
+            )
         );
 
-        $this->assertEquals([$item2], $container->getItemsByTypeAndTag(
-            ContainerInterface::class,
-            $item->getTag())
+        $this->assertEquals(
+            [$item2],
+            $container->getItemsByTypeAndTag(
+                ContainerInterface::class,
+                $item->getTag()
+            )
         );
     }
 
@@ -125,19 +145,5 @@ class ContainerTest extends TestCase
 
         $container->removeItemById($item->getId());
         $this->assertNull($container->getItemById($item->getId()));
-    }
-
-    public function testGetItems()
-    {
-        $container = new Container();
-        $item = new Item(
-            'test-item',
-            'Test Item',
-            'Test Item Description',
-            'test'
-        );
-
-        $container->addItem($item);
-        $this->assertEquals([$item], $container->getItems());
     }
 }

@@ -7,6 +7,7 @@ use AdventureGame\Command\Exception\InvalidPrepositionException;
 use AdventureGame\Command\Exception\InvalidTokensLengthException;
 use AdventureGame\Command\Exception\InvalidVerbException;
 use AdventureGame\Game\GameController;
+use AdventureGame\Response\Response;
 
 /**
  * Class CommandController creates and processes commands from tokens.
@@ -23,13 +24,13 @@ class CommandController
     /**
      * Create and process a command from array of tokens.
      * @param array $tokens
-     * @return bool true when a command was successfully processed, false otherwise.
+     * @return Response|null
      * @throws InvalidNounException
      * @throws InvalidPrepositionException
      * @throws InvalidTokensLengthException
      * @throws InvalidVerbException
      */
-    public function createAndProcessCommandFromTokens(array $tokens): bool
+    public function createAndProcessCommandFromTokens(array $tokens): ?Response
     {
         $command = $this->createCommandFromTokens($tokens);
         return $this->processCommand($command);
@@ -52,9 +53,9 @@ class CommandController
     /**
      * Process a command.
      * @param CommandInterface $command
-     * @return bool true when a command was successfully processed, false otherwise.
+     * @return Response|null
      */
-    private function processCommand(CommandInterface $command): bool
+    private function processCommand(CommandInterface $command): ?Response
     {
         return $command->process($this->gameController);
     }

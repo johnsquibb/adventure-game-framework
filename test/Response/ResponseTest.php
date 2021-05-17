@@ -14,10 +14,10 @@ class ResponseTest extends TestCase
         $description = new Description();
 
         $response->addContainerDescription($description);
-        $this->assertEquals($response->containers, [$description]);
+        $this->assertEquals($response->getContainers(), [$description]);
 
         $response->addContainerDescription($description);
-        $this->assertEquals($response->containers, [$description, $description]);
+        $this->assertEquals($response->getContainers(), [$description, $description]);
     }
 
     public function testAddExitDescription()
@@ -26,10 +26,10 @@ class ResponseTest extends TestCase
         $description = new Description();
 
         $response->addExitDescription($description);
-        $this->assertEquals($response->exits, [$description]);
+        $this->assertEquals($response->getExits(), [$description]);
 
         $response->addExitDescription($description);
-        $this->assertEquals($response->exits, [$description, $description]);
+        $this->assertEquals($response->getExits(), [$description, $description]);
     }
 
     public function testAddItemDescription()
@@ -38,9 +38,9 @@ class ResponseTest extends TestCase
         $description = new Description();
 
         $response->addItemDescription($description);
-        $this->assertEquals($response->items, [$description]);
+        $this->assertEquals($response->getItems(), [$description]);
 
         $response->addItemDescription($description);
-        $this->assertEquals($response->items, [$description, $description]);
+        $this->assertEquals($response->getItems(), [$description, $description]);
     }
 }

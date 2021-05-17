@@ -3,6 +3,7 @@
 namespace AdventureGame\Command;
 
 use AdventureGame\Game\GameController;
+use AdventureGame\Response\Response;
 
 /**
  * Interface CommandInterface defines methods for Commands.
@@ -10,5 +11,5 @@ use AdventureGame\Game\GameController;
  */
 interface CommandInterface
 {
-    public function process(GameController $gameController): bool;
+    public function process(GameController $gameController): ?Response;
 }

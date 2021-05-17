@@ -9,14 +9,6 @@ use PHPUnit\Framework\TestCase;
 
 class CharacterTest extends TestCase
 {
-    public function testCreatePlayer()
-    {
-        $name = 'test-character';
-        $inventory = new Container();
-        $character = new Character($name, $inventory);
-        $this->assertEquals($name, $character->getName());
-    }
-
     public function testAddItemToPlayerInventory()
     {
         $name = 'test-character';
@@ -32,6 +24,14 @@ class CharacterTest extends TestCase
         $character->inventory->addItem($item);
 
         $this->assertEquals($item, $character->inventory->getItemById($item->getId()));
+    }
+
+    public function testCreatePlayer()
+    {
+        $name = 'test-character';
+        $inventory = new Container();
+        $character = new Character($name, $inventory);
+        $this->assertEquals($name, $character->getName());
     }
 
     public function testGetItemFromPlayerInventory()

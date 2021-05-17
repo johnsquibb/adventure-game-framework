@@ -4,37 +4,10 @@ namespace AdventureGame\Test\Item;
 
 use AdventureGame\Item\Container;
 use AdventureGame\Item\ContainerItem;
-use AdventureGame\Item\Item;
 use PHPUnit\Framework\TestCase;
 
 class ContainerItemTest extends TestCase
 {
-    public function testCreateContainerItem()
-    {
-        $id = 'test-item';
-        $name = 'Test Item';
-        $description = 'Test Item Description';
-        $tag = 'test';
-        $item = new ContainerItem($id, $name, $description, $tag);
-
-        $this->assertEquals($id, $item->getId());
-        $this->assertEquals($name, $item->getName());
-        $this->assertEquals($description, $item->getDescription());
-        $this->assertEquals($tag, $item->getTag());
-    }
-
-    public function testContainerItemAccessible()
-    {
-        $item = new ContainerItem('','','','');
-
-        $this->assertFalse($item->getAccessible());
-        $item->setAccessible(true);
-        $this->assertTrue($item->getAccessible());
-
-        $item->setAccessible(false);
-        $this->assertFalse($item->getAccessible());
-    }
-
     public function testAddContainerItemToContainer()
     {
         $container = new Container();
@@ -65,6 +38,60 @@ class ContainerItemTest extends TestCase
         );
         $container->addItem($item);
         $this->assertEquals($item, $container->getItemById($item->getId()));
+    }
+
+    public function testContainerItemAccessible()
+    {
+        $item = new ContainerItem('', '', '', '');
+
+        $this->assertFalse($item->getAccessible());
+        $item->setAccessible(true);
+        $this->assertTrue($item->getAccessible());
+
+        $item->setAccessible(false);
+        $this->assertFalse($item->getAccessible());
+    }
+
+    public function testContainerItemLockable()
+    {
+        $container = new ContainerItem(
+            'test-containerItem',
+            'Test ContainerItem',
+            'Test ContainerItem Description',
+            'test-container'
+        );
+
+        $this->assertFalse($container->getMutable());
+        $this->assertFalse($container->getLocked());
+
+        // Immutable, can't change locked state.
+        $container->setLocked(true);
+        $this->assertFalse($container->getLocked());
+
+        // Mutable, now can changed locked state.
+        $container->setMutable(true);
+        $container->setLocked(true);
+        $this->assertTrue($container->getLocked());
+
+        $container->setLocked(false);
+        $this->assertFalse($container->getLocked());
+
+        $container->setKeyEntityId('theKey');
+        $this->assertEquals('theKey', $container->getKeyEntityId());
+    }
+
+    public function testCreateContainerItem()
+    {
+        $id = 'test-item';
+        $name = 'Test Item';
+        $description = 'Test Item Description';
+        $tag = 'test';
+        $item = new ContainerItem($id, $name, $description, $tag);
+
+        $this->assertEquals($id, $item->getId());
+        $this->assertEquals($name, $item->getName());
+        $this->assertEquals($description, $item->getDescription());
+        $this->assertEquals($tag, $item->getTag());
     }
 
     public function testGetContainerItemFromContainer()
@@ -199,33 +226,5 @@ class ContainerItemTest extends TestCase
 
         $container->removeItemById($item->getId());
         $this->assertNull($container->getItemById($item->getId()));
-    }
-
-    public function testContainerItemLockable()
-    {
-        $container = new ContainerItem(
-            'test-containerItem',
-            'Test ContainerItem',
-            'Test ContainerItem Description',
-            'test-container'
-        );
-
-        $this->assertFalse($container->getMutable());
-        $this->assertFalse($container->getLocked());
-
-        // Immutable, can't change locked state.
-        $container->setLocked(true);
-        $this->assertFalse($container->getLocked());
-
-        // Mutable, now can changed locked state.
-        $container->setMutable(true);
-        $container->setLocked(true);
-        $this->assertTrue($container->getLocked());
-
-        $container->setLocked(false);
-        $this->assertFalse($container->getLocked());
-
-        $container->setKeyEntityId('theKey');
-        $this->assertEquals('theKey', $container->getKeyEntityId());
     }
 }

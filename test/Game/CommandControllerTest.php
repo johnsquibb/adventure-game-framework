@@ -8,14 +8,6 @@ use AdventureGame\Test\FrameworkTest;
 
 class CommandControllerTest extends FrameworkTest
 {
-    public function testCreateAndProcessCommandFromInvalidTokensLength()
-    {
-        $commandController = $this->createCommandController();
-
-        $this->expectException(InvalidTokensLengthException::class);
-        $commandController->createAndProcessCommandFromTokens([]);
-    }
-
     public function testCreateAndProcessCommandFromInvalidTokens()
     {
         $commandController = $this->createCommandController();
@@ -24,14 +16,22 @@ class CommandControllerTest extends FrameworkTest
         $commandController->createAndProcessCommandFromTokens(['beep', 'beep', '...']);
     }
 
+    public function testCreateAndProcessCommandFromInvalidTokensLength()
+    {
+        $commandController = $this->createCommandController();
+
+        $this->expectException(InvalidTokensLengthException::class);
+        $commandController->createAndProcessCommandFromTokens([]);
+    }
+
     public function testCreateAndProcessCommandFromTokens()
     {
         $commandController = $this->createCommandController();
 
-        $result = $commandController->createAndProcessCommandFromTokens(
+        $response = $commandController->createAndProcessCommandFromTokens(
             ['take', 'sword', 'from', 'chest']
         );
 
-        $this->assertTrue($result);
+        $this->assertNotNull($response);
     }
 }

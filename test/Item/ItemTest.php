@@ -23,7 +23,7 @@ class ItemTest extends TestCase
 
     public function testItemAccessible()
     {
-        $item = new Item('','','','');
+        $item = new Item('', '', '', '');
 
         $this->assertFalse($item->getAccessible());
         $item->setAccessible(true);

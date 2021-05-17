@@ -9,6 +9,7 @@ use AdventureGame\Command\Exception\InvalidNounException;
 use AdventureGame\Command\Exception\InvalidPrepositionException;
 use AdventureGame\Command\Exception\InvalidTokensLengthException;
 use AdventureGame\Command\Exception\InvalidVerbException;
+use AdventureGame\Response\Response;
 
 /**
  * Class InputController handles input text.
@@ -27,14 +28,14 @@ class InputController extends InputOutputController implements InputOutputContro
      * Successful processing will be relayed through downstream components, whereas exceptions will
      * throw back to the caller.
      * @param string $input
-     * @return bool returns true if a command was successfully processed, false otherwise.
+     * @return Response|null
      * @throws InvalidCommandException
      * @throws InvalidNounException
      * @throws InvalidPrepositionException
      * @throws InvalidTokensLengthException
      * @throws InvalidVerbException
      */
-    public function processInput(string $input): bool
+    public function processInput(string $input): ?Response
     {
         $tokens = $this->convertInputToTokens($input);
         return $this->commandController->createAndProcessCommandFromTokens($tokens);

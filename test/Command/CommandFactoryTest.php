@@ -16,6 +16,24 @@ use AdventureGame\Test\FrameworkTest;
 
 class CommandFactoryTest extends FrameworkTest
 {
+    public function testCreateFromTokensUnsupportedTokensLength()
+    {
+        $commandParser = $this->createCommandParser();
+        $outputController = new OutputController();
+        $commandFactory = new CommandFactory($commandParser, $outputController);
+        $this->expectException(InvalidTokensLengthException::class);
+        $commandFactory->createFromTokens([]);
+    }
+
+    public function testCreateVerbCommandFromInvalidVerbToken()
+    {
+        $commandParser = $this->createCommandParser();
+        $outputController = new OutputController();
+        $commandFactory = new CommandFactory($commandParser, $outputController);
+        $this->expectException(InvalidVerbException::class);
+        $commandFactory->createFromTokens(['into']);
+    }
+
     public function testCreateVerbCommandFromTokens()
     {
         $commandParser = $this->createCommandParser();
@@ -26,13 +44,22 @@ class CommandFactoryTest extends FrameworkTest
         $this->assertInstanceOf(VerbCommand::class, $command);
     }
 
-    public function testCreateVerbCommandFromInvalidVerbToken()
+    public function testCreateVerbNounCommandFromInvalidNounToken()
+    {
+        $commandParser = $this->createCommandParser();
+        $outputController = new OutputController();
+        $commandFactory = new CommandFactory($commandParser, $outputController);
+        $this->expectException(InvalidNounException::class);
+        $commandFactory->createFromTokens(['take', 'take']);
+    }
+
+    public function testCreateVerbNounCommandFromInvalidVerbToken()
     {
         $commandParser = $this->createCommandParser();
         $outputController = new OutputController();
         $commandFactory = new CommandFactory($commandParser, $outputController);
         $this->expectException(InvalidVerbException::class);
-        $commandFactory->createFromTokens(['into']);
+        $commandFactory->createFromTokens(['sword', 'take']);
     }
 
     public function testCreateVerbNounCommandFromTokens()
@@ -45,59 +72,40 @@ class CommandFactoryTest extends FrameworkTest
         $this->assertInstanceOf(VerbNounCommand::class, $command);
     }
 
-    public function testCreateVerbNounCommandFromInvalidVerbToken()
-    {
-        $commandParser = $this->createCommandParser();
-        $outputController = new OutputController();
-        $commandFactory = new CommandFactory($commandParser, $outputController);
-        $this->expectException(InvalidVerbException::class);
-        $commandFactory->createFromTokens(['sword', 'take']);
-    }
-
-    public function testCreateVerbNounCommandFromInvalidNounToken()
+    public function testCreateVerbNounPrepositionNounCommandFromInvalidNoun1Token()
     {
         $commandParser = $this->createCommandParser();
         $outputController = new OutputController();
         $commandFactory = new CommandFactory($commandParser, $outputController);
         $this->expectException(InvalidNounException::class);
-        $commandFactory->createFromTokens(['take', 'take']);
+        $commandFactory->createFromTokens(['put', 'put', 'into', 'sheath']);
     }
 
-    public function testCreateVerbPrepositionNounCommandFromTokens()
+    public function testCreateVerbNounPrepositionNounCommandFromInvalidNoun2Token()
     {
         $commandParser = $this->createCommandParser();
         $outputController = new OutputController();
         $commandFactory = new CommandFactory($commandParser, $outputController);
-        $command = $commandFactory->createFromTokens(['look', 'at', 'sword']);
-
-        $this->assertInstanceOf(VerbPrepositionNounCommand::class, $command);
+        $this->expectException(InvalidNounException::class);
+        $commandFactory->createFromTokens(['put', 'sword', 'into', 'put']);
     }
 
-    public function testCreateVerbPrepositionNounCommandFromInvalidVerbToken()
-    {
-        $commandParser = $this->createCommandParser();
-        $outputController = new OutputController();
-        $commandFactory = new CommandFactory($commandParser, $outputController);
-        $this->expectException(InvalidVerbException::class);
-        $commandFactory->createFromTokens(['sword', 'at', 'sword']);
-    }
-
-    public function testCreateVerbPrepositionNounCommandFromInvalidPrepositionToken()
+    public function testCreateVerbNounPrepositionNounCommandFromInvalidPrepositionToken()
     {
         $commandParser = $this->createCommandParser();
         $outputController = new OutputController();
         $commandFactory = new CommandFactory($commandParser, $outputController);
         $this->expectException(InvalidPrepositionException::class);
-        $commandFactory->createFromTokens(['look', 'sword', 'sword']);
+        $commandFactory->createFromTokens(['put', 'sword', 'put', 'sheath']);
     }
 
-    public function testCreateVerbPrepositionNounCommandFromInvalidNounToken()
+    public function testCreateVerbNounPrepositionNounCommandFromInvalidVerbToken()
     {
         $commandParser = $this->createCommandParser();
         $outputController = new OutputController();
         $commandFactory = new CommandFactory($commandParser, $outputController);
-        $this->expectException(InvalidNounException::class);
-        $commandFactory->createFromTokens(['look', 'at', 'look']);
+        $this->expectException(InvalidVerbException::class);
+        $commandFactory->createFromTokens(['sword', 'sword', 'into', 'sheath']);
     }
 
     public function testCreateVerbNounPrepositionNounCommandFromTokens()
@@ -110,48 +118,40 @@ class CommandFactoryTest extends FrameworkTest
         $this->assertInstanceOf(VerbNounPrepositionNounCommand::class, $command);
     }
 
-    public function testCreateVerbNounPrepositionNounCommandFromInvalidVerbToken()
-    {
-        $commandParser = $this->createCommandParser();
-        $outputController = new OutputController();
-        $commandFactory = new CommandFactory($commandParser, $outputController);
-        $this->expectException(InvalidVerbException::class);
-        $commandFactory->createFromTokens(['sword', 'sword', 'into', 'sheath']);
-    }
-
-    public function testCreateVerbNounPrepositionNounCommandFromInvalidNoun1Token()
+    public function testCreateVerbPrepositionNounCommandFromInvalidNounToken()
     {
         $commandParser = $this->createCommandParser();
         $outputController = new OutputController();
         $commandFactory = new CommandFactory($commandParser, $outputController);
         $this->expectException(InvalidNounException::class);
-        $commandFactory->createFromTokens(['put', 'put', 'into', 'sheath']);
+        $commandFactory->createFromTokens(['look', 'at', 'look']);
     }
 
-    public function testCreateVerbNounPrepositionNounCommandFromInvalidPrepositionToken()
+    public function testCreateVerbPrepositionNounCommandFromInvalidPrepositionToken()
     {
         $commandParser = $this->createCommandParser();
         $outputController = new OutputController();
         $commandFactory = new CommandFactory($commandParser, $outputController);
         $this->expectException(InvalidPrepositionException::class);
-        $commandFactory->createFromTokens(['put', 'sword', 'put', 'sheath']);
+        $commandFactory->createFromTokens(['look', 'sword', 'sword']);
     }
 
-    public function testCreateVerbNounPrepositionNounCommandFromInvalidNoun2Token()
+    public function testCreateVerbPrepositionNounCommandFromInvalidVerbToken()
     {
         $commandParser = $this->createCommandParser();
         $outputController = new OutputController();
         $commandFactory = new CommandFactory($commandParser, $outputController);
-        $this->expectException(InvalidNounException::class);
-        $commandFactory->createFromTokens(['put', 'sword', 'into', 'put']);
+        $this->expectException(InvalidVerbException::class);
+        $commandFactory->createFromTokens(['sword', 'at', 'sword']);
     }
 
-    public function testCreateFromTokensUnsupportedTokensLength()
+    public function testCreateVerbPrepositionNounCommandFromTokens()
     {
         $commandParser = $this->createCommandParser();
         $outputController = new OutputController();
         $commandFactory = new CommandFactory($commandParser, $outputController);
-        $this->expectException(InvalidTokensLengthException::class);
-        $commandFactory->createFromTokens([]);
+        $command = $commandFactory->createFromTokens(['look', 'at', 'sword']);
+
+        $this->assertInstanceOf(VerbPrepositionNounCommand::class, $command);
     }
 }

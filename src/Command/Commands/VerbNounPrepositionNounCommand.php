@@ -5,11 +5,11 @@ namespace AdventureGame\Command\Commands;
 use AdventureGame\Command\CommandInterface;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
-use AdventureGame\IO\OutputController;
 use AdventureGame\Item\ContainerInterface;
 use AdventureGame\Item\ContainerItem;
 use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Portal;
+use AdventureGame\Response\Response;
 
 class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandInterface
 {
@@ -17,52 +17,50 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
         private string $verb,
         private string $noun1,
         private string $preposition,
-        private string $noun2,
-        OutputController $outputController,
+        private string $noun2
     ) {
-        parent::__construct($outputController);
     }
 
     /**
      * Process verb+noun+preposition+noun action.
      * @param GameController $gameController
-     * @return bool
+     * @return Response|null
      * @throws PlayerLocationNotSetException
      */
-    public function process(GameController $gameController): bool
+    public function process(GameController $gameController): ?Response
     {
-        return $this->tryContainerItemAction($gameController) || $this->tryKeyAction(
-                $gameController
-            );
+        if ($response = $this->tryContainerItemAction($gameController)) {
+            return $response;
+        }
+
+        return $this->tryKeyAction($gameController);
     }
 
     /**
      * Try an item action involving a container at the current player's location.
      * @param GameController $gameController
-     * @return bool true if a take verb was processed, false otherwise.
+     * @return Response|null
      * @throws PlayerLocationNotSetException
      */
-    private function tryContainerItemAction(GameController $gameController): bool
+    private function tryContainerItemAction(GameController $gameController): ?Response
     {
         switch ($this->verb) {
             case 'take':
-                $this->takeItemsByTagFromFirstContainerByTagAtPlayerLocation(
+                return $this->takeItemsByTagFromFirstContainerByTagAtPlayerLocation(
                     $gameController,
                     $this->noun1,
                     $this->noun2
                 );
-                return true;
             case 'drop':
             case 'put':
-                $this->dropItemsByTagIntoFirstContainerByTagAtPlayerLocation(
+                return $this->dropItemsByTagIntoFirstContainerByTagAtPlayerLocation(
                     $gameController,
                     $this->noun1,
                     $this->noun2
                 );
-                return true;
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -70,42 +68,40 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
      * @param GameController $gameController
      * @param string $itemTag
      * @param string $containerTag
+     * @return Response
      * @throws PlayerLocationNotSetException
      */
     private function takeItemsByTagFromFirstContainerByTagAtPlayerLocation(
         GameController $gameController,
         string $itemTag,
         string $containerTag,
-    ): void {
+    ): Response {
+        $response = new Response();
+
         $container = $this->getFirstContainerByTagAtPlayerLocation($gameController, $containerTag);
 
         if ($container) {
             $items = $container->getItemsByTag($itemTag);
 
             if (empty($items)) {
-                $this->outputController->addLines(
-                    [
-                        "You don't see anything like that here."
-                    ]
-                );
-                return;
+                $response->addMessage("You don't see anything like that here.");
+                return $response;
             }
 
             foreach ($items as $item) {
                 if ($item instanceof ItemInterface) {
                     if ($item->getAccessible()) {
-                        $this->addItemToPlayerInventory($gameController, $item);
                         $container->removeItemById($item->getId());
+                        $message = $this->addItemToPlayerInventory($gameController, $item);
+                        $response->addMessage($message);
                     } else {
-                        $this->outputController->addLines(
-                            [
-                                "You haven't discovered anything like that here."
-                            ]
-                        );
+                        $response->addMessage("You haven't discovered anything like that here.");
                     }
                 }
             }
         }
+
+        return $response;
     }
 
     /**
@@ -139,50 +135,55 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
      * @param GameController $gameController
      * @param string $itemTag
      * @param string $containerTag
+     * @return Response
      * @throws PlayerLocationNotSetException
      */
     private function dropItemsByTagIntoFirstContainerByTagAtPlayerLocation(
         GameController $gameController,
         string $itemTag,
         string $containerTag,
-    ): void {
+    ): Response {
+        $response = new Response();
+
+
         $container = $this->getFirstContainerByTagAtPlayerLocation($gameController, $containerTag);
 
         if ($container) {
             $items = $gameController->playerController->getItemsByTagFromPlayerInventory($itemTag);
             foreach ($items as $item) {
                 $container->addItem($item);
-                $this->removeItemFromPlayerInventory($gameController, $item);
+                $message = $this->removeItemFromPlayerInventory($gameController, $item);
+                $response->addMessage($message);
             }
         }
+
+        return $response;
     }
 
     /**
      * Try an action using a key from player inventory at current player location.
      * @param GameController $gameController
-     * @return bool true if a key action was processed, false otherwise.
+     * @return Response|null
      * @throws PlayerLocationNotSetException
      */
-    private function tryKeyAction(GameController $gameController): bool
+    private function tryKeyAction(GameController $gameController): ?Response
     {
         switch ($this->verb) {
             case 'unlock':
-                $this->unlockEntitiesByTagAtUsingKeyByTagAtPlayerLocation(
+                return $this->unlockEntitiesByTagAtUsingKeyByTagAtPlayerLocation(
                     $gameController,
                     $this->noun1,
                     $this->noun2
                 );
-                return true;
             case 'lock':
-                $this->lockEntitiesByTagAtUsingKeyByTagAtPlayerLocation(
+                return $this->lockEntitiesByTagAtUsingKeyByTagAtPlayerLocation(
                     $gameController,
                     $this->noun1,
                     $this->noun2
                 );
-                return true;
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -190,19 +191,23 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
      * @param GameController $gameController
      * @param string $entityTag
      * @param string $keyTag
+     * @return Response
      * @throws PlayerLocationNotSetException
      */
     private function unlockEntitiesByTagAtUsingKeyByTagAtPlayerLocation(
         GameController $gameController,
         string $entityTag,
         string $keyTag
-    ): void {
+    ): Response {
+        $response = new Response();
+
+
         $location = $gameController->mapController->getPlayerLocation();
 
         $keys = $gameController->playerController->getItemsByTagFromPlayerInventory($keyTag);
         if (empty($keys)) {
-            $this->outputController->addLines(["You don't have {$keyTag}."]);
-            return;
+            $response->addMessage("You don't have {$keyTag}.");
+            return $response;
         }
 
         // Use the first available key.
@@ -212,13 +217,12 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
         $portal = $location->getExitByTag($entityTag);
         if ($portal instanceof Portal) {
             if ($portal->getMutable()) {
-                $this->unlockEntityWithKey($portal, $key);
+                $message = $this->unlockEntityWithKey($portal, $key);
+                $response->addMessage($message);
             } else {
-                $this->outputController->addLines(
-                    ["You can't unlock {$portal->getName()} with {$keyTag}"]
-                );
+                $response->addMessage("You can't unlock {$portal->getName()} with {$keyTag}");
             }
-            return;
+            return $response;
         }
 
         // Try unlocking a container.
@@ -228,17 +232,20 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
         );
 
         if (empty($containers)) {
-            $this->outputController->addLines(["The is nothing to unlock with {$keyTag}."]);
-            return;
+            $response->addMessage("The is nothing to unlock with {$keyTag}.");
+            return $response;
         }
 
         foreach ($containers as $container) {
             if ($container->getMutable()) {
-                $this->unlockEntityWithKey($container, $key);
+                $message = $this->unlockEntityWithKey($container, $key);
+                $response->addMessage($message);
             } else {
-                $this->outputController->addLines(["You can't unlock {$container->getName()}"]);
+                $response->addMessage("You can't unlock {$container->getName()}");
             }
         }
+
+        return $response;
     }
 
     /**
@@ -246,19 +253,23 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
      * @param GameController $gameController
      * @param string $entityTag
      * @param string $keyTag
+     * @return Response
      * @throws PlayerLocationNotSetException
      */
     private function lockEntitiesByTagAtUsingKeyByTagAtPlayerLocation(
         GameController $gameController,
         string $entityTag,
         string $keyTag
-    ): void {
+    ): Response {
+        $response = new Response();
+
+
         $location = $gameController->mapController->getPlayerLocation();
 
         $keys = $gameController->playerController->getItemsByTagFromPlayerInventory($keyTag);
         if (empty($keys)) {
-            $this->outputController->addLines(["You don't have {$keyTag}."]);
-            return;
+            $response->addMessage("You don't have {$keyTag}.");
+            return $response;
         }
 
         // Use the first available key.
@@ -268,13 +279,12 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
         $portal = $location->getExitByTag($entityTag);
         if ($portal instanceof Portal) {
             if ($portal->getMutable()) {
-                $this->lockEntityWithKey($portal, $key);
+                $message = $this->lockEntityWithKey($portal, $key);
+                $response->addMessage($message);
             } else {
-                $this->outputController->addLines(
-                    ["You can't lock {$portal->getName()} with {$keyTag}"]
-                );
+                $response->addMessage("You can't lock {$portal->getName()} with {$keyTag}");
             }
-            return;
+            return $response;
         }
 
         // Try locking a container.
@@ -284,16 +294,19 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
         );
 
         if (empty($containers)) {
-            $this->outputController->addLines(["The is nothing to lock with {$keyTag}."]);
-            return;
+            $response->addMessage("The is nothing to lock with {$keyTag}.");
+            return $response;
         }
 
         foreach ($containers as $container) {
             if ($container->getMutable()) {
-                $this->lockEntityWithKey($container, $key);
+                $message = $this->lockEntityWithKey($container, $key);
+                $response->addMessage($message);
             } else {
-                $this->outputController->addLines(["You can't lock {$container->getName()}"]);
+                $response->addMessage("You can't lock {$container->getName()}");
             }
         }
+
+        return $response;
     }
 }

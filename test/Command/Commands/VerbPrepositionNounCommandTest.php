@@ -11,37 +11,29 @@ class VerbPrepositionNounCommandTest extends FrameworkTest
     public function testProcessLookAtItem()
     {
         $gameController = $this->createGameController();
-        $outputController = $this->createOutputController();
 
         $command = new VerbPrepositionNounCommand(
-            'look', 'at', 'test', $outputController
+            'look', 'at', 'test'
         );
-        $result = $command->process($gameController);
-        $this->assertTrue($result);
-        $this->assertCount(2, $outputController->getLinesAndClear());
+        $response = $command->process($gameController);
+        $this->assertNotNull($response);
 
         // Add another item.
         $gameController->mapController->dropItem(
             new Item('test2', 'test-item-2', 'another item', 'test')
         );
 
-        $command = new VerbPrepositionNounCommand(
-            'look', 'at', 'test', $outputController
-        );
-        $result = $command->process($gameController);
-        $this->assertTrue($result);
-        $this->assertCount(4, $outputController->getLinesAndClear());
+        $command = new VerbPrepositionNounCommand('look', 'at', 'test');
+        $response = $command->process($gameController);
+        $this->assertNotNull($response);
     }
 
     public function testProcessNoAction()
     {
         $gameController = $this->createGameController();
-        $outputController = $this->createOutputController();
 
-        $command = new VerbPrepositionNounCommand(
-            'north', 'at', 'test', $outputController
-        );
-        $result = $command->process($gameController);
-        $this->assertFalse($result);
+        $command = new VerbPrepositionNounCommand('north', 'at', 'test');
+        $response = $command->process($gameController);
+        $this->assertNull($response);
     }
 }

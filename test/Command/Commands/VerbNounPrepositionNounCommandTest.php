@@ -8,33 +8,9 @@ use AdventureGame\Test\FrameworkTest;
 
 class VerbNounPrepositionNounCommandTest extends FrameworkTest
 {
-    public function testProcessTakeItemFromContainer()
-    {
-        $gameController = $this->createGameController();
-        $outputController = $this->createOutputController();
-
-        $items = $gameController->playerController->getItemsByTagFromPlayerInventory('test');
-        $this->assertCount(0, $items);
-
-        $command = new VerbNounPrepositionNounCommand(
-            'take',
-            'test-item-in-container',
-            'from',
-            'test-container-item',
-            $outputController
-        );
-        $result = $command->process($gameController);
-        $this->assertTrue($result);
-        $items = $gameController->playerController->getItemsByTagFromPlayerInventory(
-            'test-item-in-container'
-        );
-        $this->assertCount(1, $items);
-    }
-
     public function testProcessNoAction()
     {
         $gameController = $this->createGameController();
-        $outputController = $this->createOutputController();
 
         $items = $gameController->playerController->getItemsByTagFromPlayerInventory('test');
         $this->assertCount(0, $items);
@@ -43,17 +19,36 @@ class VerbNounPrepositionNounCommandTest extends FrameworkTest
             'fly',
             'test-item-in-container',
             'from',
-            'test-container-item',
-            $outputController
+            'test-container-item'
         );
-        $result = $command->process($gameController);
-        $this->assertFalse($result);
+        $response = $command->process($gameController);
+        $this->assertNull($response);
+    }
+
+    public function testProcessTakeItemFromContainer()
+    {
+        $gameController = $this->createGameController();
+
+        $items = $gameController->playerController->getItemsByTagFromPlayerInventory('test');
+        $this->assertCount(0, $items);
+
+        $command = new VerbNounPrepositionNounCommand(
+            'take',
+            'test-item-in-container',
+            'from',
+            'test-container-item'
+        );
+        $response = $command->process($gameController);
+        $this->assertNotNull($response);
+        $items = $gameController->playerController->getItemsByTagFromPlayerInventory(
+            'test-item-in-container'
+        );
+        $this->assertCount(1, $items);
     }
 
     public function testProcessTakeItemFromContainerThenDropItemIntoContainer()
     {
         $gameController = $this->createGameController();
-        $outputController = $this->createOutputController();
 
         /** @var ContainerInterface $container */
         $container = $gameController->mapController->getPlayerLocation()->getContainer()
@@ -69,11 +64,10 @@ class VerbNounPrepositionNounCommandTest extends FrameworkTest
             'take',
             'test-item-in-container',
             'from',
-            'test-container-item',
-            $outputController
+            'test-container-item'
         );
-        $result = $command->process($gameController);
-        $this->assertTrue($result);
+        $response = $command->process($gameController);
+        $this->assertNotNull($response);
         $items = $gameController->playerController->getItemsByTagFromPlayerInventory(
             'test-item-in-container'
         );
@@ -84,11 +78,10 @@ class VerbNounPrepositionNounCommandTest extends FrameworkTest
             'drop',
             'test-item-in-container',
             'into',
-            'test-container-item',
-            $outputController
+            'test-container-item'
         );
-        $result = $command->process($gameController);
-        $this->assertTrue($result);
+        $response = $command->process($gameController);
+        $this->assertNotNull($response);
         $items = $gameController->playerController->getItemsByTagFromPlayerInventory(
             'test-item-in-container'
         );

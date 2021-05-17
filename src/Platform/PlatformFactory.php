@@ -258,7 +258,7 @@ class PlatformFactory
         $keyToCellarDoor = new Item(
             'keyToCellarDoor',
             'Key to Cellar',
-            'A small that unlocks the door to the cellar.',
+            'A small key that unlocks the door to the cellar.',
             'key'
         );
 
@@ -270,6 +270,23 @@ class PlatformFactory
             [$doorFromHallwayToCourtyard, $entryFromHallwayToSpawn]
         );
         $hallwayLeadingSouth->getContainer()->addItem($keyToCellarDoor);
+
+        $doorFromCourtyardToHallway = new Portal(
+            'doorFromCourtyardToHallway',
+            'Front door',
+            "A door that leads inside the house. It has a small stained glass window in the center.",
+            'door',
+            'north', 'hallwayLeadingSouthFromSpawn'
+        );
+
+        $courtyard = new Location(
+            'courtyard',
+            'Courtyard',
+            'A courtyard surrounds the entrance of the house. ' . "\n" .
+            'Hedges form a wall in three directions, with a path leading away from the house toward town.',
+            new Container(),
+            [$doorFromCourtyardToHallway]
+        );
 
         $spawnRoom = new Location(
             'spawn',
@@ -286,7 +303,8 @@ class PlatformFactory
                 [
                     $spawnRoom,
                     $roomEastOfSpawn,
-                    $hallwayLeadingSouth
+                    $hallwayLeadingSouth,
+                    $courtyard,
                 ]
             );
 

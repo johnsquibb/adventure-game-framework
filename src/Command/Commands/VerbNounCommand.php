@@ -6,11 +6,11 @@ use AdventureGame\Command\CommandInterface;
 use AdventureGame\Game\Exception\InvalidExitException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
-use AdventureGame\IO\OutputController;
 use AdventureGame\Item\ContainerItem;
 use AdventureGame\Item\ContainerItemInterface;
 use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Portal;
+use AdventureGame\Response\Response;
 
 /**
  * Class VerbNounCommand processes verb+noun commands, e.g. "take sword" or "drop dish".
@@ -20,167 +20,185 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
 {
     public function __construct(
         private string $verb,
-        private string $noun,
-        OutputController $outputController,
+        private string $noun
     ) {
-        parent::__construct($outputController);
     }
 
     /**
      * Process verb+noun action.
      * @param GameController $gameController
-     * @return bool
-     * @throws PlayerLocationNotSetException|InvalidExitException
+     * @return Response|null
+     * @throws InvalidExitException
+     * @throws PlayerLocationNotSetException
      */
-    public function process(GameController $gameController): bool
+    public function process(GameController $gameController): ?Response
     {
-        return $this->tryMoveAction($gameController)
-            || $this->tryInventoryAction($gameController)
-            || $this->tryKeyAction($gameController);
+        if ($response = $this->tryMoveAction($gameController)) {
+            return $response;
+        }
+
+        if ($response = $this->tryInventoryAction($gameController)) {
+            return $response;
+        }
+
+        return $this->tryKeyAction($gameController);
     }
 
     /**
      * Attempt to move player if the verb is a move action.
      * @param GameController $gameController
-     * @return bool true if a move verb was processed, false otherwise.
+     * @return Response|null
      * @throws InvalidExitException
      * @throws PlayerLocationNotSetException
      */
-    private function tryMoveAction(GameController $gameController): bool
+    private function tryMoveAction(GameController $gameController): ?Response
     {
         switch ($this->verb) {
             case 'go':
-                $this->movePlayer($gameController, $this->noun);
-                return true;
+                return $this->movePlayer($gameController, $this->noun);
         }
 
-        return false;
+        return null;
     }
 
     /**
      * Try an inventory action on player's inventory at current player location.
      * @param GameController $gameController
-     * @return bool true if a take verb was processed, false otherwise.
+     * @return Response|null
      * @throws PlayerLocationNotSetException
      */
-    private function tryInventoryAction(GameController $gameController): bool
+    private function tryInventoryAction(GameController $gameController): ?Response
     {
         switch ($this->verb) {
             case 'take':
-                $this->takeItemsByTagAtPlayerLocation($gameController, $this->noun);
-                return true;
+                return $this->takeItemsByTagAtPlayerLocation($gameController, $this->noun);
             case 'drop':
-                $this->dropItemsByTagAtPlayerLocation($gameController, $this->noun);
-                return true;
+                return $this->dropItemsByTagAtPlayerLocation($gameController, $this->noun);
         }
 
-        return false;
+        return null;
     }
 
     /**
      * Take all items matching tag at current player location into player inventory.
      * @param GameController $gameController
      * @param string $tag
+     * @return Response
      * @throws PlayerLocationNotSetException
      */
     private function takeItemsByTagAtPlayerLocation(
         GameController $gameController,
         string $tag
-    ): void {
+    ): Response {
+        $response = new Response();
+
         $items = $gameController->mapController->takeItemsByTag($tag);
 
         if (empty($items)) {
-            $this->outputController->addLines(
-                [
-                    "You don't see anything like that here."
-                ]
-            );
-            return;
+            $response->addMessage("You don't see anything like that here.");
         }
 
         foreach ($items as $item) {
             if ($item instanceof ItemInterface) {
-                $this->addItemToPlayerInventory($gameController, $item);
+                $message = $this->addItemToPlayerInventory($gameController, $item);
+                $response->addMessage($message);
             }
         }
+
+        return $response;
     }
 
     /**
      * Drop all items in player inventory matching tag to current player location.
      * @param GameController $gameController
      * @param string $tag
+     * @return Response
      * @throws PlayerLocationNotSetException
      */
     private function dropItemsByTagAtPlayerLocation(
         GameController $gameController,
         string $tag
-    ): void {
+    ): Response {
+        $response = new Response();
+
         $items = $gameController->playerController->getItemsByTagFromPlayerInventory($tag);
 
         foreach ($items as $item) {
             if ($item instanceof ItemInterface) {
                 $this->removeItemFromPlayerInventory($gameController, $item);
-                $gameController->mapController->dropItem($item);
+                $message = $gameController->mapController->dropItem($item);
+                $response->addMessage($message);
             }
         }
+
+        return $response;
     }
 
     /**
      * Try an action using a key from player inventory at current player location.
      * @param GameController $gameController
-     * @return bool true if a key action was processed, false otherwise.
+     * @return Response|null
      * @throws PlayerLocationNotSetException
      */
-    private function tryKeyAction(GameController $gameController): bool
+    private function tryKeyAction(GameController $gameController): ?Response
     {
         switch ($this->verb) {
             case 'unlock':
-                $this->unlockEntitiesByTagAtPlayerLocation($gameController, $this->noun);
-                return true;
+                return $this->unlockEntitiesByTagAtPlayerLocation($gameController, $this->noun);
             case 'lock':
-                $this->lockEntitiesByTagAtPlayerLocation($gameController, $this->noun);
-                return true;
+                return $this->lockEntitiesByTagAtPlayerLocation($gameController, $this->noun);
         }
 
-        return false;
+        return null;
     }
 
     /**
      * Unlock entities by tag at player location.
      * @param GameController $gameController
      * @param string $noun
+     * @return Response
      * @throws PlayerLocationNotSetException
      */
     private function unlockEntitiesByTagAtPlayerLocation(
         GameController $gameController,
         string $noun
-    ): void {
+    ): Response {
+        $response = new Response();
+
+
         $location = $gameController->mapController->getPlayerLocation();
 
         // Try unlocking a door.
         $portal = $location->getExitByTag($noun);
         if ($portal instanceof Portal) {
             if ($portal->getMutable()) {
-                $this->unlockPortalWithAnyAvailableKey($gameController, $portal);
+                $message = $this->unlockPortalWithAnyAvailableKey($gameController, $portal);
+                $response->addMessage($message);
             } else {
-                $this->outputController->addLines(["You can't unlock {$portal->getName()}"]);
+                $response->addMessage("You can't unlock {$portal->getName()}");
             }
-            return;
+
+            return $response;
         }
 
         // Try unlocking a container.
-        $containers = $location->getContainer()->getItemsByTypeAndTag(ContainerItem::class, $noun);
+        $containers = $location->getContainer()
+            ->getItemsByTypeAndTag(ContainerItem::class, $noun);
 
         if (empty($containers)) {
-            $this->outputController->addLines(["The is nothing to unlock."]);
-            return;
+            $response->addMessage("The is nothing to unlock.");
+            return $response;
         }
 
         foreach ($containers as $container) {
             if ($container->getMutable()) {
-                $this->unlockContainerItemWithAnyAvailableKey($gameController, $container);
+                $message = $this->unlockContainerItemWithAnyAvailableKey(
+                    $gameController,
+                    $container
+                );
+                $response->addMessage($message);
             } else {
-                $this->outputController->addLines(["You can't unlock {$container->getName()}"]);
+                $response->addMessage("You can't unlock {$container->getName()}");
             }
         }
     }
@@ -193,121 +211,127 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     protected function unlockPortalWithAnyAvailableKey(
         GameController $gameController,
         Portal $portal
-    ): void {
+    ): string {
         $keyId = $portal->getKeyEntityId();
 
         $key = $gameController->playerController->getItemByIdFromPlayerInventory($keyId);
         if ($key instanceof ItemInterface) {
-            $this->unlockEntityWithKey($portal, $key);
-        } else {
-            $this->outputController->addLines(
-                [
-                    "You don't have the required key.",
-                ]
-            );
+            return $this->unlockEntityWithKey($portal, $key);
         }
+
+        return "You don't have the required key.";
     }
 
     /**
      * Unlock containerItems if the player has the key in inventory.
      * @param GameController $gameController
      * @param ContainerItemInterface $containerItem
+     * @return string
      */
     protected function unlockContainerItemWithAnyAvailableKey(
         GameController $gameController,
         ContainerItemInterface $containerItem
-    ): void {
+    ): string {
         $keyId = $containerItem->getKeyEntityId();
 
         $key = $gameController->playerController->getItemByIdFromPlayerInventory($keyId);
         if ($key instanceof ItemInterface) {
-            $this->unlockEntityWithKey($containerItem, $key);
-        } else {
-            $this->outputController->addLines(
-                [
-                    "You don't have the required key.",
-                ]
-            );
+            return $this->unlockEntityWithKey($containerItem, $key);
         }
+
+        return "You don't have the required key.";
     }
 
-    private function lockEntitiesByTagAtPlayerLocation(GameController $gameController, string $noun)
-    {
+    /**
+     * Lock entities by tag at player location.
+     * @param GameController $gameController
+     * @param string $noun
+     * @return Response
+     * @throws PlayerLocationNotSetException
+     */
+    private function lockEntitiesByTagAtPlayerLocation(
+        GameController $gameController,
+        string $noun
+    ): Response {
+        $response = new Response();
+
         $location = $gameController->mapController->getPlayerLocation();
 
         // Try locking a door.
         $portal = $location->getExitByTag($noun);
         if ($portal instanceof Portal) {
             if ($portal->getMutable()) {
-                $this->lockPortalWithAnyAvailableKey($gameController, $portal);
+                $message = $this->lockPortalWithAnyAvailableKey($gameController, $portal);
+                $response->addMessage($message);
             } else {
-                $this->outputController->addLines(["You can't lock {$portal->getName()}"]);
+                $response->addMessage("You can't lock {$portal->getName()}");
             }
-            return;
+
+            return $response;
         }
 
         // Try locking a container.
         $containers = $location->getContainer()->getItemsByTypeAndTag(ContainerItem::class, $noun);
 
         if (empty($containers)) {
-            $this->outputController->addLines(["The is nothing to lock."]);
-            return;
+            $response->addMessage("The is nothing to lock.");
+            return $response;
         }
 
         foreach ($containers as $container) {
             if ($container instanceof ContainerItemInterface) {
                 if ($container->getMutable()) {
-                    $this->LockContainerItemWithAnyAvailableKey($gameController, $container);
+                    $message = $this->LockContainerItemWithAnyAvailableKey(
+                        $gameController,
+                        $container
+                    );
+                    $response->addMessage($message);
                 } else {
-                    $this->outputController->addLines(["You can't lock {$container->getName()}"]);
+                    $response->addMessage("You can't lock {$container->getName()}");
                 }
             }
         }
+
+        return $response;
     }
 
     /**
      * Unlock a portal if the player has the key in inventory.
      * @param GameController $gameController
      * @param Portal $portal
+     * @return string
      */
     protected function lockPortalWithAnyAvailableKey(
         GameController $gameController,
         Portal $portal
-    ): void {
+    ): string {
         $keyId = $portal->getKeyEntityId();
 
         $key = $gameController->playerController->getItemByIdFromPlayerInventory($keyId);
         if ($key instanceof ItemInterface) {
-            $this->lockEntityWithKey($portal, $key);
-        } else {
-            $this->outputController->addLines(
-                [
-                    "You don't have the required key.",
-                ]
-            );
+            return $this->lockEntityWithKey($portal, $key);
         }
+
+        return "You don't have the required key.";
     }
 
     /**
      * Unlock containerItems if the player has the key in inventory.
      * @param GameController $gameController
      * @param ContainerItemInterface $containerItem
+     * @return string
      */
     protected function LockContainerItemWithAnyAvailableKey(
         GameController $gameController,
         ContainerItemInterface $containerItem
-    ): void {
+    ): string {
         $keyId = $containerItem->getKeyEntityId();
 
         $key = $gameController->playerController->getItemByIdFromPlayerInventory($keyId);
         if ($key instanceof ItemInterface) {
-            $this->lockEntityWithKey($containerItem, $key);
-        } else {
-            $this->outputController->addLines(
-                [
-                    "You don't have the required key.",
-                ]
-            );
+            return $this->lockEntityWithKey($containerItem, $key);
         }
+
+        return "You don't have the required key.";
     }
 }

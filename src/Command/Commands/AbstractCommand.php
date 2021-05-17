@@ -8,12 +8,13 @@ use AdventureGame\Game\Exception\ExitIsLockedException;
 use AdventureGame\Game\Exception\InvalidExitException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
-use AdventureGame\IO\OutputController;
 use AdventureGame\Item\ContainerInterface;
 use AdventureGame\Item\ContainerItem;
 use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Location;
 use AdventureGame\Location\Portal;
+use AdventureGame\Response\Description;
+use AdventureGame\Response\Response;
 
 /**
  * Class AbstractCommand provides common methods used by other Commands.
@@ -21,62 +22,55 @@ use AdventureGame\Location\Portal;
  */
 abstract class AbstractCommand
 {
-    public function __construct(
-        protected OutputController $outputController,
-    ) {
-    }
-
     /**
      * Add an item to player inventory.
      * @param GameController $gameController
      * @param ItemInterface $item
+     * @return string
      */
     protected function addItemToPlayerInventory(
         GameController $gameController,
         ItemInterface $item
-    ): void {
+    ): string {
         $gameController->playerController->addItemToPlayerInventory($item);
-        $this->outputController->addLine("Added {$item->getName()} to inventory");
+
+        return "Added {$item->getName()} to inventory";
     }
 
     /**
      * Describe an exit.
      * @param Portal $exit
+     * @return Description
      */
-    protected function describeExit(Portal $exit): void
+    protected function describeExit(Portal $exit): Description
     {
-        $this->outputController->addLines(
-            [
-                $exit->getName(),
-                $exit->getDescription(),
-            ]
-        );
+        return new Description($exit->getName(), $exit->getSummary(), $exit->getDescription());
     }
 
     /**
      * Describe a list of items.
      * @param array $items
+     * @return array
      */
-    protected function describeItems(array $items): void
+    protected function describeItems(array $items): array
     {
+        $descriptions = [];
+
         foreach ($items as $item) {
-            $this->describeItem($item);
+            $descriptions[] = $this->describeItem($item);
         }
+
+        return $descriptions;
     }
 
     /**
      * Describe an item.
      * @param ItemInterface $item
-     * @return void
+     * @return Description
      */
-    protected function describeItem(ItemInterface $item): void
+    protected function describeItem(ItemInterface $item): Description
     {
-        $this->outputController->addLines(
-            [
-                $item->getName(),
-                $item->getDescription(),
-            ]
-        );
+        return new Description($item->getName(), $item->getSummary(), $item->getDescription());
     }
 
     /**
@@ -92,42 +86,47 @@ abstract class AbstractCommand
     /**
      * Describe items at Location.
      * @param Location $location
-     * @return void
+     * @return array
      */
-    protected function describeLocationItems(Location $location): void
+    protected function describeLocationItems(Location $location): array
     {
+        $descriptions = [];
+
         $items = $location->getContainer()->getItems();
-        if (count($items) === 0) {
-            return;
-        }
-
-        $this->outputController->addLines(
-            [
-                'You see the following items:',
-            ]
-        );
-
         foreach ($items as $item) {
-            $this->describeItem($item);
+            $descriptions[] = $this->describeItem($item);
         }
+
+        return $descriptions;
     }
 
     /**
      * Describe a list of items inside a container.
      * @param ContainerItem $container
+     * @return array
      */
-    protected function listContainerItems(ContainerInterface $container): void
+    protected function listContainerItems(ContainerInterface $container): array
     {
-        $this->outputController->addLines(
-            ["You see the following items inside " . $container->getName() . ": "],
-        );
+        $descriptions = [];
 
         foreach ($container->getItems() as $item) {
             if ($item instanceof ItemInterface) {
                 $item->setAccessible(true);
-                $this->listItem($item);
+                $descriptions[] = $this->listItem($item);
             }
         }
+
+        return $descriptions;
+    }
+
+    /**
+     * List an item's name.
+     * @param ItemInterface $item
+     * @return Description
+     */
+    protected function listItem(ItemInterface $item): Description
+    {
+        return new Description($item->getName(), $item->getSummary(), $item->getDescription());
     }
 
     /**
@@ -143,153 +142,154 @@ abstract class AbstractCommand
     /**
      * List items for a location.
      * @param Location $location
+     * @return array
      */
-    protected function listLocationItems(Location $location): void
+    protected function listLocationItems(Location $location): array
     {
-        $this->outputController->addLines(
-            [
-                'You see the following items: ',
-            ]
-        );
+        $descriptions = [];
 
         foreach ($location->getContainer()->getItems() as $item) {
-            $this->listItem($item);
+            $descriptions[] = $this->listItem($item);
         }
+
+        return $descriptions;
     }
 
     /**
-     * List an item's name.
-     * @param ItemInterface $item
-     * @return void
+     * Lock entity with key.
+     * @param EntityInterface $entity
+     * @param ItemInterface $key
+     * @return string
      */
-    protected function listItem(ItemInterface $item): void
-    {
-        $this->outputController->addLines(
-            [
-                $item->getName(),
-            ]
-        );
-    }
-
-    protected function lockEntityWithKey(EntityInterface $entity, ItemInterface $key): void
+    protected function lockEntityWithKey(EntityInterface $entity, ItemInterface $key): string
     {
         if (is_a($entity, LockableInterface::class)) {
             $entity->setLocked(true);
 
-            $this->outputController->addLines(
-                [
-                    "Locked {$entity->getName()} with {$key->getName()}.",
-                ]
-            );
+            return "Locked {$entity->getName()} with {$key->getName()}.";
         }
+
+        return "Can't lock that.";
     }
 
     /**
      * Move player, describe the new location.
      * @param GameController $gameController
      * @param string $direction
+     * @return Response|null
      * @throws InvalidExitException
      * @throws PlayerLocationNotSetException
      */
-    protected function movePlayer(GameController $gameController, string $direction): void
+    protected function movePlayer(GameController $gameController, string $direction): ?Response
     {
         try {
             $gameController->mapController->movePlayer($direction);
-            $this->describePlayerLocation($gameController);
+            return $this->describePlayerLocation($gameController);
         } catch (ExitIsLockedException $e) {
             $portal = $gameController->mapController
                 ->getPlayerLocation()
                 ->getExitInDirection($direction);
 
-            $this->outputController->addLines(
-                [
-                    "{$portal->getName()} is locked!"
-                ]
-            );
+            $response = new Response();
+
+            $response->addMessage("{$portal->getName()} is locked!");
+
+            return $response;
         }
     }
 
     /**
      * Describe the current player location.
      * @param GameController $gameController
+     * @return Response
      * @throws PlayerLocationNotSetException
      */
-    protected function describePlayerLocation(GameController $gameController): void
+    protected function describePlayerLocation(GameController $gameController): Response
     {
+        $response = new Response();
+
         $location = $gameController->mapController->getPlayerLocation();
-        $this->describeLocation($location);
-        $this->listLocationExits($location);
-        $this->listLocationItems($location);
+
+        $description = $this->describeLocation($location);
+        $response->addLocationDescription($description);
+
+        foreach ($this->listLocationExits($location) as $description) {
+            $response->addExitDescription($description);
+        }
+
+        foreach ($this->listLocationItems($location) as $description) {
+            $response->addItemDescription($description);
+        }
+
+        return $response;
     }
 
     /**
      * Describe a location.
      * @param Location $location
-     * @return void
+     * @return Description
      */
-    protected function describeLocation(Location $location): void
+    protected function describeLocation(Location $location): Description
     {
-        $this->outputController->addLines(
-            [
-                $location->getName(),
-                $location->getDescription(),
-            ]
+        return new Description(
+            $location->getName(),
+            $location->getSummary(),
+            $location->getDescription()
         );
     }
 
     /**
      * List exits for a location.
      * @param Location $location
+     * @return array
      */
-    protected function listLocationExits(Location $location): void
+    protected function listLocationExits(Location $location): array
     {
-        $this->outputController->addLines(
-            [
-                'You see the following exits: ',
-            ]
-        );
+        $descriptions = [];
 
         foreach ($location->getExits() as $exit) {
-            $this->listExit($exit);
+            $descriptions[] = $this->listExit($exit);
         }
+
+        return $descriptions;
     }
 
     /**
      * List an exit.
      * @param Portal $exit
+     * @return Description
      */
-    protected function listExit(Portal $exit): void
+    protected function listExit(Portal $exit): Description
     {
-        $this->outputController->addLines(
-            [
-                $exit->getName()
-            ]
-        );
+        return new Description($exit->getName(), $exit->getSummary(), $exit->getDescription());
     }
 
     /**
      * Remove an item from player inventory.
      * @param GameController $gameController
      * @param ItemInterface $item
+     * @return string response message
      */
     protected function removeItemFromPlayerInventory(
         GameController $gameController,
         ItemInterface $item
-    ): void {
+    ): string {
         $gameController->playerController->removeItemFromPlayerInventory($item);
-        $this->outputController->addLine("Removed {$item->getName()} from inventory");
+
+        return "Removed {$item->getName()} from inventory";
     }
 
-    protected function unlockEntityWithKey(EntityInterface $entity, ItemInterface $key): void
+    /**
+     * @param EntityInterface $entity
+     * @param ItemInterface $key
+     * @return string response message
+     */
+    protected function unlockEntityWithKey(EntityInterface $entity, ItemInterface $key): string
     {
         if (is_a($entity, LockableInterface::class)) {
             $entity->setLocked(false);
 
-            $this->outputController->addLines(
-                [
-                    "Unlocked {$entity->getName()} with {$key->getName()}.",
-                ]
-            );
+            return "Unlocked {$entity->getName()} with {$key->getName()}.";
         }
     }
 }

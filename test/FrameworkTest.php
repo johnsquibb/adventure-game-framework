@@ -3,9 +3,9 @@
 namespace AdventureGame\Test;
 
 use AdventureGame\Character\Character;
+use AdventureGame\Command\CommandController;
 use AdventureGame\Command\CommandFactory;
 use AdventureGame\Command\CommandParser;
-use AdventureGame\Command\CommandController;
 use AdventureGame\Game\GameController;
 use AdventureGame\Game\MapController;
 use AdventureGame\Game\PlayerController;
@@ -28,9 +28,15 @@ abstract class FrameworkTest extends TestCase
         return new InputController($commandParser, $commandController);
     }
 
-    protected function createOutputController(): OutputController
+    protected function createCommandParser(): CommandParser
     {
-        return new OutputController();
+        $verbs = ['north', 'take', 'look', 'put'];
+        $nouns = ['sword', 'sheath', 'chest', 'test-container-item', 'test-item-in-container'];
+        $articles = [];
+        $prepositions = ['at', 'into', 'from'];
+        $aliases = [];
+
+        return new CommandParser($verbs, $nouns, $articles, $prepositions, $aliases, []);
     }
 
     protected function createCommandController(): CommandController
@@ -42,15 +48,12 @@ abstract class FrameworkTest extends TestCase
         return new CommandController($commandFactory, $gameController);
     }
 
-    protected function createCommandParser(): CommandParser
+    protected function createGameController(): GameController
     {
-        $verbs = ['north', 'take', 'look', 'put'];
-        $nouns = ['sword', 'sheath', 'chest', 'test-container-item', 'test-item-in-container'];
-        $articles = [];
-        $prepositions = ['at', 'into', 'from'];
-        $aliases = [];
+        $mapController = $this->createMapController();
+        $playerController = $this->createPlayerController();
 
-        return new CommandParser($verbs, $nouns, $articles, $prepositions, $aliases, []);
+        return new GameController($mapController, $playerController);
     }
 
     protected function createMapController(): MapController
@@ -138,11 +141,8 @@ abstract class FrameworkTest extends TestCase
         return new PlayerController($player);
     }
 
-    protected function createGameController(): GameController
+    protected function createOutputController(): OutputController
     {
-        $mapController = $this->createMapController();
-        $playerController = $this->createPlayerController();
-
-        return new GameController($mapController, $playerController);
+        return new OutputController();
     }
 }

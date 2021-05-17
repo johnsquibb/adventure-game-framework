@@ -5,7 +5,7 @@ namespace AdventureGame\Command\Commands;
 use AdventureGame\Command\CommandInterface;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
-use AdventureGame\IO\OutputController;
+use AdventureGame\Response\Response;
 
 /**
  * Class VerbCommand processes single-word verb commands, e.g. "take" or "eat".
@@ -14,19 +14,17 @@ use AdventureGame\IO\OutputController;
 class VerbCommand extends AbstractCommand implements CommandInterface
 {
     public function __construct(
-        private string $verb,
-        OutputController $outputController,
+        private string $verb
     ) {
-        parent::__construct($outputController);
     }
 
     /**
      * Process verb action.
      * @param GameController $gameController
-     * @return bool
+     * @return Response|null
      * @throws PlayerLocationNotSetException
      */
-    public function process(GameController $gameController): bool
+    public function process(GameController $gameController): ?Response
     {
         return $this->tryLookAction($gameController);
     }
@@ -34,17 +32,16 @@ class VerbCommand extends AbstractCommand implements CommandInterface
     /**
      * Look at current player area.
      * @param GameController $gameController
-     * @return bool
+     * @return Response|null
      * @throws PlayerLocationNotSetException
      */
-    private function tryLookAction(GameController $gameController): bool
+    private function tryLookAction(GameController $gameController): ?Response
     {
         switch ($this->verb) {
             case 'look':
-                $this->describePlayerLocation($gameController);
-                return true;
+                return $this->describePlayerLocation($gameController);
         }
 
-        return false;
+        return null;
     }
 }

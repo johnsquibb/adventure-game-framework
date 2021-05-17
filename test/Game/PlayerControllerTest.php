@@ -10,13 +10,6 @@ use PHPUnit\Framework\TestCase;
 
 class PlayerControllerTest extends TestCase
 {
-    public function testCreatePlayerController()
-    {
-        $player = new Character('test-player', new Container());
-        $playerController = new PlayerController($player);
-        $this->assertNull($playerController->getItemByIdFromPlayerInventory('nothing'));
-    }
-
     public function testAddItemToPlayerInventory()
     {
         $inventory = new Container();
@@ -31,8 +24,18 @@ class PlayerControllerTest extends TestCase
         );
         $playerController->addItemToPlayerInventory($item);
 
-        $this->assertEquals($item, $playerController->getItemByIdFromPlayerInventory($item->getId()));
+        $this->assertEquals(
+            $item,
+            $playerController->getItemByIdFromPlayerInventory($item->getId())
+        );
         $this->assertEquals($item, $inventory->getItemById($item->getId()));
+    }
+
+    public function testCreatePlayerController()
+    {
+        $player = new Character('test-player', new Container());
+        $playerController = new PlayerController($player);
+        $this->assertNull($playerController->getItemByIdFromPlayerInventory('nothing'));
     }
 
     public function testGetItemFromPlayerInventory()
@@ -51,7 +54,10 @@ class PlayerControllerTest extends TestCase
 
         $playerController->addItemToPlayerInventory($item);
 
-        $this->assertEquals($item, $playerController->getItemByIdFromPlayerInventory($item->getId()));
+        $this->assertEquals(
+            $item,
+            $playerController->getItemByIdFromPlayerInventory($item->getId())
+        );
         $this->assertEquals($item, $inventory->getItemById($item->getId()));
     }
 

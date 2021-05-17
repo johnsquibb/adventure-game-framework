@@ -23,12 +23,15 @@ class MapController
     /**
      * Drop an item to current player location.
      * @param ItemInterface $item
+     * @return string
      * @throws PlayerLocationNotSetException
      */
-    public function dropItem(ItemInterface $item): void
+    public function dropItem(ItemInterface $item): string
     {
         $location = $this->getPlayerLocation();
         $location->getContainer()->addItem($item);
+
+        return "Dropped {$item->getName()}";
     }
 
     /**

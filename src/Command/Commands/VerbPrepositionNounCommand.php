@@ -5,8 +5,8 @@ namespace AdventureGame\Command\Commands;
 use AdventureGame\Command\CommandInterface;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
-use AdventureGame\IO\OutputController;
 use AdventureGame\Item\ContainerInterface;
+use AdventureGame\Response\Response;
 
 /**
  * Class VerbPrepositionNounCommand processes verb+preposition+noun commands, e.g. "look at spoon".
@@ -17,19 +17,17 @@ class VerbPrepositionNounCommand extends AbstractCommand implements CommandInter
     public function __construct(
         private string $verb,
         private string $preposition,
-        private string $noun,
-        OutputController $outputController,
+        private string $noun
     ) {
-        parent::__construct($outputController);
     }
 
     /**
      * Process verb+noun action.
      * @param GameController $gameController
-     * @return bool
+     * @return Response|null
      * @throws PlayerLocationNotSetException
      */
-    public function process(GameController $gameController): bool
+    public function process(GameController $gameController): ?Response
     {
         return $this->tryLookAction($gameController);
     }
@@ -37,10 +35,10 @@ class VerbPrepositionNounCommand extends AbstractCommand implements CommandInter
     /**
      * Attempt to look at objects.
      * @param GameController $gameController
-     * @return bool returns true when a look action is processed, false otherwise.
+     * @return Response|null
      * @throws PlayerLocationNotSetException
      */
-    private function tryLookAction(GameController $gameController): bool
+    private function tryLookAction(GameController $gameController): ?Response
     {
         switch ($this->verb) {
             case 'look':
@@ -58,54 +56,60 @@ class VerbPrepositionNounCommand extends AbstractCommand implements CommandInter
                 }
         }
 
-        return false;
+        return null;
     }
 
     /**
      * Try to look at items in the current player location.
      * @param GameController $gameController
      * @param string $tag
-     * @return bool returns true when a look at item action is processed, false otherwise.
+     * @return Response
      * @throws PlayerLocationNotSetException
      */
     private function tryLookAtItemsByTagAtPlayerLocationAction(
         GameController $gameController,
         string $tag
-    ): bool {
-        $items = $gameController->mapController->getPlayerLocation()->getContainer()->getItemsByTag(
-            $tag
-        );
+    ): Response {
+        $response = new Response();
+
+        $items = $gameController->mapController
+            ->getPlayerLocation()->getContainer()->getItemsByTag($tag);
+
         if (count($items)) {
-            $this->describeItems($items);
-            return true;
+            foreach ($this->describeItems($items) as $description) {
+                $response->addItemDescription($description);
+            }
         }
 
-        return false;
+        return $response;
     }
 
     /**
      * Try to look inside the first container matching tag in the current player location.
      * @param GameController $gameController
      * @param string $tag
-     * @return bool returns true when a look at item action is processed, false otherwise.
+     * @return Response
      * @throws PlayerLocationNotSetException
      */
     private function tryLookInsideContainersByTagAtPlayerLocationAction(
         GameController $gameController,
         string $tag
-    ): bool {
-        $items = $gameController->mapController->getPlayerLocation()->getContainer()->getItemsByTag(
-            $tag
-        );
+    ): Response {
+        $response = new Response();
+
+        $items = $gameController->mapController
+            ->getPlayerLocation()->getContainer()->getItemsByTag($tag);
+
         if (count($items)) {
             foreach ($items as $container) {
                 if ($container instanceof ContainerInterface) {
-                    $this->listContainerItems($container);
-                    return true;
+                    foreach ($this->listContainerItems($container) as $description) {
+                        $response->addItemDescription($description);
+                    }
                 }
             }
         }
 
-        return false;
+        return $response;
     }
 }

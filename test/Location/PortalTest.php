@@ -33,7 +33,9 @@ class PortalTest extends TestCase
         $direction = 'north';
         $destinationLocationId = 'test-room';
 
-        $door = new Portal($id, $name, $description, $direction, $direction, $destinationLocationId);
+        $door = new Portal(
+            $id, $name, $description, $direction, $direction, $destinationLocationId
+        );
 
         $this->assertFalse($door->getMutable());
         $this->assertFalse($door->getLocked());
