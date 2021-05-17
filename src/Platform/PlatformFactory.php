@@ -204,7 +204,7 @@ class PlatformFactory
         $doorFromSpawnToEastRoom = new Portal(
             'doorFromSpawnToEastRoom',
             'Wooden Door',
-            'A heavy wooden door leading back to spawn.',
+            'A heavy wooden door leading to the east.',
             'door',
             'east', 'roomEastOfSpawn'
         );
@@ -216,7 +216,7 @@ class PlatformFactory
         $doorFromEastRoomToSpawn = new Portal(
             'doorFromEastRoomToSpawn',
             'Wooden Door',
-            'A heavy wooden door leading to the east.',
+            'A heavy wooden door leading back to spawn.',
             'door',
             'west', 'spawn'
         );

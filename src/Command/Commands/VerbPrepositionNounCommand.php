@@ -104,7 +104,7 @@ class VerbPrepositionNounCommand extends AbstractCommand implements CommandInter
             foreach ($items as $container) {
                 if ($container instanceof ContainerInterface) {
                     foreach ($this->listContainerItems($container) as $description) {
-                        $response->addItemDescription($description);
+                        $response->addContainerDescription($description);
                     }
                 }
             }

@@ -7,8 +7,13 @@ use AdventureGame\Response\Response;
 
 class ConsoleResponseDecorator
 {
-    private const DIVIDER_CHARACTER = '-';
     private const DIVIDER_WIDTH = 40;
+
+    private const BLANK_CHARACTER = '';
+    private const DIVIDER_CHARACTER = '-';
+    private const BULLET_CHARACTER = '*';
+    private const SPACE_CHARACTER = ' ';
+    private const TAB_CHARACTER = '    ';
 
     public function __construct(private Response $response)
     {
@@ -18,11 +23,27 @@ class ConsoleResponseDecorator
     {
         $lines = [];
 
-        array_push($lines, ...$this->renderMessage($this->response->getMessage()));
-        array_push($lines, ...$this->renderLocations($this->response->getLocations()));
-        array_push($lines, ...$this->renderItems($this->response->getItems()));
-        array_push($lines, ...$this->renderContainers($this->response->getContainers()));
-        array_push($lines, ...$this->renderExits($this->response->getExits()));
+        if (!empty($this->response->getMessage())) {
+            array_push($lines, ...$this->renderMessage($this->response->getMessage()));
+        }
+
+        if (!empty($this->response->getLocations())) {
+            array_push($lines, ...$this->renderLocations($this->response->getLocations()));
+        }
+
+        if (!empty($this->response->getItems())) {
+            array_push($lines, ...$this->renderItems($this->response->getItems()));
+        }
+
+        if (!empty($this->response->getContainers())) {
+            array_push($lines, ...$this->renderContainers($this->response->getContainers()));
+        }
+
+        if (!empty($this->response->getExits())) {
+            array_push($lines, ...$this->renderExits($this->response->getExits()));
+        }
+
+        $lines[] = $this->blank();
 
         return $lines;
     }
@@ -63,18 +84,18 @@ class ConsoleResponseDecorator
             $lines[] = $this->divider();
             $lines[] = $item->name;
             $lines[] = $this->divider();
-            $lines[] = $this->blankLine();
+            $lines[] = $this->blank();
         }
 
 
         if (!empty($item->summary)) {
             $lines[] = $item->summary;
-            $lines[] = $this->blankLine();
+            $lines[] = $this->blank();
         }
 
         if (!empty($item->description)) {
             $lines[] = $item->description;
-            $lines[] = $this->blankLine();
+            $lines[] = $this->blank();
         }
 
         return $lines;
@@ -85,18 +106,38 @@ class ConsoleResponseDecorator
         return str_repeat(self::DIVIDER_CHARACTER, self::DIVIDER_WIDTH);
     }
 
-    private function blankLine(): string
+    private function blank(): string
     {
-        return '';
+        return self::BLANK_CHARACTER;
+    }
+
+    private function bullet(): string
+    {
+        return self::BULLET_CHARACTER;
+    }
+
+    private function space(): string
+    {
+        return self::SPACE_CHARACTER;
+    }
+
+    private function tab(): string
+    {
+        return self::TAB_CHARACTER;
     }
 
     private function renderItems(array $items): array
     {
         $lines = [];
 
+        $lines[] = $this->blank();
+        $lines[] = "You see:";
+        $lines[] = $this->blank();
+
         foreach ($items as $description) {
             if ($description instanceof Description) {
                 array_push($lines, ...$this->renderDescription($description));
+                $lines[] = $this->blank();
             }
         }
 
@@ -108,15 +149,15 @@ class ConsoleResponseDecorator
         $lines = [];
 
         if (!empty($item->name)) {
-            $lines[] = $item->name;
+            $lines[] = $this->bullet() . $this->space() . $item->name;
         }
 
         if (!empty($item->summary)) {
-            $lines[] = $item->summary;
+            $lines[] = $this->tab() . $item->summary;
         }
 
         if (!empty($item->description)) {
-            $lines[] = $item->description;
+            $lines[] = $this->tab() . $item->description;
         }
 
         return $lines;
@@ -126,9 +167,14 @@ class ConsoleResponseDecorator
     {
         $lines = [];
 
+        $lines[] = $this->blank();
+        $lines[] = "You see the following inside:";
+        $lines[] = $this->blank();
+
         foreach ($containers as $description) {
             if ($description instanceof Description) {
                 array_push($lines, ...$this->renderDescription($description));
+                $lines[] = $this->blank();
             }
         }
 
@@ -139,9 +185,14 @@ class ConsoleResponseDecorator
     {
         $lines = [];
 
+        $lines[] = $this->blank();
+        $lines[] = "You see the following exits:";
+        $lines[] = $this->blank();
+
         foreach ($exits as $description) {
             if ($description instanceof Description) {
                 array_push($lines, ...$this->renderDescription($description));
+                $lines[] = $this->blank();
             }
         }
 
