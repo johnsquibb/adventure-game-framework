@@ -58,6 +58,11 @@ class MapController
         return $this->getPlayerLocation()->getContainer()->countItems();
     }
 
+    public function getLocations(): array
+    {
+        return $this->locations;
+    }
+
     /**
      * @param string $direction The direction in which to move the player.
      * @throws InvalidExitException|PlayerLocationNotSetException|ExitIsLockedException
@@ -89,6 +94,11 @@ class MapController
                 $this->playerLocation = $location;
             }
         }
+    }
+
+    public function setLocations(array $locations): void
+    {
+        $this->locations = $locations;
     }
 
     /**

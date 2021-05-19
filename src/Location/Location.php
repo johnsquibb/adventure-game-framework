@@ -8,6 +8,7 @@ use AdventureGame\Item\ContainerInterface;
 use AdventureGame\Traits\DescriptionTrait;
 use AdventureGame\Traits\IdentityTrait;
 use AdventureGame\Traits\NameTrait;
+use AdventureGame\Traits\SerializeTrait;
 
 /**
  * Class Location is a place in which players and objects can exist.

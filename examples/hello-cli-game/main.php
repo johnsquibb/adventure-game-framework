@@ -9,10 +9,9 @@ require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 // Try: `take sword from chest`
 // Try: `drop sword into chest`
 
-$platformFactory = new PlatformFactory();
-$platformRegistry = $platformFactory->createPlatformRegistry();
-
-$platformController = new PlatformController($platformRegistry);
+$saveGameDirectory = __DIR__ . '/data/saves';
+$platformFactory = new PlatformFactory($saveGameDirectory);
+$platformController = new PlatformController($platformFactory);
 
 $consoleController = new ConsoleClientController();
 $platformController->run($consoleController);

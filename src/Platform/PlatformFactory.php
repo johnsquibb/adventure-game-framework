@@ -6,6 +6,7 @@ use AdventureGame\Character\Character;
 use AdventureGame\Command\CommandController;
 use AdventureGame\Command\CommandFactory;
 use AdventureGame\Command\CommandParser;
+use AdventureGame\Game\Exception\InvalidSaveDirectoryException;
 use AdventureGame\Game\GameController;
 use AdventureGame\Game\MapController;
 use AdventureGame\Game\PlayerController;
@@ -18,14 +19,22 @@ use AdventureGame\Location\Location;
 use AdventureGame\Location\Portal;
 
 /**
- * Provides factory and initialization for platform components.
- * Class PlatformFactory
+ * Class PlatformFactory provides factory and initialization for platform components.
  * @package AdventureGame\Platform
  */
 class PlatformFactory
 {
     private array $registry = [];
 
+    public function __construct(private string $saveGameDirectory)
+    {
+    }
+
+    /**
+     * Initialize the registry and all its dependencies to ready a new game.
+     * @return PlatformRegistry
+     * @throws InvalidSaveDirectoryException
+     */
     public function createPlatformRegistry(): PlatformRegistry
     {
         $platformRegistry = new PlatformRegistry();
@@ -40,27 +49,39 @@ class PlatformFactory
         return $platformRegistry;
     }
 
-    private function getOutputController(): OutputController
-    {
-        $object = $this->getRegisteredObject(OutputController::class);
-        if ($object === null) {
-            $object = new OutputController();
-            $this->registerObject($object);
-        }
-
-        return $object;
-    }
-
+    /**
+     * Get a previously registered object. Ensures a singleton until the registry cache is cleared.
+     * @param string $className
+     * @return object|null
+     */
     private function getRegisteredObject(string $className): ?object
     {
         return $this->registry[$className] ?? null;
     }
 
+    /**
+     * Register an object to ensure a singleton until the registry cache is cleared.
+     * @param object $object
+     */
     private function registerObject(object $object): void
     {
         $this->registry[$object::class] = $object;
     }
 
+    /**
+     * Clear the registry cache. This is important when starting a new game to ensure fresh game
+     * objects are loaded.
+     */
+    public function clearRegistry()
+    {
+        $this->registry = [];
+    }
+
+    /**
+     * Get the input controller.
+     * @return InputController
+     * @throws InvalidSaveDirectoryException
+     */
     private function getInputController(): InputController
     {
         $object = $this->getRegisteredObject(InputController::class);
@@ -72,10 +93,33 @@ class PlatformFactory
         return $object;
     }
 
+    /**
+     * Get the output controller.
+     * @return OutputController
+     */
+    private function getOutputController(): OutputController
+    {
+        $object = $this->getRegisteredObject(OutputController::class);
+        if ($object === null) {
+            $object = new OutputController();
+            $this->registerObject($object);
+        }
+
+        return $object;
+    }
+
+    /**
+     * Get the command parser with initialized vocabulary.
+     * @return CommandParser
+     */
     private function getCommandParser(): CommandParser
     {
         // TODO load from configuration file.
         $verbs = [
+            'save',
+            'load',
+            'quit',
+            'new',
             'go',
             'take',
             'drop',
@@ -132,6 +176,11 @@ class PlatformFactory
         return $object;
     }
 
+    /**
+     * Get the command controller.
+     * @return CommandController
+     * @throws InvalidSaveDirectoryException
+     */
     private function getCommandController(): CommandController
     {
         $object = $this->getRegisteredObject(CommandController::class);
@@ -143,6 +192,10 @@ class PlatformFactory
         return $object;
     }
 
+    /**
+     * Get the command factory.
+     * @return CommandFactory
+     */
     private function getCommandFactory(): CommandFactory
     {
         $object = $this->getRegisteredObject(CommandFactory::class);
@@ -154,6 +207,11 @@ class PlatformFactory
         return $object;
     }
 
+    /**
+     * Get the game controller.
+     * @return GameController
+     * @throws InvalidSaveDirectoryException
+     */
     private function getGameController(): GameController
     {
         $object = $this->getRegisteredObject(GameController::class);
@@ -164,9 +222,15 @@ class PlatformFactory
             $this->registerObject($object);
         }
 
+        $object->setSaveDirectory($this->saveGameDirectory);
+
         return $object;
     }
 
+    /**
+     * Get the map controller with all its locations and items initialized.
+     * @return MapController
+     */
     private function getMapController(): MapController
     {
         // TODO load from configuration file.
@@ -316,6 +380,10 @@ class PlatformFactory
         return $object;
     }
 
+    /**
+     * Get the player controller with the player character initialized.
+     * @return PlayerController
+     */
     private function getPlayerController(): PlayerController
     {
         // TODO load from configuration.

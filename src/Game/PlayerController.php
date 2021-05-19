@@ -44,6 +44,11 @@ class PlayerController
         return $this->player->inventory->getItemsByTag($tag);
     }
 
+    public function getPlayer(): Character
+    {
+        return $this->player;
+    }
+
     /**
      * Remove an item from player inventory.
      * @param ItemInterface $item
@@ -51,5 +56,10 @@ class PlayerController
     public function removeItemFromPlayerInventory(ItemInterface $item): void
     {
         $this->player->inventory->removeItemById($item->getId());
+    }
+
+    public function setPlayer(Character $player): void
+    {
+        $this->player = $player;
     }
 }

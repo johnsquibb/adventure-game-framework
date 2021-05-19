@@ -10,5 +10,5 @@ interface ClientControllerInterface
 
     public function setOutput(array $lines): void;
 
-    public function setResponse(Response $response): void;
+    public function processResponse(Response $response): void;
 }

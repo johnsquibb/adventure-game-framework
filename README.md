@@ -1,7 +1,14 @@
 # adventure-game-framework
-A PHP framework for text-based adventure games.
+A PHP framework for console text-based adventure games.
+
+## Tests
+Run the unit tests with the `composer test` command.
+
+## Examples
+The examples directory contains a game that demonstrates the framework abilities. Run the game on
+the command line using `composer example` command.
 
 ## TODO
 * Create abstraction for game-specific words in commands, e.g. "take", "drop" in VerbNounCommand.
-* Save and Load games using files.
+* Improve save/load system to allow for multiple files using trigger system.
 * Create abstraction for output controller lines so Command objects don't control the flow of text. descriptions, etc. should be added to a template and styling should be handled by the client.

@@ -2,6 +2,10 @@
 
 namespace AdventureGame\Response;
 
+/**
+ * Class Response is a transport for displaying game output to the player.
+ * @package AdventureGame\Response
+ */
 class Response
 {
     private array $message = [];
@@ -10,6 +14,7 @@ class Response
     private array $locations = [];
     private array $exits = [];
     private bool $clearBefore = false;
+    private ?Trigger $trigger = null;
 
     public function addContainerDescription(Description $container): void
     {
@@ -69,5 +74,15 @@ class Response
     public function getMessage(): array
     {
         return $this->message;
+    }
+
+    public function getTrigger(): ?Trigger
+    {
+        return $this->trigger;
+    }
+
+    public function setTrigger(Trigger $trigger): void
+    {
+        $this->trigger = $trigger;
     }
 }

@@ -4,7 +4,12 @@ namespace AdventureGame\Client;
 
 use AdventureGame\Response\Description;
 use AdventureGame\Response\Response;
+use AdventureGame\Response\Trigger;
 
+/**
+ * Class ConsoleResponseDecorator decorates output for display to the player on the console.
+ * @package AdventureGame\Client
+ */
 class ConsoleResponseDecorator
 {
     private const DIVIDER_WIDTH = 40;
@@ -19,6 +24,10 @@ class ConsoleResponseDecorator
     {
     }
 
+    /**
+     * Get the individual output lines to be streamed by the client.
+     * @return array
+     */
     public function getLines(): array
     {
         $lines = [];
@@ -43,11 +52,20 @@ class ConsoleResponseDecorator
             array_push($lines, ...$this->renderExits($this->response->getExits()));
         }
 
+        if ($this->response->getTrigger() instanceof Trigger) {
+            array_push($lines, ...$this->renderTrigger($this->response->getTrigger()));
+        }
+
         $lines[] = $this->blank();
 
         return $lines;
     }
 
+    /**
+     * Render the message lines.
+     * @param array $message
+     * @return array
+     */
     private function renderMessage(array $message): array
     {
         $lines = [];
@@ -61,6 +79,11 @@ class ConsoleResponseDecorator
         return $lines;
     }
 
+    /**
+     * Render the locations.
+     * @param array $locations
+     * @return array
+     */
     private function renderLocations(array $locations): array
     {
         $lines = [];
@@ -74,6 +97,11 @@ class ConsoleResponseDecorator
         return $lines;
     }
 
+    /**
+     * Render the details about an individual location.
+     * @param Description $item
+     * @return array
+     */
     private function renderLocation(Description $item): array
     {
         $this->response->setClearBefore(true);
@@ -101,31 +129,11 @@ class ConsoleResponseDecorator
         return $lines;
     }
 
-    private function divider(): string
-    {
-        return str_repeat(self::DIVIDER_CHARACTER, self::DIVIDER_WIDTH);
-    }
-
-    private function blank(): string
-    {
-        return self::BLANK_CHARACTER;
-    }
-
-    private function bullet(): string
-    {
-        return self::BULLET_CHARACTER;
-    }
-
-    private function space(): string
-    {
-        return self::SPACE_CHARACTER;
-    }
-
-    private function tab(): string
-    {
-        return self::TAB_CHARACTER;
-    }
-
+    /**
+     * Render the items.
+     * @param array $items
+     * @return array
+     */
     private function renderItems(array $items): array
     {
         $lines = [];
@@ -144,6 +152,11 @@ class ConsoleResponseDecorator
         return $lines;
     }
 
+    /**
+     * Render the description.
+     * @param Description $item
+     * @return array
+     */
     private function renderDescription(Description $item): array
     {
         $lines = [];
@@ -163,12 +176,17 @@ class ConsoleResponseDecorator
         return $lines;
     }
 
+    /**
+     * Render the containers.
+     * @param array $containers
+     * @return array
+     */
     private function renderContainers(array $containers): array
     {
         $lines = [];
 
         $lines[] = $this->blank();
-        $lines[] = "You see the following inside:";
+        $lines[] = 'You see the following inside:';
         $lines[] = $this->blank();
 
         foreach ($containers as $description) {
@@ -181,12 +199,17 @@ class ConsoleResponseDecorator
         return $lines;
     }
 
+    /**
+     * Render the exits.
+     * @param array $exits
+     * @return array
+     */
     private function renderExits(array $exits): array
     {
         $lines = [];
 
         $lines[] = $this->blank();
-        $lines[] = "You see the following exits:";
+        $lines[] = 'You see the following exits:';
         $lines[] = $this->blank();
 
         foreach ($exits as $description) {
@@ -197,5 +220,69 @@ class ConsoleResponseDecorator
         }
 
         return $lines;
+    }
+
+    /**
+     * Render a trigger.
+     * @param Trigger $trigger
+     * @return array
+     */
+    private function renderTrigger(Trigger $trigger): array
+    {
+        $lines = [];
+
+        $lines[] = $this->blank();
+        $lines[] = $trigger->getMessage();
+
+        foreach ($trigger->getOptions() as $option) {
+            $lines[] = $option;
+        }
+
+        return $lines;
+    }
+
+    /**
+     * Build a visible divider.
+     * @return string
+     */
+    private function divider(): string
+    {
+        return str_repeat(self::DIVIDER_CHARACTER, self::DIVIDER_WIDTH);
+    }
+
+    /**
+     * Build a blank character.
+     * @return string
+     */
+    private function blank(): string
+    {
+        return self::BLANK_CHARACTER;
+    }
+
+    /**
+     * Build a bullet character.
+     * @return string
+     */
+    private function bullet(): string
+    {
+        return self::BULLET_CHARACTER;
+    }
+
+    /**
+     * Build a space character.
+     * @return string
+     */
+    private function space(): string
+    {
+        return self::SPACE_CHARACTER;
+    }
+
+    /**
+     * Build a tab character.
+     * @return string
+     */
+    private function tab(): string
+    {
+        return self::TAB_CHARACTER;
     }
 }
