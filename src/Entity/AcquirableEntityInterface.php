@@ -6,7 +6,7 @@ namespace AdventureGame\Entity;
  * Interface AcquirableEntityInterface defines methods for items that are acquirable.
  * @package AdventureGame\Entity
  */
-interface AcquirableEntityInterface extends TaggableEntityInterface
+interface AcquirableEntityInterface
 {
     public function getAcquirable(): bool;
 
