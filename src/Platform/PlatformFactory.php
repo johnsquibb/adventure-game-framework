@@ -266,34 +266,34 @@ class PlatformFactory
         $chest->addItem($potionOfHealing1);
         $chest->addItem($keyToDoorWoodenDoor);
 
-        $doorFromSpawnToEastRoom = new Portal(
-            'doorFromSpawnToEastRoom',
+        $doorFromSpawnToWestRoom = new Portal(
+            'doorFromSpawnToWestRoom',
             'Wooden Door',
-            'A heavy wooden door leading to the east.',
+            'A heavy wooden door leading to the west.',
             'door',
-            'east', 'roomEastOfSpawn'
+            'west', 'roomWestOfSpawn'
         );
 
-        $doorFromSpawnToEastRoom->setMutable(true);
-        $doorFromSpawnToEastRoom->setLocked(true);
-        $doorFromSpawnToEastRoom->setKeyEntityId($keyToDoorWoodenDoor->getId());
+        $doorFromSpawnToWestRoom->setMutable(true);
+        $doorFromSpawnToWestRoom->setLocked(true);
+        $doorFromSpawnToWestRoom->setKeyEntityId($keyToDoorWoodenDoor->getId());
 
-        $doorFromEastRoomToSpawn = new Portal(
-            'doorFromEastRoomToSpawn',
+        $doorFromWestRoomToSpawn = new Portal(
+            'doorFromWestRoomToSpawn',
             'Wooden Door',
             'A heavy wooden door leading back to spawn.',
             'door',
-            'west', 'spawn'
+            'east', 'spawn'
         );
 
-        $doorFromEastRoomToSpawn->setKeyEntityId($keyToDoorWoodenDoor->getId());
+        $doorFromWestRoomToSpawn->setKeyEntityId($keyToDoorWoodenDoor->getId());
 
-        $roomEastOfSpawn = new Location(
-            'roomEastOfSpawn',
-            'Room East of Spawn',
+        $roomWestOfSpawn = new Location(
+            'roomWestOfSpawn',
+            'Room West of Spawn',
             'There is nothing special about this room. It is just an ordinary room with walls.',
             new Container(),
-            [$doorFromEastRoomToSpawn],
+            [$doorFromWestRoomToSpawn],
         );
 
         $entryFromSpawnToHallway = new Portal(
@@ -358,7 +358,7 @@ class PlatformFactory
             'Player Spawn',
             'This is the starting room.',
             new Container(),
-            [$doorFromSpawnToEastRoom, $entryFromSpawnToHallway],
+            [$doorFromSpawnToWestRoom, $entryFromSpawnToHallway],
         );
         $spawnRoom->getContainer()->addItem($chest);
 
@@ -367,7 +367,7 @@ class PlatformFactory
             $object = new MapController(
                 [
                     $spawnRoom,
-                    $roomEastOfSpawn,
+                    $roomWestOfSpawn,
                     $hallwayLeadingSouth,
                     $courtyard,
                 ]
