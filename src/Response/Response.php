@@ -14,7 +14,7 @@ class Response
     private array $locations = [];
     private array $exits = [];
     private bool $clearBefore = false;
-    private ?Trigger $trigger = null;
+    private ?Choice $choice = null;
 
     public function addContainerDescription(Description $container): void
     {
@@ -76,13 +76,13 @@ class Response
         return $this->message;
     }
 
-    public function getTrigger(): ?Trigger
+    public function getChoice(): ?Choice
     {
-        return $this->trigger;
+        return $this->choice;
     }
 
-    public function setTrigger(Trigger $trigger): void
+    public function setChoice(Choice $choice): void
     {
-        $this->trigger = $trigger;
+        $this->choice = $choice;
     }
 }

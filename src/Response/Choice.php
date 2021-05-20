@@ -3,11 +3,11 @@
 namespace AdventureGame\Response;
 
 /**
- * Class Trigger provides container for interactive responses with options to be presented to the
+ * Class Choice provides container for interactive responses with options to be presented to the
  * player.
  * @package AdventureGame\Response
  */
-class Trigger
+class Choice
 {
     private $callback;
 

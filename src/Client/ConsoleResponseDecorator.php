@@ -4,7 +4,7 @@ namespace AdventureGame\Client;
 
 use AdventureGame\Response\Description;
 use AdventureGame\Response\Response;
-use AdventureGame\Response\Trigger;
+use AdventureGame\Response\Choice;
 
 /**
  * Class ConsoleResponseDecorator decorates output for display to the player on the console.
@@ -52,8 +52,8 @@ class ConsoleResponseDecorator
             array_push($lines, ...$this->renderExits($this->response->getExits()));
         }
 
-        if ($this->response->getTrigger() instanceof Trigger) {
-            array_push($lines, ...$this->renderTrigger($this->response->getTrigger()));
+        if ($this->response->getChoice() instanceof Choice) {
+            array_push($lines, ...$this->renderChoice($this->response->getChoice()));
         }
 
         $lines[] = $this->blank();
@@ -222,18 +222,18 @@ class ConsoleResponseDecorator
     }
 
     /**
-     * Render a trigger.
-     * @param Trigger $trigger
+     * Render a choice.
+     * @param Choice $choice
      * @return array
      */
-    private function renderTrigger(Trigger $trigger): array
+    private function renderChoice(Choice $choice): array
     {
         $lines = [];
 
         $lines[] = $this->blank();
-        $lines[] = $trigger->getMessage();
+        $lines[] = $choice->getMessage();
 
-        foreach ($trigger->getOptions() as $option) {
+        foreach ($choice->getOptions() as $option) {
             $lines[] = $option;
         }
 

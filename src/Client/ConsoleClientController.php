@@ -4,7 +4,7 @@ namespace AdventureGame\Client;
 
 use AdventureGame\Client\Terminal\TerminalIO;
 use AdventureGame\Response\Response;
-use AdventureGame\Response\Trigger;
+use AdventureGame\Response\Choice;
 
 /**
  * Class ConsoleClientController takes user input and renders game output using the console.
@@ -35,8 +35,8 @@ class ConsoleClientController implements ClientControllerInterface
      */
     public function processResponse(Response $response): void
     {
-        if ($response->getTrigger()) {
-            $this->handleTrigger($response);
+        if ($response->getChoice()) {
+            $this->handleChoice($response);
             return;
         }
 
@@ -71,19 +71,19 @@ class ConsoleClientController implements ClientControllerInterface
     }
 
     /**
-     * Handle game response object trigger.
+     * Handle game response object choice.
      * @param Response $response
      */
-    private function handleTrigger(Response $response): void
+    private function handleChoice(Response $response): void
     {
-        $trigger = $response->getTrigger();
-        if ($trigger instanceof Trigger) {
+        $choice = $response->getChoice();
+        if ($choice instanceof Choice) {
             $decorator = new ConsoleResponseDecorator($response);
             $lines = $decorator->getLines();
             $this->setOutput($lines);
 
             $input = $this->getInput();
-            $trigger->invoke(['answer' => $input]);
+            $choice->invoke(['answer' => $input]);
         }
     }
 }

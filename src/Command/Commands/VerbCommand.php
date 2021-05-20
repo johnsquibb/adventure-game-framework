@@ -8,7 +8,7 @@ use AdventureGame\Game\Exception\InvalidSaveDirectoryException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
 use AdventureGame\Response\Response;
-use AdventureGame\Response\Trigger;
+use AdventureGame\Response\Choice;
 
 /**
  * Class VerbCommand processes single-word verb commands, e.g. "take" or "eat".
@@ -61,9 +61,6 @@ class VerbCommand extends AbstractCommand implements CommandInterface
      */
     private function tryGameAction(GameController $gameController): ?Response
     {
-        // TODO: see if we can implement a callback system to prompt user for additional input.
-        // The client can then show its desired interface, collect the input, then trigger the callback
-        // function to do the thing.
         switch ($this->verb) {
             case "save":
                 return $this->saveGame($gameController);
@@ -83,6 +80,7 @@ class VerbCommand extends AbstractCommand implements CommandInterface
      * @param GameController $gameController
      * @return Response
      * @throws InvalidSaveDirectoryException
+     * @todo Implement choices for selecting which game to save using named 'slots'
      */
     private function saveGame(GameController $gameController): Response
     {
@@ -103,6 +101,7 @@ class VerbCommand extends AbstractCommand implements CommandInterface
      * @param GameController $gameController
      * @return Response
      * @throws InvalidSaveDirectoryException
+     * @todo Implement choices for selecting which game to load using named 'slots'
      */
     private function loadGame(GameController $gameController): Response
     {
@@ -142,8 +141,8 @@ class VerbCommand extends AbstractCommand implements CommandInterface
         $response = new Response();
         $response->addMessage('New game started');
 
-        $response->setTrigger(
-            new Trigger(
+        $response->setChoice(
+            new Choice(
                 'Starting a new game will erase all progress. Are you sure?',
                 ['yes', 'no'],
                 function (array $p) {
@@ -173,8 +172,8 @@ class VerbCommand extends AbstractCommand implements CommandInterface
     {
         $response = new Response();
 
-        $response->setTrigger(
-            new Trigger(
+        $response->setChoice(
+            new Choice(
                 'Are you sure you want to quit?',
                 ['yes', 'no'],
                 function (array $p) {
