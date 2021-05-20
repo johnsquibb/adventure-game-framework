@@ -3,6 +3,7 @@
 namespace AdventureGame\Item;
 
 use AdventureGame\Traits\AccessibleTrait;
+use AdventureGame\Traits\AcquirableTrait;
 use AdventureGame\Traits\DescriptionTrait;
 use AdventureGame\Traits\IdentityTrait;
 use AdventureGame\Traits\NameTrait;
@@ -19,6 +20,7 @@ class Item implements ItemInterface
     use DescriptionTrait;
     use TagTrait;
     use AccessibleTrait;
+    use AcquirableTrait;
 
     public function __construct(
         string $id,

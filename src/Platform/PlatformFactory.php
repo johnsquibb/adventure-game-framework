@@ -241,6 +241,7 @@ class PlatformFactory
             'A chest containing valuable treasure.',
             'chest',
         );
+        $chest->setAcquirable(false);
 
         $swordOfPoking = new Item(
             'swordOfPoking',

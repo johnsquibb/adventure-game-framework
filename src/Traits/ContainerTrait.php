@@ -10,6 +10,9 @@ use AdventureGame\Item\ItemInterface;
  */
 trait ContainerTrait
 {
+    /**
+     * @var array of ItemInterface
+     */
     private array $items = [];
 
     /**
@@ -31,12 +34,13 @@ trait ContainerTrait
     }
 
     /**
-     * Get an item by id, if it exists.
+     * Get an item by id, if it exists
      * @param string $itemId
      * @return ItemInterface|null
      */
     public function getItemById(string $itemId): ?ItemInterface
     {
+        /** @var $item ItemInterface */
         foreach ($this->items as $item) {
             if ($item->getId() === $itemId) {
                 return $item;
@@ -47,12 +51,19 @@ trait ContainerTrait
     }
 
     /**
-     * Return all items.
+     * Return all items
      * @return array
      */
     public function getItems(): array
     {
-        return $this->items;
+        $items = [];
+
+        /** @var $item ItemInterface */
+        foreach ($this->items as $item) {
+            $items[] = $item;
+        }
+
+        return $items;
     }
 
     /**
@@ -63,6 +74,8 @@ trait ContainerTrait
     public function getItemsByTag(string $tag): array
     {
         $items = [];
+
+        /** @var $item ItemInterface */
         foreach ($this->items as $item) {
             if ($item->getTag() === $tag) {
                 $items[] = $item;
@@ -81,6 +94,8 @@ trait ContainerTrait
     public function getItemsByTypeAndTag(string $type, string $tag): array
     {
         $items = [];
+
+        /** @var $item ItemInterface */
         foreach ($this->items as $item) {
             if (is_a($item, $type) && $item->getTag() === $tag) {
                 $items[] = $item;

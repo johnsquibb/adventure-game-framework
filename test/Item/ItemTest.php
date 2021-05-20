@@ -32,4 +32,16 @@ class ItemTest extends TestCase
         $item->setAccessible(false);
         $this->assertFalse($item->getAccessible());
     }
+
+    public function testItemAcquirable()
+    {
+        $item = new Item('', '', '', '');
+
+        $this->assertTrue($item->getAcquirable());
+        $item->setAcquirable(false);
+        $this->assertFalse($item->getAcquirable());
+
+        $item->setAcquirable(true);
+        $this->assertTrue($item->getAcquirable());
+    }
 }

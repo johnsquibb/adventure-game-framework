@@ -2,6 +2,7 @@
 
 namespace AdventureGame\Game;
 
+use AdventureGame\Entity\AcquirableEntityInterface;
 use AdventureGame\Game\Exception\ExitIsLockedException;
 use AdventureGame\Game\Exception\InvalidExitException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
@@ -58,11 +59,6 @@ class MapController
         return $this->getPlayerLocation()->getContainer()->countItems();
     }
 
-    public function getLocations(): array
-    {
-        return $this->locations;
-    }
-
     /**
      * @param string $direction The direction in which to move the player.
      * @throws InvalidExitException|PlayerLocationNotSetException|ExitIsLockedException
@@ -96,11 +92,6 @@ class MapController
         }
     }
 
-    public function setLocations(array $locations): void
-    {
-        $this->locations = $locations;
-    }
-
     /**
      * Take an item by id from current player location.
      * @param string $itemId
@@ -112,11 +103,12 @@ class MapController
         $location = $this->getPlayerLocation();
 
         $item = $location->getContainer()->getItemById($itemId);
-        if ($item !== null) {
+        if ($item instanceof AcquirableEntityInterface && $item->getAcquirable()) {
             $location->getContainer()->removeItemById($item->getId());
+            return $item;
         }
 
-        return $item;
+        return null;
     }
 
     /**
@@ -125,16 +117,34 @@ class MapController
      * @return array
      * @throws PlayerLocationNotSetException
      */
+    public function getItemsByTag(string $tag): array
+    {
+        $location = $this->getPlayerLocation();
+
+        return $location->getContainer()->getItemsByTag($tag);
+    }
+
+    /**
+     * Take all items that match tag.
+     * @param string $tag
+     * @return array
+     * @throws PlayerLocationNotSetException
+     */
     public function takeItemsByTag(string $tag): array
     {
+        $taken = [];
+
         $location = $this->getPlayerLocation();
 
         $items = $location->getContainer()->getItemsByTag($tag);
 
         foreach ($items as $item) {
-            $location->getContainer()->removeItemById($item->getId());
+            if ($item instanceof AcquirableEntityInterface && $item->getAcquirable()) {
+                $taken[] = $item;
+                $location->getContainer()->removeItemById($item->getId());
+            }
         }
 
-        return $items;
+        return $taken;
     }
 }

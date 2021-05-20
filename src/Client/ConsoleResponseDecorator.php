@@ -99,30 +99,29 @@ class ConsoleResponseDecorator
 
     /**
      * Render the details about an individual location.
-     * @param Description $item
+     * @param Description $location
      * @return array
      */
-    private function renderLocation(Description $item): array
+    private function renderLocation(Description $location): array
     {
         $this->response->setClearBefore(true);
 
         $lines = [];
 
-        if (!empty($item->name)) {
+        if (!empty($location->name)) {
             $lines[] = $this->divider();
-            $lines[] = $item->name;
+            $lines[] = $location->name;
             $lines[] = $this->divider();
             $lines[] = $this->blank();
         }
 
-
-        if (!empty($item->summary)) {
-            $lines[] = $item->summary;
+        if (!empty($location->summary)) {
+            $lines[] = $location->summary;
             $lines[] = $this->blank();
         }
 
-        if (!empty($item->description)) {
-            $lines[] = $item->description;
+        if (!empty($location->description)) {
+            $lines[] = $location->description;
             $lines[] = $this->blank();
         }
 

@@ -80,7 +80,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     }
 
     /**
-     * Take all items matching tag at current player location into player inventory.
+     * Take all acquirable items matching tag at current player location into player inventory.
      * @param GameController $gameController
      * @param string $tag
      * @return Response
@@ -92,7 +92,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     ): Response {
         $response = new Response();
 
-        $items = $gameController->mapController->takeItemsByTag($tag);
+        $items = $gameController->mapController->getItemsByTag($tag);
 
         if (empty($items)) {
             $response->addMessage("You don't see anything like that here.");
@@ -100,8 +100,14 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
 
         foreach ($items as $item) {
             if ($item instanceof ItemInterface) {
-                $message = $this->addItemToPlayerInventory($gameController, $item);
-                $response->addMessage($message);
+                if ($item->getAcquirable()) {
+                    // Remove the item from map, add to player inventory.
+                    $item = $gameController->mapController->takeItemById($item->getId());
+                    $message = $this->addItemToPlayerInventory($gameController, $item);
+                    $response->addMessage($message);
+                } else {
+                    $response->addMessage("You can't take {$item->getName()}.");
+                }
             }
         }
 
@@ -122,6 +128,10 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         $response = new Response();
 
         $items = $gameController->playerController->getItemsByTagFromPlayerInventory($tag);
+
+        if (empty($items)) {
+            $response->addMessage("You don't have anything like that.");
+        }
 
         foreach ($items as $item) {
             if ($item instanceof ItemInterface) {
@@ -164,7 +174,6 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         string $noun
     ): Response {
         $response = new Response();
-
 
         $location = $gameController->mapController->getPlayerLocation();
 
