@@ -2,6 +2,7 @@
 
 namespace AdventureGame\Game;
 
+use AdventureGame\Event\EventController;
 use AdventureGame\Game\Exception\InvalidSaveDirectoryException;
 
 /**
@@ -15,6 +16,7 @@ class GameController
     public function __construct(
         public MapController $mapController,
         public PlayerController $playerController,
+        public EventController $eventController,
     ) {
     }
 
@@ -25,6 +27,7 @@ class GameController
     public function hydrateFromSave(GameController $gameController) {
         $this->mapController = $gameController->mapController;
         $this->playerController = $gameController->playerController;
+        $this->eventController = $gameController->eventController;
     }
 
     /**

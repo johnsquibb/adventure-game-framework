@@ -22,6 +22,15 @@ class MapController
     }
 
     /**
+     * Add a location.
+     * @param Location $location
+     */
+    public function addLocation(Location $location)
+    {
+        $this->locations[] = $location;
+    }
+
+    /**
      * Drop an item to current player location.
      * @param ItemInterface $item
      * @return string

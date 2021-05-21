@@ -6,6 +6,7 @@ use AdventureGame\Character\Character;
 use AdventureGame\Command\CommandController;
 use AdventureGame\Command\CommandFactory;
 use AdventureGame\Command\CommandParser;
+use AdventureGame\Event\EventController;
 use AdventureGame\Game\GameController;
 use AdventureGame\Game\MapController;
 use AdventureGame\Game\PlayerController;
@@ -20,6 +21,11 @@ use PHPUnit\Framework\TestCase;
 
 abstract class FrameworkTest extends TestCase
 {
+    private function createEventController(): EventController
+    {
+        return new EventController();
+    }
+
     protected function createInputController(): InputController
     {
         $commandParser = $this->createCommandParser();
@@ -52,8 +58,9 @@ abstract class FrameworkTest extends TestCase
     {
         $mapController = $this->createMapController();
         $playerController = $this->createPlayerController();
+        $eventController = $this->createEventController();
 
-        return new GameController($mapController, $playerController);
+        return new GameController($mapController, $playerController, $eventController);
     }
 
     protected function createMapController(): MapController

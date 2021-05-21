@@ -6,6 +6,7 @@ use AdventureGame\Character\Character;
 use AdventureGame\Command\CommandController;
 use AdventureGame\Command\CommandFactory;
 use AdventureGame\Command\CommandParser;
+use AdventureGame\Game\EventController;
 use AdventureGame\Game\Exception\InvalidSaveDirectoryException;
 use AdventureGame\Game\GameController;
 use AdventureGame\Game\MapController;
@@ -218,7 +219,8 @@ class PlatformFactory
         if ($object === null) {
             $mapController = $this->getMapController();
             $playerController = $this->getPlayerController();
-            $object = new GameController($mapController, $playerController);
+            $eventController = $this->getEventController();
+            $object = new GameController($mapController, $playerController, $eventController);
             $this->registerObject($object);
         }
 
@@ -395,6 +397,21 @@ class PlatformFactory
         if ($object === null) {
             $player = new Character($playerName, $inventory);
             $object = new PlayerController($player);
+            $this->registerObject($object);
+        }
+
+        return $object;
+    }
+
+    /**
+     * Get the event controller.
+     * @return EventController
+     */
+    private function getEventController(): EventController
+    {
+        $object = $this->getRegisteredObject(EventController::class);
+        if ($object === null) {
+            $object = new EventController();
             $this->registerObject($object);
         }
 
