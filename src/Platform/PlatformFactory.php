@@ -6,7 +6,7 @@ use AdventureGame\Character\Character;
 use AdventureGame\Command\CommandController;
 use AdventureGame\Command\CommandFactory;
 use AdventureGame\Command\CommandParser;
-use AdventureGame\Game\EventController;
+use AdventureGame\Event\EventController;
 use AdventureGame\Game\Exception\InvalidSaveDirectoryException;
 use AdventureGame\Game\GameController;
 use AdventureGame\Game\MapController;
