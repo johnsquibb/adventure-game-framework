@@ -2,7 +2,9 @@
 
 namespace AdventureGame\Event;
 
+use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
+use AdventureGame\Response\Response;
 
 class EventController
 {
@@ -13,7 +15,13 @@ class EventController
         $this->events[] = $event;
     }
 
-    public function processInventoryTakeEvents(GameController $gameController, string $itemId): void
+    /**
+     * Process take item events for current player location.
+     * @param GameController $gameController
+     * @param string $itemId
+     * @throws PlayerLocationNotSetException
+     */
+    public function processTakeItemEvents(GameController $gameController, string $itemId): ?Response
     {
         $locationId = $gameController->mapController->getPlayerLocation()->getId();
 
@@ -23,8 +31,10 @@ class EventController
                 && $event->matchItemId($itemId)
                 && $event->matchLocationId($locationId)
             ) {
-                $event->trigger($gameController);
+                return $event->trigger($gameController);
             }
         }
+
+        return null;
     }
 }

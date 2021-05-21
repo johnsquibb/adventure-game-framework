@@ -103,8 +103,8 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
                 if ($item->getAcquirable()) {
                     // Remove the item from map, add to player inventory.
                     $item = $gameController->mapController->takeItemById($item->getId());
-                    $message = $this->addItemToPlayerInventory($gameController, $item);
-                    $response->addMessage($message);
+                    $addItemResponse = $this->addItemToPlayerInventory($gameController, $item);
+                    $response->addMessages($addItemResponse->getMessages());
                 } else {
                     $response->addMessage("You can't take {$item->getName()}.");
                 }

@@ -3,13 +3,18 @@
 namespace AdventureGame\Event\Events;
 
 use AdventureGame\Event\AbstractInventoryEvent;
-use AdventureGame\Event\Triggers\AddItemToInventoryTrigger;
 use AdventureGame\Game\GameController;
+use AdventureGame\Response\Response;
 
 class TakeItemEvent extends AbstractInventoryEvent
 {
-    public function trigger(GameController $gameController): void
+    /**
+     * Trigger the take item event.
+     * @param GameController $gameController
+     * @return Response|null
+     */
+    public function trigger(GameController $gameController): ?Response
     {
-        $this->trigger->execute($gameController);
+        return $this->trigger->execute($gameController);
     }
 }

@@ -32,8 +32,8 @@ class ConsoleResponseDecorator
     {
         $lines = [];
 
-        if (!empty($this->response->getMessage())) {
-            array_push($lines, ...$this->renderMessage($this->response->getMessage()));
+        if (!empty($this->response->getMessages())) {
+            array_push($lines, ...$this->renderMessage($this->response->getMessages()));
         }
 
         if (!empty($this->response->getLocations())) {

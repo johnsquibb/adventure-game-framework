@@ -8,7 +8,7 @@ namespace AdventureGame\Response;
  */
 class Response
 {
-    private array $message = [];
+    private array $messages = [];
     private array $items = [];
     private array $containers = [];
     private array $locations = [];
@@ -38,7 +38,14 @@ class Response
 
     public function addMessage(string $message): void
     {
-        $this->message[] = $message;
+        $this->messages[] = $message;
+    }
+
+    public function addMessages(array $messages): void
+    {
+        foreach ($messages as $message) {
+            $this->addMessage($message);
+        }
     }
 
     public function getClearBefore(): bool
@@ -71,9 +78,9 @@ class Response
         return $this->locations;
     }
 
-    public function getMessage(): array
+    public function getMessages(): array
     {
-        return $this->message;
+        return $this->messages;
     }
 
     public function getChoice(): ?Choice

@@ -26,19 +26,28 @@ abstract class AbstractCommand
      * Add an item to player inventory.
      * @param GameController $gameController
      * @param ItemInterface $item
-     * @return string
+     * @return Response
+     * @throws PlayerLocationNotSetException
      */
     protected function addItemToPlayerInventory(
         GameController $gameController,
         ItemInterface $item
-    ): string {
+    ): Response {
+        $response = new Response();
+
         $gameController->playerController->addItemToPlayerInventory($item);
-        $gameController->eventController->processInventoryTakeEvents(
+        $response->addMessage("Added {$item->getName()} to inventory.");
+
+        $eventResponse = $gameController->eventController->processTakeItemEvents(
             $gameController,
             $item->getId()
         );
 
-        return "Added {$item->getName()} to inventory";
+        if ($eventResponse) {
+            $response->addMessages($eventResponse->getMessages());
+        }
+
+        return $response;
     }
 
     /**

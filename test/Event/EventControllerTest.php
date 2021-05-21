@@ -44,7 +44,7 @@ class EventControllerTest extends FrameworkTest
         );
 
         // Event not added yet.
-        $gameController->eventController->processInventoryTakeEvents(
+        $gameController->eventController->processTakeItemEvents(
             $gameController,
             'test-item-id'
         );
@@ -55,7 +55,7 @@ class EventControllerTest extends FrameworkTest
 
         $gameController->eventController->addEvent($event);
 
-        $gameController->eventController->processInventoryTakeEvents(
+        $gameController->eventController->processTakeItemEvents(
             $gameController,
             'test-item-id'
         );
@@ -66,7 +66,7 @@ class EventControllerTest extends FrameworkTest
         );
 
         // Number of uses exceeded.
-        $gameController->eventController->processInventoryTakeEvents(
+        $gameController->eventController->processTakeItemEvents(
             $gameController,
             'test-item-id'
         );
@@ -110,7 +110,7 @@ class EventControllerTest extends FrameworkTest
         );
 
         // Event not added yet.
-        $gameController->eventController->processInventoryTakeEvents(
+        $gameController->eventController->processTakeItemEvents(
             $gameController,
             'test-item-id'
         );
@@ -121,7 +121,7 @@ class EventControllerTest extends FrameworkTest
 
         $gameController->eventController->addEvent($event);
 
-        $gameController->eventController->processInventoryTakeEvents(
+        $gameController->eventController->processTakeItemEvents(
             $gameController,
             'test-item-id'
         );
@@ -139,7 +139,7 @@ class EventControllerTest extends FrameworkTest
         );
 
         // Number of uses not yet exceeded.
-        $gameController->eventController->processInventoryTakeEvents(
+        $gameController->eventController->processTakeItemEvents(
             $gameController,
             'test-item-id'
         );
@@ -157,7 +157,7 @@ class EventControllerTest extends FrameworkTest
         );
 
         // Number of uses not yet exceeded.
-        $gameController->eventController->processInventoryTakeEvents(
+        $gameController->eventController->processTakeItemEvents(
             $gameController,
             'test-item-id'
         );
@@ -175,7 +175,7 @@ class EventControllerTest extends FrameworkTest
         );
 
         // Number of uses exceeded.
-        $gameController->eventController->processInventoryTakeEvents(
+        $gameController->eventController->processTakeItemEvents(
             $gameController,
             'test-item-id'
         );
