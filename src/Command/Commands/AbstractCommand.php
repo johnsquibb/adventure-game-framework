@@ -42,16 +42,6 @@ abstract class AbstractCommand
     }
 
     /**
-     * Describe an exit.
-     * @param Portal $exit
-     * @return Description
-     */
-    protected function describeExit(Portal $exit): Description
-    {
-        return new Description($exit->getName(), $exit->getSummary(), $exit->getDescription());
-    }
-
-    /**
      * Describe a list of items.
      * @param array $items
      * @return array
@@ -75,16 +65,6 @@ abstract class AbstractCommand
     protected function describeItem(ItemInterface $item): Description
     {
         return new Description($item->getName(), $item->getSummary(), $item->getDescription());
-    }
-
-    /**
-     * Describe items at the current player location.
-     * @param GameController $gameController
-     * @throws PlayerLocationNotSetException
-     */
-    protected function describePlayerLocationItems(GameController $gameController): void
-    {
-        $this->describeLocationItems($gameController->mapController->getPlayerLocation());
     }
 
     /**
@@ -131,16 +111,6 @@ abstract class AbstractCommand
     protected function listItem(ItemInterface $item): Description
     {
         return new Description($item->getName(), $item->getSummary(), $item->getDescription());
-    }
-
-    /**
-     * List items at the current player location.
-     * @param GameController $gameController
-     * @throws PlayerLocationNotSetException
-     */
-    protected function listPlayerLocationItems(GameController $gameController): void
-    {
-        $this->listLocationItems($gameController->mapController->getPlayerLocation());
     }
 
     /**
