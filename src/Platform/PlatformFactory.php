@@ -6,7 +6,10 @@ use AdventureGame\Character\Character;
 use AdventureGame\Command\CommandController;
 use AdventureGame\Command\CommandFactory;
 use AdventureGame\Command\CommandParser;
+use AdventureGame\Event\AbstractInventoryEvent;
 use AdventureGame\Event\EventController;
+use AdventureGame\Event\Events\TakeItemEvent;
+use AdventureGame\Event\Triggers\AddItemToInventoryTrigger;
 use AdventureGame\Game\Exception\InvalidSaveDirectoryException;
 use AdventureGame\Game\GameController;
 use AdventureGame\Game\MapController;
@@ -132,6 +135,7 @@ class PlatformFactory
 
         $nouns = [
             'sword',
+            'manual',
             'chest',
             'door',
             'potion',
@@ -378,6 +382,19 @@ class PlatformFactory
             // Spawn player in room 1
             $object->setPlayerLocationById($spawnRoom->getId());
             $this->registerObject($object);
+
+            // Add the owner's manual to inventory when taking sword.
+            $swordOfPokingOwnersManual = new Item(
+                'swordOfPokingOwnersManual',
+                'Sword of Poking Owner\'s Manual',
+                'Your guide to all matters related to the sword of poking. Use it in good health.',
+                'manual'
+            );
+
+            $trigger = new AddItemToInventoryTrigger($swordOfPokingOwnersManual);
+            $event = new TakeItemEvent($trigger, 'swordOfPoking', 'spawn');
+            $gameController = $this->getGameController();
+            $gameController->eventController->addEvent($event);
         }
 
         return $object;

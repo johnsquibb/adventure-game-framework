@@ -33,6 +33,10 @@ abstract class AbstractCommand
         ItemInterface $item
     ): string {
         $gameController->playerController->addItemToPlayerInventory($item);
+        $gameController->eventController->processInventoryTakeEvents(
+            $gameController,
+            $item->getId()
+        );
 
         return "Added {$item->getName()} to inventory";
     }
