@@ -8,12 +8,17 @@ use AdventureGame\Item\Item;
 
 class AddItemToInventoryTrigger extends AbstractTrigger
 {
-    public function __construct(private Item $item)
+    private int $triggerCount = 0;
+
+    public function __construct(private Item $item, private int $numberOfUses = 1)
     {
     }
 
     public function execute(GameController $gameController): void
     {
-        $gameController->playerController->addItemToPlayerInventory($this->item);
+        if ($this->triggerCount < $this->numberOfUses) {
+            $gameController->playerController->addItemToPlayerInventory($this->item);
+            $this->triggerCount++;
+        }
     }
 }
