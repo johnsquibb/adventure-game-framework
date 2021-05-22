@@ -2,9 +2,9 @@
 
 namespace AdventureGame\Client;
 
+use AdventureGame\Response\Choice;
 use AdventureGame\Response\Description;
 use AdventureGame\Response\Response;
-use AdventureGame\Response\Choice;
 
 /**
  * Class ConsoleResponseDecorator decorates output for display to the player on the console.
@@ -42,6 +42,13 @@ class ConsoleResponseDecorator
 
         if (!empty($this->response->getItems())) {
             array_push($lines, ...$this->renderItems($this->response->getItems()));
+        }
+
+        if (!empty($this->response->getInventoryItems())) {
+            array_push(
+                $lines,
+                ...$this->renderInventoryItems($this->response->getInventoryItems())
+            );
         }
 
         if (!empty($this->response->getContainers())) {
@@ -139,6 +146,29 @@ class ConsoleResponseDecorator
 
         $lines[] = $this->blank();
         $lines[] = "You see:";
+        $lines[] = $this->blank();
+
+        foreach ($items as $description) {
+            if ($description instanceof Description) {
+                array_push($lines, ...$this->renderDescription($description));
+                $lines[] = $this->blank();
+            }
+        }
+
+        return $lines;
+    }
+
+    /**
+     * Render the inventory items.
+     * @param array $items
+     * @return array
+     */
+    private function renderInventoryItems(array $items): array
+    {
+        $lines = [];
+
+        $lines[] = $this->blank();
+        $lines[] = "You have:";
         $lines[] = $this->blank();
 
         foreach ($items as $description) {

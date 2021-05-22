@@ -208,6 +208,24 @@ abstract class AbstractCommand
     }
 
     /**
+     * Describe the items in the player inventory.
+     * @param GameController $gameController
+     * @return Response
+     */
+    protected function describePlayerInventory(GameController $gameController): Response
+    {
+        $response = new Response();
+
+        $inventory = $gameController->playerController->getPlayerInventory();
+
+        foreach ($this->listContainerItems($inventory) as $description) {
+            $response->addInventoryItemDescription($description);
+        }
+
+        return $response;
+    }
+
+    /**
      * Describe a location.
      * @param Location $location
      * @return Description

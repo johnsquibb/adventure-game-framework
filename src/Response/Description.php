@@ -21,23 +21,8 @@ class Description
         return $this->name;
     }
 
-    public function getSummary(): string
-    {
-        return $this->summary;
-    }
-
-    public function setDescription(string $description): void
-    {
-        $this->description = $description;
-    }
-
     public function setName(string $name): void
     {
         $this->name = $name;
-    }
-
-    public function setSummary(string $summary): void
-    {
-        $this->summary = $summary;
     }
 }

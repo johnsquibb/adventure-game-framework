@@ -3,6 +3,7 @@
 namespace AdventureGame\Game;
 
 use AdventureGame\Character\Character;
+use AdventureGame\Item\ContainerInterface;
 use AdventureGame\Item\ItemInterface;
 
 /**
@@ -51,5 +52,14 @@ class PlayerController
     public function removeItemFromPlayerInventory(ItemInterface $item): void
     {
         $this->player->inventory->removeItemById($item->getId());
+    }
+
+    /**
+     * Get player inventory.
+     * @return ContainerInterface
+     */
+    public function getPlayerInventory(): ContainerInterface
+    {
+        return $this->player->inventory;
     }
 }

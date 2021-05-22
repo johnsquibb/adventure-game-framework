@@ -130,6 +130,7 @@ class PlatformFactory
             'put',
             'lock',
             'unlock',
+            'inventory',
         ];
 
         $nouns = [
@@ -153,6 +154,7 @@ class PlatformFactory
             'move' => 'go',
             'ex' => 'look',
             'examine' => 'look',
+            'i' => 'inventory',
         ];
 
         $substitutions = [
@@ -164,6 +166,7 @@ class PlatformFactory
             'east' => 'go east',
             'south' => 'go south',
             'west' => 'go west',
+            'look at inventory' => 'inventory',
         ];
 
         $object = $this->getRegisteredObject(CommandParser::class);

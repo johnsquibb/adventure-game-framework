@@ -29,8 +29,11 @@ class VerbCommand extends AbstractCommand implements CommandInterface
      */
     public function process(GameController $gameController): ?Response
     {
-        $response = $this->tryLookAction($gameController);
-        if ($response) {
+        if ($response = $this->tryLookAction($gameController)) {
+            return $response;
+        }
+
+        if ($response = $this->tryInventoryAction($gameController)) {
             return $response;
         }
 
@@ -48,6 +51,22 @@ class VerbCommand extends AbstractCommand implements CommandInterface
         switch ($this->verb) {
             case 'look':
                 return $this->describePlayerLocation($gameController);
+        }
+
+        return null;
+    }
+
+    /**
+     * Inventory.
+     * @param GameController $gameController
+     * @return Response|null
+     * @throws PlayerLocationNotSetException
+     */
+    private function tryInventoryAction(GameController $gameController): ?Response
+    {
+        switch ($this->verb) {
+            case 'inventory':
+                return $this->describePlayerInventory($gameController);
         }
 
         return null;
