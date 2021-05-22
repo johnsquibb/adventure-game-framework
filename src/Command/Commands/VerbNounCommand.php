@@ -41,6 +41,10 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
             return $response;
         }
 
+        if ($response = $this->tryLookAction($gameController)) {
+            return $response;
+        }
+
         return $this->tryKeyAction($gameController);
     }
 
@@ -74,6 +78,25 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
                 return $this->takeItemsByTagAtPlayerLocation($gameController, $this->noun);
             case 'drop':
                 return $this->dropItemsByTagAtPlayerLocation($gameController, $this->noun);
+        }
+
+        return null;
+    }
+
+    /**
+     * Attempt to look at objects, location.
+     * @param GameController $gameController
+     * @return Response|null
+     * @throws PlayerLocationNotSetException
+     */
+    private function tryLookAction(GameController $gameController): ?Response
+    {
+        switch ($this->verb) {
+            case 'look':
+                return $this->tryLookAtItemsByTagAtPlayerLocationAction(
+                    $gameController,
+                    $this->noun
+                );
         }
 
         return null;

@@ -15,19 +15,21 @@ class CommandParser
     }
 
     /**
-     * Apply substitutions for first literal match against input.
+     * Apply substitutions for literal matches against input.
      * @param string $input
      * @return string
      */
     public function applySubstitutions(string $input): string
     {
-        foreach ($this->substitutions as $match => $substitution) {
-            if ($input === $match) {
-                return $substitution;
+        $tokens = $this->parseCommand($input);
+
+        foreach ($tokens as &$token) {
+            if (isset($this->substitutions[$token])) {
+                $token = $this->substitutions[$token];
             }
         }
 
-        return $input;
+        return $this->assembleCommandFromTokens($tokens);
     }
 
     /**
@@ -72,6 +74,16 @@ class CommandParser
     public function parseCommand(string $command): array
     {
         return preg_split("/[\s,]+/", trim($command));
+    }
+
+    /**
+     * Assemble command from tokens.
+     * @param array $tokens
+     * @return string
+     */
+    public function assembleCommandFromTokens(array $tokens): string
+    {
+        return trim(implode(' ', $tokens));
     }
 
     /**

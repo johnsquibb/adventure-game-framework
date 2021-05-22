@@ -275,4 +275,31 @@ abstract class AbstractCommand
             return "Unlocked {$entity->getName()} with {$key->getName()}.";
         }
     }
+
+    /**
+     * Try to look at items in the current player location.
+     * @param GameController $gameController
+     * @param string $tag
+     * @return Response
+     * @throws PlayerLocationNotSetException
+     */
+    protected function tryLookAtItemsByTagAtPlayerLocationAction(
+        GameController $gameController,
+        string $tag
+    ): Response {
+        $response = new Response();
+
+        $items = $gameController->mapController
+            ->getPlayerLocation()->getContainer()->getItemsByTag($tag);
+
+        if (count($items)) {
+            foreach ($this->describeItems($items) as $description) {
+                $response->addItemDescription($description);
+            }
+        } else {
+            $response->addMessage("You don't see anything like that here.");
+        }
+
+        return $response;
+    }
 }

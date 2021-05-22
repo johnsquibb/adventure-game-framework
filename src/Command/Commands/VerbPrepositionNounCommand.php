@@ -60,31 +60,6 @@ class VerbPrepositionNounCommand extends AbstractCommand implements CommandInter
     }
 
     /**
-     * Try to look at items in the current player location.
-     * @param GameController $gameController
-     * @param string $tag
-     * @return Response
-     * @throws PlayerLocationNotSetException
-     */
-    private function tryLookAtItemsByTagAtPlayerLocationAction(
-        GameController $gameController,
-        string $tag
-    ): Response {
-        $response = new Response();
-
-        $items = $gameController->mapController
-            ->getPlayerLocation()->getContainer()->getItemsByTag($tag);
-
-        if (count($items)) {
-            foreach ($this->describeItems($items) as $description) {
-                $response->addItemDescription($description);
-            }
-        }
-
-        return $response;
-    }
-
-    /**
      * Try to look inside the first container matching tag in the current player location.
      * @param GameController $gameController
      * @param string $tag

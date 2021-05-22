@@ -151,6 +151,8 @@ class PlatformFactory
 
         $aliases = [
             'move' => 'go',
+            'ex' => 'look',
+            'examine' => 'look',
         ];
 
         $substitutions = [

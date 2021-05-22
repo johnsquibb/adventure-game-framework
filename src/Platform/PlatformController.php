@@ -78,7 +78,7 @@ class PlatformController
             }
 
             return $response;
-        } catch (InvalidCommandException | InvalidTokenException) {
+        } catch (InvalidCommandException | InvalidTokenException | InvalidTokensLengthException) {
             return $this->invalidCommandMessage();
         } catch (InvalidExitException) {
             return $this->invalidExitMessage();
