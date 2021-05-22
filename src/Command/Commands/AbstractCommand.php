@@ -77,23 +77,6 @@ abstract class AbstractCommand
     }
 
     /**
-     * Describe items at Location.
-     * @param Location $location
-     * @return array
-     */
-    protected function describeLocationItems(Location $location): array
-    {
-        $descriptions = [];
-
-        $items = $location->getContainer()->getItems();
-        foreach ($items as $item) {
-            $descriptions[] = $this->describeItem($item);
-        }
-
-        return $descriptions;
-    }
-
-    /**
      * Describe a list of items inside a container.
      * @param ContainerItem $container
      * @return array
