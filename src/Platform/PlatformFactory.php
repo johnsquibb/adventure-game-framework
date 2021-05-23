@@ -8,6 +8,7 @@ use AdventureGame\Command\CommandFactory;
 use AdventureGame\Command\CommandParser;
 use AdventureGame\Event\EventController;
 use AdventureGame\Event\Events\DropItemEvent;
+use AdventureGame\Event\Events\EnterLocationEvent;
 use AdventureGame\Event\Events\TakeItemEvent;
 use AdventureGame\Event\Triggers\AddItemToInventoryTrigger;
 use AdventureGame\Event\Triggers\DropItemFromInventoryTrigger;
@@ -146,11 +147,12 @@ class PlatformFactory
             'east',
             'south',
             'west',
+            'reward',
         ];
 
-        $articles = ['the'];
+        $articles = ['a', 'an', 'the'];
 
-        $prepositions = ['at', 'inside', 'into', 'from', 'with'];
+        $prepositions = ['at', 'inside', 'in', 'into', 'from', 'with'];
 
         $aliases = [
             'move' => 'go',
@@ -168,7 +170,6 @@ class PlatformFactory
             'east' => 'go east',
             'south' => 'go south',
             'west' => 'go west',
-            'look at inventory' => 'inventory',
         ];
 
         $object = $this->getRegisteredObject(CommandParser::class);
@@ -406,6 +407,18 @@ class PlatformFactory
             // Drop the sword when dropping the owner's manual from inventory.
             $trigger = new DropItemFromInventoryTrigger($swordOfPoking->getId());
             $event = new DropItemEvent($trigger, 'swordOfPokingOwnersManual', '*');
+            $gameController->eventController->addEvent($event);
+
+            // Give the player a reward for entering the west room.
+            $enteredWestRoomReward = new Item(
+                'enteredWestRoomReward',
+                'Reward for Entering West Room',
+                'You did it! You made it into the west room. This reward is proof of your achievement.',
+                'reward'
+            );
+
+            $trigger = new AddItemToInventoryTrigger($enteredWestRoomReward);
+            $event = new EnterLocationEvent($trigger, 'roomWestOfSpawn');
             $gameController->eventController->addEvent($event);
         }
 

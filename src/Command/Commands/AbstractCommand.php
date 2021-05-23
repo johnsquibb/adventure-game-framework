@@ -36,7 +36,7 @@ abstract class AbstractCommand
         $response = new Response();
 
         $gameController->playerController->addItemToPlayerInventory($item);
-        $response->addMessage("Added {$item->getName()} to inventory.");
+        $response->addMessage("Added \"{$item->getName()}\" to inventory.");
 
         $eventResponse = $gameController->eventController->processTakeItemEvents(
             $gameController,
@@ -64,7 +64,7 @@ abstract class AbstractCommand
         $response = new Response();
 
         $gameController->playerController->removeItemFromPlayerInventory($item);
-        $response->addMessage("Removed {$item->getName()} from inventory");
+        $response->addMessage("Removed \"{$item->getName()}\" from inventory");
 
         $eventResponse = $gameController->eventController->processDropItemEvents(
             $gameController,
@@ -174,22 +174,30 @@ abstract class AbstractCommand
      * @throws InvalidExitException
      * @throws PlayerLocationNotSetException
      */
-    protected function movePlayer(GameController $gameController, string $direction): ?Response
+    protected function movePlayer(GameController $gameController, string $direction): Response
     {
         try {
             $gameController->mapController->movePlayer($direction);
-            return $this->describePlayerLocation($gameController);
+            $response = $this->describePlayerLocation($gameController);
+
+            $eventResponse = $gameController->eventController->processEnterLocationEvents(
+                $gameController,
+                $gameController->mapController->getPlayerLocation()->getId()
+            );
+
+            if ($eventResponse) {
+                $response->addMessages($eventResponse->getMessages());
+            }
         } catch (ExitIsLockedException $e) {
             $portal = $gameController->mapController
                 ->getPlayerLocation()
                 ->getExitInDirection($direction);
 
             $response = new Response();
-
             $response->addMessage("{$portal->getName()} is locked!");
-
-            return $response;
         }
+
+        return $response;
     }
 
     /**
@@ -306,12 +314,12 @@ abstract class AbstractCommand
         $items = $gameController->mapController
             ->getPlayerLocation()->getContainer()->getItemsByTag($tag);
 
-        if (count($items)) {
-            foreach ($this->describeItems($items) as $description) {
-                $response->addItemDescription($description);
-            }
-        } else {
+        if (empty($items)) {
             $response->addMessage("You don't see anything like that here.");
+        }
+
+        foreach ($this->describeItems($items) as $description) {
+            $response->addItemDescription($description);
         }
 
         return $response;

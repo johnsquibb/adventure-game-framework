@@ -61,7 +61,7 @@ class CommandFactory
             throw new InvalidVerbException('invalid verb');
         }
 
-        return new VerbCommand($verb, $this->outputController);
+        return new VerbCommand($verb);
     }
 
     /**
@@ -82,7 +82,7 @@ class CommandFactory
             throw new InvalidNounException('invalid noun');
         }
 
-        return new VerbNounCommand($verb, $noun, $this->outputController);
+        return new VerbNounCommand($verb, $noun);
     }
 
     /**
@@ -112,7 +112,7 @@ class CommandFactory
             throw new InvalidNounException('invalid noun');
         }
 
-        return new VerbPrepositionNounCommand($verb, $preposition, $noun, $this->outputController);
+        return new VerbPrepositionNounCommand($verb, $preposition, $noun);
     }
 
     /**
@@ -148,8 +148,7 @@ class CommandFactory
             $verb,
             $noun1,
             $preposition,
-            $noun2,
-            $this->outputController
+            $noun2
         );
     }
 }

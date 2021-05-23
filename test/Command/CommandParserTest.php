@@ -27,16 +27,6 @@ class CommandParserTest extends TestCase
         $input = 'n';
         $command = $commandParser->applySubstitutions($input);
         $this->assertEquals($expected, $command);
-
-        $expected = 'jump then go north at the bend';
-        $input = 'jump then n at the bend';
-        $command = $commandParser->applySubstitutions($input);
-        $this->assertEquals($expected, $command);
-
-        $expected = 'go north go south go east go west';
-        $input = 'n s e w';
-        $command = $commandParser->applySubstitutions($input);
-        $this->assertEquals($expected, $command);
     }
 
     public function testFilterTokens()

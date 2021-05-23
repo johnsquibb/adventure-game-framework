@@ -3,18 +3,11 @@
 namespace AdventureGame\Event\Events;
 
 use AdventureGame\Event\AbstractInventoryEvent;
-use AdventureGame\Game\GameController;
-use AdventureGame\Response\Response;
 
+/**
+ * Class TakeItemEvent occurs whenever an item is taken by the player.
+ * @package AdventureGame\Event\Events
+ */
 class TakeItemEvent extends AbstractInventoryEvent
 {
-    /**
-     * Trigger the take item event.
-     * @param GameController $gameController
-     * @return Response|null
-     */
-    public function trigger(GameController $gameController): ?Response
-    {
-        return $this->trigger->execute($gameController);
-    }
 }

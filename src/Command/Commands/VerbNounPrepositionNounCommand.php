@@ -133,11 +133,18 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
 
         if ($container) {
             $items = $gameController->playerController->getItemsByTagFromPlayerInventory($itemTag);
+
+            if (empty($items)) {
+                $response->addMessage("You don't have that.");
+            }
+
             foreach ($items as $item) {
                 $container->addItem($item);
                 $removeItemResponse = $this->removeItemFromPlayerInventory($gameController, $item);
                 $response->addMessages($removeItemResponse->getMessages());
             }
+        } else {
+            $response->addMessage("Can't put that there.");
         }
 
         return $response;
