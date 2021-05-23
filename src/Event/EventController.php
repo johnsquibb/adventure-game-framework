@@ -2,6 +2,8 @@
 
 namespace AdventureGame\Event;
 
+use AdventureGame\Event\Events\DropItemEvent;
+use AdventureGame\Event\Events\TakeItemEvent;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
 use AdventureGame\Response\Response;
@@ -19,6 +21,7 @@ class EventController
      * Process take item events for current player location.
      * @param GameController $gameController
      * @param string $itemId
+     * @return Response|null
      * @throws PlayerLocationNotSetException
      */
     public function processTakeItemEvents(GameController $gameController, string $itemId): ?Response
@@ -27,7 +30,31 @@ class EventController
 
         foreach ($this->events as $event) {
             if (
-                is_a($event, AbstractInventoryEvent::class)
+                $event instanceof TakeItemEvent
+                && $event->matchItemId($itemId)
+                && $event->matchLocationId($locationId)
+            ) {
+                return $event->trigger($gameController);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Process drop item events for current player location.
+     * @param GameController $gameController
+     * @param string $itemId
+     * @return Response|null
+     * @throws PlayerLocationNotSetException
+     */
+    public function processDropItemEvents(GameController $gameController, string $itemId): ?Response
+    {
+        $locationId = $gameController->mapController->getPlayerLocation()->getId();
+
+        foreach ($this->events as $event) {
+            if (
+                $event instanceof DropItemEvent
                 && $event->matchItemId($itemId)
                 && $event->matchLocationId($locationId)
             ) {

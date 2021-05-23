@@ -7,8 +7,10 @@ use AdventureGame\Command\CommandController;
 use AdventureGame\Command\CommandFactory;
 use AdventureGame\Command\CommandParser;
 use AdventureGame\Event\EventController;
+use AdventureGame\Event\Events\DropItemEvent;
 use AdventureGame\Event\Events\TakeItemEvent;
 use AdventureGame\Event\Triggers\AddItemToInventoryTrigger;
+use AdventureGame\Event\Triggers\DropItemFromInventoryTrigger;
 use AdventureGame\Game\Exception\InvalidSaveDirectoryException;
 use AdventureGame\Game\GameController;
 use AdventureGame\Game\MapController;
@@ -387,6 +389,8 @@ class PlatformFactory
             $object->setPlayerLocationById($spawnRoom->getId());
             $this->registerObject($object);
 
+            $gameController = $this->getGameController();
+
             // Add the owner's manual to inventory when taking sword.
             $swordOfPokingOwnersManual = new Item(
                 'swordOfPokingOwnersManual',
@@ -397,7 +401,11 @@ class PlatformFactory
 
             $trigger = new AddItemToInventoryTrigger($swordOfPokingOwnersManual);
             $event = new TakeItemEvent($trigger, 'swordOfPoking', 'spawn');
-            $gameController = $this->getGameController();
+            $gameController->eventController->addEvent($event);
+
+            // Drop the sword when dropping the owner's manual from inventory.
+            $trigger = new DropItemFromInventoryTrigger($swordOfPoking->getId());
+            $event = new DropItemEvent($trigger, 'swordOfPokingOwnersManual', '*');
             $gameController->eventController->addEvent($event);
         }
 

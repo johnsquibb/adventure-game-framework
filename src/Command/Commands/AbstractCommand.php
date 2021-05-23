@@ -51,6 +51,34 @@ abstract class AbstractCommand
     }
 
     /**
+     * Remove an item from player inventory.
+     * @param GameController $gameController
+     * @param ItemInterface $item
+     * @return Response response message
+     * @throws PlayerLocationNotSetException
+     */
+    protected function removeItemFromPlayerInventory(
+        GameController $gameController,
+        ItemInterface $item
+    ): Response {
+        $response = new Response();
+
+        $gameController->playerController->removeItemFromPlayerInventory($item);
+        $response->addMessage("Removed {$item->getName()} from inventory");
+
+        $eventResponse = $gameController->eventController->processDropItemEvents(
+            $gameController,
+            $item->getId()
+        );
+
+        if ($eventResponse) {
+            $response->addMessages($eventResponse->getMessages());
+        }
+
+        return $response;
+    }
+
+    /**
      * Describe a list of items.
      * @param array $items
      * @return array
@@ -246,21 +274,6 @@ abstract class AbstractCommand
     protected function listExit(Portal $exit): Description
     {
         return new Description($exit->getName(), $exit->getSummary(), $exit->getDescription());
-    }
-
-    /**
-     * Remove an item from player inventory.
-     * @param GameController $gameController
-     * @param ItemInterface $item
-     * @return string response message
-     */
-    protected function removeItemFromPlayerInventory(
-        GameController $gameController,
-        ItemInterface $item
-    ): string {
-        $gameController->playerController->removeItemFromPlayerInventory($item);
-
-        return "Removed {$item->getName()} from inventory";
     }
 
     /**

@@ -158,9 +158,9 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
 
         foreach ($items as $item) {
             if ($item instanceof ItemInterface) {
-                $this->removeItemFromPlayerInventory($gameController, $item);
-                $message = $gameController->mapController->dropItem($item);
-                $response->addMessage($message);
+                $dropItemResponse = $this->removeItemFromPlayerInventory($gameController, $item);
+                $gameController->mapController->dropItem($item);
+                $response->addMessages($dropItemResponse->getMessages());
             }
         }
 

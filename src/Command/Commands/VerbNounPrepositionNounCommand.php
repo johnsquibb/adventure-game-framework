@@ -114,6 +114,36 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
     }
 
     /**
+     * Drop all items matching tag from player inventory into the first container matching another
+     * tag at current player location.
+     * @param GameController $gameController
+     * @param string $itemTag
+     * @param string $containerTag
+     * @return Response
+     * @throws PlayerLocationNotSetException
+     */
+    private function dropItemsByTagIntoFirstContainerByTagAtPlayerLocation(
+        GameController $gameController,
+        string $itemTag,
+        string $containerTag,
+    ): Response {
+        $response = new Response();
+
+        $container = $this->getFirstContainerByTagAtPlayerLocation($gameController, $containerTag);
+
+        if ($container) {
+            $items = $gameController->playerController->getItemsByTagFromPlayerInventory($itemTag);
+            foreach ($items as $item) {
+                $container->addItem($item);
+                $removeItemResponse = $this->removeItemFromPlayerInventory($gameController, $item);
+                $response->addMessages($removeItemResponse->getMessages());
+            }
+        }
+
+        return $response;
+    }
+
+    /**
      * Get the first container by tag at current player location.
      * @param GameController $gameController
      * @param string $tag
@@ -136,37 +166,6 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
         }
 
         return null;
-    }
-
-    /**
-     * Drop all items matching tag from player inventory into the first container matching another
-     * tag at current player location.
-     * @param GameController $gameController
-     * @param string $itemTag
-     * @param string $containerTag
-     * @return Response
-     * @throws PlayerLocationNotSetException
-     */
-    private function dropItemsByTagIntoFirstContainerByTagAtPlayerLocation(
-        GameController $gameController,
-        string $itemTag,
-        string $containerTag,
-    ): Response {
-        $response = new Response();
-
-
-        $container = $this->getFirstContainerByTagAtPlayerLocation($gameController, $containerTag);
-
-        if ($container) {
-            $items = $gameController->playerController->getItemsByTagFromPlayerInventory($itemTag);
-            foreach ($items as $item) {
-                $container->addItem($item);
-                $message = $this->removeItemFromPlayerInventory($gameController, $item);
-                $response->addMessage($message);
-            }
-        }
-
-        return $response;
     }
 
     /**
