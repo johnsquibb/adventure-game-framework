@@ -177,16 +177,25 @@ abstract class AbstractCommand
     protected function movePlayer(GameController $gameController, string $direction): Response
     {
         try {
-            $gameController->mapController->movePlayer($direction);
-            $response = $this->describePlayerLocation($gameController);
-
-            $eventResponse = $gameController->eventController->processEnterLocationEvents(
+            $exitLocationEventResponse = $gameController->eventController->processExitLocationEvents(
                 $gameController,
                 $gameController->mapController->getPlayerLocation()->getId()
             );
 
-            if ($eventResponse) {
-                $response->addMessages($eventResponse->getMessages());
+            $gameController->mapController->movePlayer($direction);
+            $response = $this->describePlayerLocation($gameController);
+
+            $enterLocationEventResponse = $gameController->eventController->processEnterLocationEvents(
+                $gameController,
+                $gameController->mapController->getPlayerLocation()->getId()
+            );
+
+            if ($enterLocationEventResponse) {
+                $response->addMessages($enterLocationEventResponse->getMessages());
+            }
+
+            if ($exitLocationEventResponse) {
+                $response->addMessages($exitLocationEventResponse->getMessages());
             }
         } catch (ExitIsLockedException $e) {
             $portal = $gameController->mapController

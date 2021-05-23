@@ -19,13 +19,13 @@ class CommandParserTest extends TestCase
         $this->assertEquals($expected, $filtered);
     }
 
-    public function testApplySubstitutions()
+    public function testApplyShortcuts()
     {
         $commandParser = $this->createCommandParser();
 
         $expected = 'go north';
         $input = 'n';
-        $command = $commandParser->applySubstitutions($input);
+        $command = $commandParser->applyShortcuts($input);
         $this->assertEquals($expected, $command);
     }
 
@@ -106,15 +106,16 @@ class CommandParserTest extends TestCase
             'an' => 'a',
             'in' => 'into',
         ];
-        $substitutions = [
+        $shortcuts = [
             'n' => 'go north',
             's' => 'go south',
             'e' => 'go east',
             'w' => 'go west',
         ];
+        $phrases = [];
 
         return new CommandParser(
-            $verbs, $nouns, $articles, $prepositions, $aliases, $substitutions
+            $verbs, $nouns, $articles, $prepositions, $aliases, $shortcuts, $phrases
         );
     }
 

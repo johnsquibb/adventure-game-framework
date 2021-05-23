@@ -17,7 +17,7 @@ class EventControllerTest extends FrameworkTest
             'test-give-item-id',
             'Test Give Item',
             'A test item given to player on event trigger',
-            'given'
+            ['given']
         );
 
         $location = new Location(
@@ -83,7 +83,7 @@ class EventControllerTest extends FrameworkTest
             'test-give-item-id',
             'Test Give Item',
             'A test item given to player on event trigger',
-            'given'
+            ['given']
         );
 
         $location = new Location(

@@ -4,5 +4,7 @@ namespace AdventureGame\Entity;
 
 interface TaggableEntityInterface extends EntityInterface
 {
-    public function getTag(): string;
+    public function getTags(): array;
+
+    public function hasTag(string $tag): bool;
 }

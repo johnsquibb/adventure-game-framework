@@ -26,13 +26,13 @@ class Portal implements TaggableEntityInterface, LockableInterface
         string $id,
         string $name,
         string $description,
-        string $tag,
+        array $tags,
         public string $direction,
         public string $destinationLocationId,
     ) {
         $this->id = $id;
         $this->name = $name;
         $this->description = $description;
-        $this->tag = $tag;
+        $this->tags = $tags;
     }
 }

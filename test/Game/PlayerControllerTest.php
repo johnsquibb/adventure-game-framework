@@ -20,7 +20,7 @@ class PlayerControllerTest extends TestCase
             'test-item',
             'Test Item',
             'Test Item Description',
-            'test'
+            ['test']
         );
         $playerController->addItemToPlayerInventory($item);
 
@@ -48,7 +48,7 @@ class PlayerControllerTest extends TestCase
             'test-item',
             'Test Item',
             'Test Item Description',
-            'test'
+            ['test']
         );
         $this->assertNull($playerController->getItemByIdFromPlayerInventory($item->getId()));
 
@@ -71,15 +71,15 @@ class PlayerControllerTest extends TestCase
             'test-item',
             'Test Item',
             'Test Item Description',
-            'test'
+            ['test']
         );
 
-        $this->assertEmpty($playerController->getItemsByTagFromPlayerInventory($item->getTag()));
+        $this->assertEmpty($playerController->getItemsByTagFromPlayerInventory('test'));
 
         $playerController->addItemToPlayerInventory($item);
         $this->assertEquals(
             [$item],
-            $playerController->getItemsByTagFromPlayerInventory($item->getTag())
+            $playerController->getItemsByTagFromPlayerInventory('test')
         );
     }
 }

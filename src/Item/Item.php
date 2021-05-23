@@ -26,11 +26,11 @@ class Item implements ItemInterface
         string $id,
         string $name,
         string $description,
-        string $tag
+        array $tags
     ) {
         $this->id = $id;
         $this->name = $name;
         $this->description = $description;
-        $this->tag = $tag;
+        $this->tags = $tags;
     }
 }

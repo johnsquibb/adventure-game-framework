@@ -247,7 +247,7 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
         );
 
         if (empty($containers)) {
-            $response->addMessage("The is nothing to unlock with {$keyTag}.");
+            $response->addMessage("There is nothing to unlock with {$keyTag}.");
             return $response;
         }
 

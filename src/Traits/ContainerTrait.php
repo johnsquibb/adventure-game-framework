@@ -77,7 +77,7 @@ trait ContainerTrait
 
         /** @var $item ItemInterface */
         foreach ($this->items as $item) {
-            if ($item->getTag() === $tag) {
+            if ($item->hasTag($tag)) {
                 $items[] = $item;
             }
         }
@@ -97,7 +97,7 @@ trait ContainerTrait
 
         /** @var $item ItemInterface */
         foreach ($this->items as $item) {
-            if (is_a($item, $type) && $item->getTag() === $tag) {
+            if (is_a($item, $type) && $item->hasTag($tag)) {
                 $items[] = $item;
             }
         }

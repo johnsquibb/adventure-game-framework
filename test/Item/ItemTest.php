@@ -12,18 +12,18 @@ class ItemTest extends TestCase
         $id = 'test-item';
         $name = 'Test Item';
         $description = 'Test Item Description';
-        $tag = 'test';
-        $item = new Item($id, $name, $description, $tag);
+        $tags = ['test'];
+        $item = new Item($id, $name, $description, $tags);
 
         $this->assertEquals($id, $item->getId());
         $this->assertEquals($name, $item->getName());
         $this->assertEquals($description, $item->getDescription());
-        $this->assertEquals($tag, $item->getTag());
+        $this->assertEquals($tags, $item->getTags());
     }
 
     public function testItemAccessible()
     {
-        $item = new Item('', '', '', '');
+        $item = new Item('', '', '', ['']);
 
         $this->assertFalse($item->getAccessible());
         $item->setAccessible(true);
@@ -35,7 +35,7 @@ class ItemTest extends TestCase
 
     public function testItemAcquirable()
     {
-        $item = new Item('', '', '', '');
+        $item = new Item('', '', '', ['']);
 
         $this->assertTrue($item->getAcquirable());
         $item->setAcquirable(false);

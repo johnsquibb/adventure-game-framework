@@ -4,10 +4,21 @@ namespace AdventureGame\Traits;
 
 trait TagTrait
 {
-    private string $tag = '';
+    private array $tags = [];
 
-    public function getTag(): string
+    public function getTags(): array
     {
-        return $this->tag;
+        return $this->tags;
+    }
+
+    public function hasTag(string $tag): bool
+    {
+        foreach ($this->tags as $match) {
+            if (strtolower($match) === $tag) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

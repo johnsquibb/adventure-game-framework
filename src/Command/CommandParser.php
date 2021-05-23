@@ -4,30 +4,60 @@ namespace AdventureGame\Command;
 
 class CommandParser
 {
+    private array $verbs;
+    private array $nouns;
+    private array $articles;
+    private array $prepositions;
+    private array $aliases;
+    private array $shortcuts;
+    private array $phrases;
+
     public function __construct(
-        private array $verbs,
-        private array $nouns,
-        private array $articles,
-        private array $prepositions,
-        private array $aliases,
-        private array $substitutions,
+        array $verbs,
+        array $nouns,
+        array $articles,
+        array $prepositions,
+        array $aliases,
+        array $shortcuts,
+        array $phrases,
     ) {
+        $this->verbs = $this->normalizeTokens($verbs);
+        $this->nouns = $this->normalizeTokens($nouns);
+        $this->articles = $this->normalizeTokens($articles);
+        $this->prepositions = $this->normalizeTokens($prepositions);
+        $this->aliases = $this->normalizeTokens($aliases);
+        $this->shortcuts = $this->normalizeTokens($shortcuts);
+        $this->phrases = $this->normalizeTokens($phrases);
     }
 
     /**
-     * Apply substitutions for literal matches against input.
+     * Apply shortcuts for literal matches against input.
      * @param string $input
      * @return string
      */
-    public function applySubstitutions(string $input): string
+    public function applyShortcuts(string $input): string
     {
-        foreach ($this->substitutions as $match => $substitution) {
+        foreach ($this->shortcuts as $match => $shortcut) {
             if ($input === $match) {
-                return $substitution;
+                return $shortcut;
             }
         }
 
-        return $input;
+        return $this->normalizeString($input);
+    }
+
+    /**
+     * Apply phrases for literal matches against portions of the input.
+     * @param string $input
+     * @return string
+     */
+    public function applyPhrases(string $input): string
+    {
+        foreach ($this->phrases as $match => $phrase) {
+            $input = str_ireplace($match, $phrase, $input);
+        }
+
+        return $this->normalizeString($input);
     }
 
     /**
@@ -57,11 +87,21 @@ class CommandParser
     {
         $normal = [];
 
-        foreach ($tokens as $token) {
-            $normal[] = strtolower($token);
+        foreach ($tokens as $key => $token) {
+            $normal[$key] = $this->normalizeString($token);
         }
 
         return $normal;
+    }
+
+    /**
+     * Normalize string.
+     * @param string $string
+     * @return string
+     */
+    public function normalizeString(string $string): string
+    {
+        return strtolower($string);
     }
 
     /**

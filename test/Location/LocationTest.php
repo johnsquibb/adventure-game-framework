@@ -35,7 +35,7 @@ class LocationTest extends TestCase
             'test-door',
             '',
             '',
-            'north',
+            ['north'],
             'north', 'test-room'
         );
         $exits = [$portal];
@@ -58,7 +58,7 @@ class LocationTest extends TestCase
             'test-item',
             'Test Item',
             'Test Item Description',
-            'test'
+            ['test']
         );
         $items->addItem($item);
 

@@ -19,7 +19,7 @@ class CharacterTest extends TestCase
             'test-item',
             'Test Item',
             'Test Item Description',
-            'test'
+            ['test']
         );
         $character->inventory->addItem($item);
 
@@ -46,7 +46,7 @@ class CharacterTest extends TestCase
             'test-item',
             'Test Item',
             'Test Item Description',
-            'test'
+            ['test']
         );
         $character->inventory->addItem($item);
 

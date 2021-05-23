@@ -49,7 +49,7 @@ class Location implements EntityInterface
     public function getExitByTag(string $tag): ?Portal
     {
         foreach ($this->exits as $exit) {
-            if (is_a($exit, TaggableEntityInterface::class) && $exit->getTag() === $tag) {
+            if (is_a($exit, TaggableEntityInterface::class) && $exit->hasTag($tag)) {
                 return $exit;
             }
         }

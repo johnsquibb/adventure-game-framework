@@ -18,7 +18,7 @@ class ContainerTest extends TestCase
             'test-item',
             'Test Item',
             'Test Item Description',
-            'test'
+            ['test']
         );
         $container->addItem($item);
         $this->assertEquals($item, $container->getItemById($item->getId()));
@@ -31,7 +31,7 @@ class ContainerTest extends TestCase
             'test-item',
             'Test Item',
             'Test Item Description',
-            'test'
+            ['test']
         );
         $container->addItem($item);
         $this->assertEquals(1, $container->countItems());
@@ -46,7 +46,7 @@ class ContainerTest extends TestCase
             'test-item',
             'Test Item',
             'Test Item Description',
-            'test'
+            ['test']
         );
         $container->addItem($item);
         $this->assertEquals($item, $container->getItemById($item->getId()));
@@ -59,7 +59,7 @@ class ContainerTest extends TestCase
             'test-item',
             'Test Item',
             'Test Item Description',
-            'test'
+            ['test']
         );
 
         $container->addItem($item);
@@ -75,21 +75,21 @@ class ContainerTest extends TestCase
             'test-item',
             'Test Item',
             'Test Item Description',
-            'test'
+            ['test']
         );
         $container->addItem($item);
 
-        $this->assertEquals([$item], $container->getItemsByTag($item->getTag()));
+        $this->assertEquals([$item], $container->getItemsByTag('test'));
 
         $item2 = new Item(
             'test-item-2',
             'Test Item 2',
             'Test Item 2 Description',
-            'test'
+            ['test']
         );
         $container->addItem($item2);
 
-        $this->assertEquals([$item, $item2], $container->getItemsByTag($item->getTag()));
+        $this->assertEquals([$item, $item2], $container->getItemsByTag('test'));
     }
 
     public function testGetItemsByTypeAndTag()
@@ -101,7 +101,7 @@ class ContainerTest extends TestCase
             'test-item',
             'Test Item',
             'Test Item Description',
-            'test'
+            ['test']
         );
         $container->addItem($item);
 
@@ -109,7 +109,7 @@ class ContainerTest extends TestCase
             'test-item-2',
             'Test Item 2',
             'Test Item 2 Description',
-            'test'
+            ['test']
         );
         $container->addItem($item2);
 
@@ -117,7 +117,7 @@ class ContainerTest extends TestCase
             [$item, $item2],
             $container->getItemsByTypeAndTag(
                 ItemInterface::class,
-                $item->getTag()
+                'test'
             )
         );
 
@@ -125,7 +125,7 @@ class ContainerTest extends TestCase
             [$item2],
             $container->getItemsByTypeAndTag(
                 ContainerInterface::class,
-                $item->getTag()
+                'test'
             )
         );
     }
@@ -137,7 +137,7 @@ class ContainerTest extends TestCase
             'test-item',
             'Test Item',
             'Test Item Description',
-            'test'
+            ['test']
         );
 
         $container->addItem($item);

@@ -42,7 +42,7 @@ abstract class FrameworkTest extends TestCase
         $prepositions = ['at', 'into', 'from'];
         $aliases = [];
 
-        return new CommandParser($verbs, $nouns, $articles, $prepositions, $aliases, []);
+        return new CommandParser($verbs, $nouns, $articles, $prepositions, $aliases, [], []);
     }
 
     protected function createCommandController(): CommandController
@@ -71,7 +71,7 @@ abstract class FrameworkTest extends TestCase
             'test-item-1',
             'Test Item 1',
             'Test Item 1 description',
-            'test'
+            ['test']
         );
         $item->setAccessible(true);
         $container->addItem($item);
@@ -80,7 +80,7 @@ abstract class FrameworkTest extends TestCase
             'test-container-item',
             'Test Container Item',
             'Test container item description',
-            'test-container-item',
+            ['test-container-item'],
         );
         $container->addItem($containerItem);
 
@@ -88,7 +88,7 @@ abstract class FrameworkTest extends TestCase
             'test-item-2',
             'Test Item 2',
             'Test Item 2 description',
-            'test-item-in-container'
+            ['test-item-in-container']
         );
         $item->setAccessible(true);
         $containerItem->addItem($item);
@@ -97,7 +97,7 @@ abstract class FrameworkTest extends TestCase
             'test-item-3',
             'Test Item 3',
             'Test Item 3 description',
-            'test-item-2-in-container'
+            ['test-item-2-in-container']
         );
         $item->setAccessible(true);
         $containerItem->addItem($item);
@@ -106,7 +106,7 @@ abstract class FrameworkTest extends TestCase
             'test-door',
             'Wooden Door',
             'A door leading to the east',
-            'east',
+            ['east'],
             'east', 'test-room-2'
         );
         $location1 = new Location(
@@ -121,7 +121,7 @@ abstract class FrameworkTest extends TestCase
             'test-door',
             '',
             '',
-            'west',
+            ['west'],
             'west', 'test-room-1'
         );
         $location2 = new Location(

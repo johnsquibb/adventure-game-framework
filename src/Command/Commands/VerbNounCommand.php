@@ -121,6 +121,14 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
             $response->addMessage("You don't see anything like that here.");
         }
 
+        if (count($items) > 1) {
+            $response->addMessage('Which item do you want to take?');
+            foreach ($items as $item) {
+                $response->addItemDescription($this->listItem($item));
+            }
+            return $response;
+        }
+
         foreach ($items as $item) {
             if ($item instanceof ItemInterface) {
                 if ($item->getAcquirable()) {
@@ -154,6 +162,15 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
 
         if (empty($items)) {
             $response->addMessage("You don't have anything like that.");
+            return $response;
+        }
+
+        if (count($items) > 1) {
+            $response->addMessage('Which item do you want to drop?');
+            foreach ($items as $item) {
+                $response->addInventoryItemDescription($this->listItem($item));
+            }
+            return $response;
         }
 
         foreach ($items as $item) {
@@ -218,7 +235,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
             ->getItemsByTypeAndTag(ContainerItem::class, $noun);
 
         if (empty($containers)) {
-            $response->addMessage("The is nothing to unlock.");
+            $response->addMessage("There is nothing to unlock.");
             return $response;
         }
 
@@ -306,7 +323,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         $containers = $location->getContainer()->getItemsByTypeAndTag(ContainerItem::class, $noun);
 
         if (empty($containers)) {
-            $response->addMessage("The is nothing to lock.");
+            $response->addMessage("There is nothing to lock.");
             return $response;
         }
 

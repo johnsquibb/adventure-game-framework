@@ -29,7 +29,7 @@ class MapControllerTest extends TestCase
             'test-item',
             'Test Item',
             'Test Item Description',
-            'test'
+            ['test']
         );
         $inventory->addItem($item);
 
@@ -56,7 +56,7 @@ class MapControllerTest extends TestCase
             'test-item-1',
             'Test Item',
             'Test Item Description',
-            'test'
+            ['test']
         );
 
         $location = new Location(
@@ -70,21 +70,21 @@ class MapControllerTest extends TestCase
 
         $mapController = new MapController($locations);
         $mapController->setPlayerLocationById($location->getId());
-        $this->assertEmpty($mapController->takeItemsByTag($item->getTag()));
+        $this->assertEmpty($mapController->takeItemsByTag('test'));
 
         $location->getContainer()->addItem($item);
-        $this->assertCount(1, $mapController->takeItemsByTag($item->getTag()));
+        $this->assertCount(1, $mapController->takeItemsByTag('test'));
 
         $item2 = new Item(
             'test-item-2',
             'Test Item',
             'Test Item Description',
-            'test'
+            ['test']
         );
 
         $location->getContainer()->addItem($item2);
-        $this->assertCount(1, $mapController->takeItemsByTag($item->getTag()));
-        $this->assertCount(0, $mapController->takeItemsByTag($item->getTag()));
+        $this->assertCount(1, $mapController->takeItemsByTag('test'));
+        $this->assertCount(0, $mapController->takeItemsByTag('test'));
     }
 
     public function testMovePlayer()
@@ -93,7 +93,7 @@ class MapControllerTest extends TestCase
             'test-door',
             '',
             '',
-            'east',
+            ['east'],
             'east', 'test-room-2'
         );
         $location1 = new Location(
@@ -108,7 +108,7 @@ class MapControllerTest extends TestCase
             'test-door',
             '',
             '',
-            'west',
+            ['west'],
             'west', 'test-room-1'
         );
         $location2 = new Location(
@@ -178,7 +178,7 @@ class MapControllerTest extends TestCase
             'test-item',
             'Test Item',
             'Test Item Description',
-            'test'
+            ['test']
         );
         $items->addItem($item);
 

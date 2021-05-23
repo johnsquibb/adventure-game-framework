@@ -9,6 +9,7 @@ use AdventureGame\Command\CommandParser;
 use AdventureGame\Event\EventController;
 use AdventureGame\Event\Events\DropItemEvent;
 use AdventureGame\Event\Events\EnterLocationEvent;
+use AdventureGame\Event\Events\ExitLocationEvent;
 use AdventureGame\Event\Events\TakeItemEvent;
 use AdventureGame\Event\Triggers\AddItemToInventoryTrigger;
 use AdventureGame\Event\Triggers\DropItemFromInventoryTrigger;
@@ -148,6 +149,10 @@ class PlatformFactory
             'south',
             'west',
             'reward',
+            'reward.exit',
+            'reward.enter',
+            'key.keyToCellarDoor',
+            'key.keyToWoodenDoor'
         ];
 
         $articles = ['a', 'an', 'the'];
@@ -161,7 +166,14 @@ class PlatformFactory
             'i' => 'inventory',
         ];
 
-        $substitutions = [
+        $phrases = [
+            'exit reward' => 'reward.exit',
+            'enter reward' => 'reward.enter',
+            'key to cellar door' => 'key.keyToCellarDoor',
+            'key to wooden door' => 'key.keyToWoodenDoor',
+        ];
+
+        $shortcuts = [
             'n' => 'go north',
             'e' => 'go east',
             's' => 'go south',
@@ -180,7 +192,8 @@ class PlatformFactory
                 $articles,
                 $prepositions,
                 $aliases,
-                $substitutions
+                $shortcuts,
+                $phrases
             );
             $this->registerObject($object);
         }
@@ -252,7 +265,7 @@ class PlatformFactory
             'treasureChest',
             'Treasure Chest',
             'A chest containing valuable treasure.',
-            'chest',
+            ['chest'],
         );
         $chest->setAcquirable(false);
 
@@ -260,46 +273,46 @@ class PlatformFactory
             'swordOfPoking',
             'The Sword of Poking',
             'An average sword, made for poking aggressive beasts.',
-            'sword',
+            ['sword'],
         );
         $potionOfHealing1 = new Item(
             'potionOfHealing1',
             'Potion of Healing I',
             'A potion that restores life.',
-            'potion',
+            ['potion'],
         );
-        $keyToDoorWoodenDoor = new Item(
+        $keyToWoodenDoor = new Item(
             'keyToWoodenDoor',
             'Key to Wooden Door',
             'A metal key that unlocks the wooden door at spawn.',
-            'key'
+            ['key.keyToWoodenDoor', 'key to wooden door', 'key']
         );
 
         $chest->addItem($swordOfPoking);
         $chest->addItem($potionOfHealing1);
-        $chest->addItem($keyToDoorWoodenDoor);
+        $chest->addItem($keyToWoodenDoor);
 
         $doorFromSpawnToWestRoom = new Portal(
             'doorFromSpawnToWestRoom',
             'Wooden Door',
             'A heavy wooden door leading to the west.',
-            'door',
+            ['door'],
             'west', 'roomWestOfSpawn'
         );
 
         $doorFromSpawnToWestRoom->setMutable(true);
         $doorFromSpawnToWestRoom->setLocked(true);
-        $doorFromSpawnToWestRoom->setKeyEntityId($keyToDoorWoodenDoor->getId());
+        $doorFromSpawnToWestRoom->setKeyEntityId($keyToWoodenDoor->getId());
 
         $doorFromWestRoomToSpawn = new Portal(
             'doorFromWestRoomToSpawn',
             'Wooden Door',
             'A heavy wooden door leading back to spawn.',
-            'door',
+            ['door'],
             'east', 'spawn'
         );
 
-        $doorFromWestRoomToSpawn->setKeyEntityId($keyToDoorWoodenDoor->getId());
+        $doorFromWestRoomToSpawn->setKeyEntityId($keyToWoodenDoor->getId());
 
         $roomWestOfSpawn = new Location(
             'roomWestOfSpawn',
@@ -313,7 +326,7 @@ class PlatformFactory
             'entryFromSpawnToHallway',
             'Hallway Entrance',
             'An entrance to a hallway leading south.',
-            'hallway',
+            ['hallway'],
             'south', 'hallwayLeadingSouthFromSpawn'
         );
 
@@ -321,7 +334,7 @@ class PlatformFactory
             'entryFromSpawnToHallway',
             'Hallway Entrance',
             'An entrance to a hallway leading north.',
-            'hallway',
+            ['hallway'],
             'north', 'spawn'
         );
 
@@ -329,15 +342,15 @@ class PlatformFactory
             'doorFromHallwayToCourtyard',
             'Front door',
             'A door with a window, through which you can see an exterior courtyard.',
-            'door',
+            ['door'],
             'south', 'courtyard'
         );
 
         $keyToCellarDoor = new Item(
             'keyToCellarDoor',
-            'Key to Cellar',
+            'Key to Cellar Door',
             'A small key that unlocks the door to the cellar.',
-            'key'
+            ['key.keyToCellarDoor', 'key to cellar door', 'key']
         );
 
         $hallwayLeadingSouth = new Location(
@@ -353,7 +366,7 @@ class PlatformFactory
             'doorFromCourtyardToHallway',
             'Front door',
             "A door that leads inside the house. It has a small stained glass window in the center.",
-            'door',
+            ['door'],
             'north', 'hallwayLeadingSouthFromSpawn'
         );
 
@@ -397,7 +410,7 @@ class PlatformFactory
                 'swordOfPokingOwnersManual',
                 'Sword of Poking Owner\'s Manual',
                 'Your guide to all matters related to the sword of poking. Use it in good health.',
-                'manual'
+                ['manual']
             );
 
             $trigger = new AddItemToInventoryTrigger($swordOfPokingOwnersManual);
@@ -414,11 +427,23 @@ class PlatformFactory
                 'enteredWestRoomReward',
                 'Reward for Entering West Room',
                 'You did it! You made it into the west room. This reward is proof of your achievement.',
-                'reward'
+                ['reward', 'reward.enter']
             );
 
             $trigger = new AddItemToInventoryTrigger($enteredWestRoomReward);
             $event = new EnterLocationEvent($trigger, 'roomWestOfSpawn');
+            $gameController->eventController->addEvent($event);
+
+            // Give the player a reward for exiting the west room.
+            $exitedWestRoomReward = new Item(
+                'exitedWestRoomReward',
+                'Reward for Exiting West Room',
+                'Great job getting out of the west room! This reward is proof of your achievement.',
+                ['reward', 'reward.exit']
+            );
+
+            $trigger = new AddItemToInventoryTrigger($exitedWestRoomReward);
+            $event = new ExitLocationEvent($trigger, 'roomWestOfSpawn');
             $gameController->eventController->addEvent($event);
         }
 
