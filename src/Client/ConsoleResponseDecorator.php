@@ -32,10 +32,6 @@ class ConsoleResponseDecorator
     {
         $lines = [];
 
-        if (!empty($this->response->getMessages())) {
-            array_push($lines, ...$this->renderMessage($this->response->getMessages()));
-        }
-
         if (!empty($this->response->getLocations())) {
             array_push($lines, ...$this->renderLocations($this->response->getLocations()));
         }
@@ -57,6 +53,10 @@ class ConsoleResponseDecorator
 
         if (!empty($this->response->getExits())) {
             array_push($lines, ...$this->renderExits($this->response->getExits()));
+        }
+
+        if (!empty($this->response->getMessages())) {
+            array_push($lines, ...$this->renderMessage($this->response->getMessages()));
         }
 
         if ($this->response->getChoice() instanceof Choice) {

@@ -48,6 +48,7 @@ class VerbPrepositionNounCommand extends AbstractCommand implements CommandInter
                             $gameController,
                             $this->noun
                         );
+                    case 'in':
                     case 'inside':
                         return $this->tryLookInsideContainersByTagAtPlayerLocationAction(
                             $gameController,
@@ -75,15 +76,18 @@ class VerbPrepositionNounCommand extends AbstractCommand implements CommandInter
         $items = $gameController->mapController
             ->getPlayerLocation()->getContainer()->getItemsByTag($tag);
 
-        if (count($items)) {
-            foreach ($items as $container) {
-                if ($container instanceof ContainerInterface) {
-                    foreach ($this->listContainerItems($container) as $description) {
-                        $response->addContainerDescription($description);
-                    }
+        if (empty($items)) {
+            $response->addMessage("Can't find that here.");
+        }
+
+        foreach ($items as $container) {
+            if ($container instanceof ContainerInterface) {
+                foreach ($this->listContainerItems($container) as $description) {
+                    $response->addContainerDescription($description);
                 }
             }
         }
+
 
         return $response;
     }

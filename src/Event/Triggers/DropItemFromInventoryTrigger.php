@@ -27,7 +27,7 @@ class DropItemFromInventoryTrigger extends AbstractTrigger
             $gameController->mapController->getPlayerLocation()->getContainer()->addItem($item);
 
             $response = new Response();
-            $response->addMessage("Removed {$item->getName()} from inventory.");
+            $response->addMessage("Removed \"{$item->getName()}\" from inventory.");
 
             return $response;
         }

@@ -27,7 +27,7 @@ class AddItemToInventoryTrigger extends AbstractTrigger
             $this->triggerCount++;
 
             $response = new Response();
-            $response->addMessage("Added {$this->item->getName()} to inventory.");
+            $response->addMessage("Added \"{$this->item->getName()}\" to inventory.");
             return $response;
         }
 

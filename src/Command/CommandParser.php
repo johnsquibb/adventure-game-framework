@@ -21,15 +21,13 @@ class CommandParser
      */
     public function applySubstitutions(string $input): string
     {
-        $tokens = $this->parseCommand($input);
-
-        foreach ($tokens as &$token) {
-            if (isset($this->substitutions[$token])) {
-                $token = $this->substitutions[$token];
+        foreach ($this->substitutions as $match => $substitution) {
+            if ($input === $match) {
+                return $substitution;
             }
         }
 
-        return $this->assembleCommandFromTokens($tokens);
+        return $input;
     }
 
     /**
