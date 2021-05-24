@@ -2,6 +2,7 @@
 
 namespace AdventureGame\Command\Commands;
 
+use AdventureGame\Entity\ActivatableEntityInterface;
 use AdventureGame\Entity\EntityInterface;
 use AdventureGame\Entity\LockableInterface;
 use AdventureGame\Game\Exception\ExitIsLockedException;

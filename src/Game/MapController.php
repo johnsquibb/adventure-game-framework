@@ -45,6 +45,18 @@ class MapController
     }
 
     /**
+     * Add an item to the current player location.
+     * @param ItemInterface $item
+     * @return void
+     * @throws PlayerLocationNotSetException
+     */
+    public function addItem(ItemInterface $item): void
+    {
+        $location = $this->getPlayerLocation();
+        $location->getContainer()->addItem($item);
+    }
+
+    /**
      * The current location of the player, if set.
      * @return Location
      * @throws PlayerLocationNotSetException

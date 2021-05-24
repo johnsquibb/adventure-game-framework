@@ -78,6 +78,8 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
                 return $this->takeItemsByTagAtPlayerLocation($gameController, $this->noun);
             case 'drop':
                 return $this->dropItemsByTagAtPlayerLocation($gameController, $this->noun);
+            case 'activate':
+                return $this->activateItemsByTagAtPlayerLocation($gameController, $this->noun);
         }
 
         return null;
@@ -382,5 +384,60 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         }
 
         return "You don't have the required key.";
+    }
+
+    /**
+     * Activate items by tag at player location.
+     * @param GameController $gameController
+     * @param string $tag
+     * @return Response
+     * @throws PlayerLocationNotSetException
+     */
+    private function activateItemsByTagAtPlayerLocation(GameController $gameController, string $tag)
+    {
+        $response = new Response();
+
+        $items = $gameController->playerController->getPlayerInventory()->getItemsByTag($tag);
+
+        if (empty($items)) {
+            $response->addMessage("You don't have that.");
+        }
+
+        if (count($items) > 1) {
+            $response->addMessage('Which item do you want to activate?');
+            foreach ($items as $item) {
+                $response->addItemSummaryWithTag($this->listItem($item));
+            }
+            return $response;
+        }
+
+        foreach ($items as $item) {
+            if ($item instanceof ItemInterface) {
+                if ($item->getActivatable()) {
+                    if ($item->getActivated() === true) {
+                        $item->setActivated(false);
+                        $message = "Deactivated {$item->getName()}.";
+                    } else {
+                        $item->setActivated(true);
+                        $message = "Activated {$item->getName()}.";
+
+                        $eventResponse = $gameController->eventController->processActivateItemEvents(
+                            $gameController,
+                            $item->getId()
+                        );
+
+                        if ($eventResponse) {
+                            $response->addMessages($eventResponse->getMessages());
+                        }
+                    }
+
+                    $response->addMessage($message);
+                } else {
+                    $response->addMessage("You can't activate {$item->getName()}.");
+                }
+            }
+        }
+
+        return $response;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace AdventureGame\Event;
 
+use AdventureGame\Event\Events\ActivateItemEvent;
 use AdventureGame\Event\Events\DropItemEvent;
 use AdventureGame\Event\Events\EnterLocationEvent;
 use AdventureGame\Event\Events\ExitLocationEvent;
@@ -102,6 +103,32 @@ class EventController
         foreach ($this->events as $event) {
             if (
                 $event instanceof ExitLocationEvent
+                && $event->matchLocationId($locationId)
+            ) {
+                return $event->trigger($gameController);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Process activate item events.
+     * @param GameController $gameController
+     * @param string $itemId
+     * @return Response|null
+     * @throws PlayerLocationNotSetException
+     */
+    public function processActivateItemEvents(
+        GameController $gameController,
+        string $itemId
+    ): ?Response {
+        $locationId = $gameController->mapController->getPlayerLocation()->getId();
+
+        foreach ($this->events as $event) {
+            if (
+                $event instanceof ActivateItemEvent
+                && $event->matchItemId($itemId)
                 && $event->matchLocationId($locationId)
             ) {
                 return $event->trigger($gameController);
