@@ -10,6 +10,7 @@ class Response
 {
     private array $messages = [];
     private array $items = [];
+    private array $itemSummaryWithTags = [];
     private array $inventoryItems = [];
     private array $containers = [];
     private array $locations = [];
@@ -27,12 +28,17 @@ class Response
         $this->exits[] = $exit;
     }
 
-    public function addItemDescription(Description $item): void
+    public function addItemSummaryWithTag(ItemDescription $itemSummaryWithTag): void
+    {
+        $this->itemSummaryWithTags[] = $itemSummaryWithTag;
+    }
+
+    public function addItemDescription(ItemDescription $item): void
     {
         $this->items[] = $item;
     }
 
-    public function addInventoryItemDescription(Description $inventoryItem): void
+    public function addInventoryItemDescription(ItemDescription $inventoryItem): void
     {
         $this->inventoryItems[] = $inventoryItem;
     }
@@ -77,6 +83,11 @@ class Response
     public function getInventoryItems(): array
     {
         return $this->inventoryItems;
+    }
+
+    public function getItemSummaryWithTags(): array
+    {
+        return $this->itemSummaryWithTags;
     }
 
     public function getItems(): array

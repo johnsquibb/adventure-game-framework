@@ -285,7 +285,7 @@ class PlatformFactory
             'keyToWoodenDoor',
             'Key to Wooden Door',
             'A metal key that unlocks the wooden door at spawn.',
-            ['key.keyToWoodenDoor', 'key to wooden door', 'key']
+            ['key to wooden door', 'key.keyToWoodenDoor', 'key']
         );
 
         $chest->addItem($swordOfPoking);
@@ -350,7 +350,7 @@ class PlatformFactory
             'keyToCellarDoor',
             'Key to Cellar Door',
             'A small key that unlocks the door to the cellar.',
-            ['key.keyToCellarDoor', 'key to cellar door', 'key']
+            ['key to cellar door', 'key.keyToCellarDoor', 'key']
         );
 
         $hallwayLeadingSouth = new Location(
@@ -427,7 +427,7 @@ class PlatformFactory
                 'enteredWestRoomReward',
                 'Reward for Entering West Room',
                 'You did it! You made it into the west room. This reward is proof of your achievement.',
-                ['reward', 'reward.enter']
+                ['enter reward', 'reward.enter', 'reward']
             );
 
             $trigger = new AddItemToInventoryTrigger($enteredWestRoomReward);
@@ -439,7 +439,7 @@ class PlatformFactory
                 'exitedWestRoomReward',
                 'Reward for Exiting West Room',
                 'Great job getting out of the west room! This reward is proof of your achievement.',
-                ['reward', 'reward.exit']
+                ['exit reward', 'reward.exit', 'reward']
             );
 
             $trigger = new AddItemToInventoryTrigger($exitedWestRoomReward);

@@ -3,6 +3,7 @@
 namespace AdventureGame\Test\Response;
 
 use AdventureGame\Response\Description;
+use AdventureGame\Response\ItemDescription;
 use AdventureGame\Response\Response;
 use PHPUnit\Framework\TestCase;
 
@@ -35,7 +36,7 @@ class ResponseTest extends TestCase
     public function testAddItemDescription()
     {
         $response = new Response();
-        $description = new Description();
+        $description = new ItemDescription();
 
         $response->addItemDescription($description);
         $this->assertEquals($response->getItems(), [$description]);

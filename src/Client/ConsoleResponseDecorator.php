@@ -4,6 +4,7 @@ namespace AdventureGame\Client;
 
 use AdventureGame\Response\Choice;
 use AdventureGame\Response\Description;
+use AdventureGame\Response\ItemDescription;
 use AdventureGame\Response\Response;
 
 /**
@@ -38,6 +39,14 @@ class ConsoleResponseDecorator
 
         if (!empty($this->response->getItems())) {
             array_push($lines, ...$this->renderItems($this->response->getItems()));
+        }
+
+        if (!empty($this->response->getItemSummaryWithTags())) {
+            array_push(
+                $lines,
+                ...
+                $this->renderItemSummariesWithTags($this->response->getItemSummaryWithTags())
+            );
         }
 
         if (!empty($this->response->getInventoryItems())) {
@@ -149,8 +158,31 @@ class ConsoleResponseDecorator
         $lines[] = $this->blank();
 
         foreach ($items as $description) {
-            if ($description instanceof Description) {
+            if ($description instanceof ItemDescription) {
                 array_push($lines, ...$this->renderDescription($description));
+                $lines[] = $this->blank();
+            }
+        }
+
+        return $lines;
+    }
+
+    /**
+     * Render the item summaries with suggested tags.
+     * @param array $items
+     * @return array
+     */
+    private function renderItemSummariesWithTags(array $items): array
+    {
+        $lines = [];
+
+        $lines[] = $this->blank();
+        $lines[] = "You see:";
+        $lines[] = $this->blank();
+
+        foreach ($items as $description) {
+            if ($description instanceof ItemDescription) {
+                array_push($lines, ...$this->renderItemSummaryWithTag($description));
                 $lines[] = $this->blank();
             }
         }
@@ -172,7 +204,7 @@ class ConsoleResponseDecorator
         $lines[] = $this->blank();
 
         foreach ($items as $description) {
-            if ($description instanceof Description) {
+            if ($description instanceof ItemDescription) {
                 array_push($lines, ...$this->renderDescription($description));
                 $lines[] = $this->blank();
             }
@@ -183,23 +215,54 @@ class ConsoleResponseDecorator
 
     /**
      * Render the description.
+     * @param ItemDescription $item
+     * @return array
+     */
+    private function renderItemDescription(ItemDescription $item): array
+    {
+        return $this->renderDescription($item);
+    }
+
+    /**
+     * Render the description for entity.
+     * @param Description $entity
+     * @return array
+     */
+    private function renderDescription(Description $entity): array
+    {
+        $lines = [];
+
+        if (!empty($entity->name)) {
+            $lines[] = $this->bullet() . $this->space() . $entity->name;
+        }
+
+        if (!empty($entity->summary)) {
+            $lines[] = $this->tab() . $entity->summary;
+        }
+
+        if (!empty($entity->description)) {
+            $lines[] = $this->tab() . $entity->description;
+        }
+
+        return $lines;
+    }
+
+    /**
+     * Render the summary with tag.
      * @param Description $item
      * @return array
      */
-    private function renderDescription(Description $item): array
+    private function renderItemSummaryWithTag(ItemDescription $item): array
     {
         $lines = [];
 
         if (!empty($item->name)) {
-            $lines[] = $this->bullet() . $this->space() . $item->name;
+            $tag = $item->getTags()[0] ?? '';
+            $lines[] = $this->bullet() . $this->space() . $item->name . $this->tab() . "[$tag]";
         }
 
         if (!empty($item->summary)) {
             $lines[] = $this->tab() . $item->summary;
-        }
-
-        if (!empty($item->description)) {
-            $lines[] = $this->tab() . $item->description;
         }
 
         return $lines;

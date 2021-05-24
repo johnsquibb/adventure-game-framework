@@ -124,7 +124,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         if (count($items) > 1) {
             $response->addMessage('Which item do you want to take?');
             foreach ($items as $item) {
-                $response->addItemDescription($this->listItem($item));
+                $response->addItemSummaryWithTag($this->listItem($item));
             }
             return $response;
         }
@@ -168,7 +168,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         if (count($items) > 1) {
             $response->addMessage('Which item do you want to drop?');
             foreach ($items as $item) {
-                $response->addInventoryItemDescription($this->listItem($item));
+                $response->addItemSummaryWithTag($this->listItem($item));
             }
             return $response;
         }

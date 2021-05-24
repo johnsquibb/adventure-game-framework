@@ -14,6 +14,7 @@ use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Location;
 use AdventureGame\Location\Portal;
 use AdventureGame\Response\Description;
+use AdventureGame\Response\ItemDescription;
 use AdventureGame\Response\Response;
 
 /**
@@ -101,7 +102,12 @@ abstract class AbstractCommand
      */
     protected function describeItem(ItemInterface $item): Description
     {
-        return new Description($item->getName(), $item->getSummary(), $item->getDescription());
+        return new ItemDescription(
+            $item->getName(),
+            $item->getSummary(),
+            $item->getDescription(),
+            $item->getTags()
+        );
     }
 
     /**
@@ -128,9 +134,14 @@ abstract class AbstractCommand
      * @param ItemInterface $item
      * @return Description
      */
-    protected function listItem(ItemInterface $item): Description
+    protected function listItem(ItemInterface $item): ItemDescription
     {
-        return new Description($item->getName(), $item->getSummary(), $item->getDescription());
+        return new ItemDescription(
+            $item->getName(),
+            $item->getSummary(),
+            $item->getDescription(),
+            $item->getTags()
+        );
     }
 
     /**
