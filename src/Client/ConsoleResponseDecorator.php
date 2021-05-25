@@ -2,6 +2,7 @@
 
 namespace AdventureGame\Client;
 
+use AdventureGame\Entity\ActivatableEntityInterface;
 use AdventureGame\Response\Choice;
 use AdventureGame\Response\Description;
 use AdventureGame\Response\ItemDescription;
@@ -205,7 +206,7 @@ class ConsoleResponseDecorator
 
         foreach ($items as $description) {
             if ($description instanceof ItemDescription) {
-                array_push($lines, ...$this->renderDescription($description));
+                array_push($lines, ...$this->renderItemDescription($description));
                 $lines[] = $this->blank();
             }
         }
@@ -214,13 +215,34 @@ class ConsoleResponseDecorator
     }
 
     /**
-     * Render the description.
+     * Render the item description.
      * @param ItemDescription $item
      * @return array
      */
     private function renderItemDescription(ItemDescription $item): array
     {
-        return $this->renderDescription($item);
+        $lines = [];
+
+        if (!empty($item->name)) {
+            $name = $this->bullet() . $this->space() . $item->name;
+
+            $status = $item->getStatus();
+            if (!empty($status)) {
+                $name .= $this->space() . "($status)";
+            }
+
+            $lines[] = $name;
+        }
+
+        if (!empty($item->summary)) {
+            $lines[] = $this->tab() . $item->summary;
+        }
+
+        if (!empty($item->description)) {
+            $lines[] = $this->tab() . $item->description;
+        }
+
+        return $lines;
     }
 
     /**
@@ -249,7 +271,7 @@ class ConsoleResponseDecorator
 
     /**
      * Render the summary with tag.
-     * @param Description $item
+     * @param ItemDescription $item
      * @return array
      */
     private function renderItemSummaryWithTag(ItemDescription $item): array

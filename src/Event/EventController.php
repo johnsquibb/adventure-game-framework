@@ -3,9 +3,11 @@
 namespace AdventureGame\Event;
 
 use AdventureGame\Event\Events\ActivateItemEvent;
+use AdventureGame\Event\Events\DeactivateItemEvent;
 use AdventureGame\Event\Events\DropItemEvent;
 use AdventureGame\Event\Events\EnterLocationEvent;
 use AdventureGame\Event\Events\ExitLocationEvent;
+use AdventureGame\Event\Events\HasActivatedItemEvent;
 use AdventureGame\Event\Events\TakeItemEvent;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
@@ -128,6 +130,58 @@ class EventController
         foreach ($this->events as $event) {
             if (
                 $event instanceof ActivateItemEvent
+                && $event->matchItemId($itemId)
+                && $event->matchLocationId($locationId)
+            ) {
+                return $event->trigger($gameController);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Process deactivate item events.
+     * @param GameController $gameController
+     * @param string $itemId
+     * @return Response|null
+     * @throws PlayerLocationNotSetException
+     */
+    public function processDeactivateItemEvents(
+        GameController $gameController,
+        string $itemId
+    ): ?Response {
+        $locationId = $gameController->mapController->getPlayerLocation()->getId();
+
+        foreach ($this->events as $event) {
+            if (
+                $event instanceof DeactivateItemEvent
+                && $event->matchItemId($itemId)
+                && $event->matchLocationId($locationId)
+            ) {
+                return $event->trigger($gameController);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Process has activated item events.
+     * @param GameController $gameController
+     * @param string $itemId
+     * @return Response|null
+     * @throws PlayerLocationNotSetException
+     */
+    public function processHasActivatedItemEvents(
+        GameController $gameController,
+        string $itemId
+    ): ?Response {
+        $locationId = $gameController->mapController->getPlayerLocation()->getId();
+
+        foreach ($this->events as $event) {
+            if (
+                $event instanceof HasActivatedItemEvent
                 && $event->matchItemId($itemId)
                 && $event->matchLocationId($locationId)
             ) {

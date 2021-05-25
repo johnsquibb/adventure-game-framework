@@ -5,6 +5,7 @@ namespace AdventureGame\Item;
 use AdventureGame\Traits\AccessibleTrait;
 use AdventureGame\Traits\AcquirableTrait;
 use AdventureGame\Traits\ActivatableTrait;
+use AdventureGame\Traits\DeactivatableTrait;
 use AdventureGame\Traits\DescriptionTrait;
 use AdventureGame\Traits\IdentityTrait;
 use AdventureGame\Traits\NameTrait;
@@ -23,6 +24,7 @@ class Item implements ItemInterface
     use AccessibleTrait;
     use AcquirableTrait;
     use ActivatableTrait;
+    use DeactivatableTrait;
 
     public function __construct(
         string $id,

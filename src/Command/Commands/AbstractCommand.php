@@ -122,6 +122,7 @@ abstract class AbstractCommand
 
         foreach ($container->getItems() as $item) {
             if ($item instanceof ItemInterface) {
+                // Now that it's been discovered, it can be taken.
                 $item->setAccessible(true);
                 $descriptions[] = $this->listItem($item);
             }
@@ -133,16 +134,24 @@ abstract class AbstractCommand
     /**
      * List an item's name.
      * @param ItemInterface $item
-     * @return Description
+     * @return ItemDescription
      */
     protected function listItem(ItemInterface $item): ItemDescription
     {
-        return new ItemDescription(
+        $description = new ItemDescription(
             $item->getName(),
             $item->getSummary(),
             $item->getDescription(),
             $item->getTags()
         );
+
+        if ($item instanceof ActivatableEntityInterface) {
+            if ($item->getActivated()) {
+                $description->setStatus('activated');
+            }
+        }
+
+        return $description;
     }
 
     /**
@@ -189,6 +198,7 @@ abstract class AbstractCommand
     protected function movePlayer(GameController $gameController, string $direction): Response
     {
         try {
+            // Process leave current location events.
             $exitLocationEventResponse = $gameController->eventController->processExitLocationEvents(
                 $gameController,
                 $gameController->mapController->getPlayerLocation()->getId()
@@ -197,18 +207,36 @@ abstract class AbstractCommand
             $gameController->mapController->movePlayer($direction);
             $response = $this->describePlayerLocation($gameController);
 
+            // Process enter new location events.
             $enterLocationEventResponse = $gameController->eventController->processEnterLocationEvents(
                 $gameController,
                 $gameController->mapController->getPlayerLocation()->getId()
             );
 
-            if ($enterLocationEventResponse) {
-                $response->addMessages($enterLocationEventResponse->getMessages());
+            // Process item-specific events when entering new location.
+            foreach ($gameController->playerController->getPlayerInventory()->getItems() as $item) {
+                if ($item instanceof ItemInterface) {
+                    if ($item->getActivated()) {
+                        $hasActivatedItemEventResponse = $gameController->eventController->processHasActivatedItemEvents(
+                            $gameController,
+                            $item->getId()
+                        );
+
+                        if ($hasActivatedItemEventResponse) {
+                            $response->addMessages($hasActivatedItemEventResponse->getMessages());
+                        }
+                    }
+                }
             }
 
             if ($exitLocationEventResponse) {
                 $response->addMessages($exitLocationEventResponse->getMessages());
             }
+
+            if ($enterLocationEventResponse) {
+                $response->addMessages($enterLocationEventResponse->getMessages());
+            }
+
         } catch (ExitIsLockedException $e) {
             $portal = $gameController->mapController
                 ->getPlayerLocation()

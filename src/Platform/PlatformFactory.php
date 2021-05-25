@@ -12,9 +12,11 @@ use AdventureGame\Event\Events\ActivateItemEvent;
 use AdventureGame\Event\Events\DropItemEvent;
 use AdventureGame\Event\Events\EnterLocationEvent;
 use AdventureGame\Event\Events\ExitLocationEvent;
+use AdventureGame\Event\Events\HasActivatedItemEvent;
 use AdventureGame\Event\Events\TakeItemEvent;
 use AdventureGame\Event\Triggers\AddItemToInventoryTrigger;
 use AdventureGame\Event\Triggers\AddItemToLocationTrigger;
+use AdventureGame\Event\Triggers\AddItemTrigger;
 use AdventureGame\Event\Triggers\DropItemFromInventoryTrigger;
 use AdventureGame\Game\Exception\InvalidSaveDirectoryException;
 use AdventureGame\Game\GameController;
@@ -139,6 +141,7 @@ class PlatformFactory
             'unlock',
             'inventory',
             'activate',
+            'deactivate',
         ];
 
         $nouns = [
@@ -178,6 +181,12 @@ class PlatformFactory
             'enter reward' => 'reward.enter',
             'key to cellar door' => 'key.keyToCellarDoor',
             'key to wooden door' => 'key.keyToWoodenDoor',
+            'turn on flashlight' => 'activate flashlight',
+            'turn flashlight on' => 'activate flashlight',
+            'turn off flashlight' => 'deactivate flashlight',
+            'turn flashlight off' => 'deactivate flashlight',
+            'read map' => 'activate map',
+            'look at map' => 'activate map',
         ];
 
         $shortcuts = [
@@ -550,6 +559,10 @@ class PlatformFactory
             );
             $trigger = new AddItemToLocationTrigger($mapToSecretRoom);
             $event = new ActivateItemEvent($trigger, 'flashlight', 'cellar');
+            $gameController->eventController->addEvent($event);
+
+            // Apply the same trigger on room entry when the flashlight is already activated.
+            $event = new HasActivatedItemEvent($trigger, 'flashlight', 'cellar');
             $gameController->eventController->addEvent($event);
         }
 

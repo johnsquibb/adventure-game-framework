@@ -80,6 +80,8 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
                 return $this->dropItemsByTagAtPlayerLocation($gameController, $this->noun);
             case 'activate':
                 return $this->activateItemsByTagAtPlayerLocation($gameController, $this->noun);
+            case 'deactivate':
+                return $this->deactivateItemsByTagAtPlayerLocation($gameController, $this->noun);
         }
 
         return null;
@@ -415,8 +417,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
             if ($item instanceof ItemInterface) {
                 if ($item->getActivatable()) {
                     if ($item->getActivated() === true) {
-                        $item->setActivated(false);
-                        $message = "Deactivated {$item->getName()}.";
+                        $message = "It's already activated.";
                     } else {
                         $item->setActivated(true);
                         $message = "Activated {$item->getName()}.";
@@ -434,6 +435,53 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
                     $response->addMessage($message);
                 } else {
                     $response->addMessage("You can't activate {$item->getName()}.");
+                }
+            }
+        }
+
+        return $response;
+    }
+
+    private function deactivateItemsByTagAtPlayerLocation(GameController $gameController, string $tag)
+    {
+        $response = new Response();
+
+        $items = $gameController->playerController->getPlayerInventory()->getItemsByTag($tag);
+
+        if (empty($items)) {
+            $response->addMessage("You don't have that.");
+        }
+
+        if (count($items) > 1) {
+            $response->addMessage('Which item do you want to deactivate?');
+            foreach ($items as $item) {
+                $response->addItemSummaryWithTag($this->listItem($item));
+            }
+            return $response;
+        }
+
+        foreach ($items as $item) {
+            if ($item instanceof ItemInterface) {
+                if ($item->getDeactivatable()) {
+                    if ($item->getDeactivated() === true) {
+                        $message = "It's already deactivated.";
+                    } else {
+                        $item->setDeactivated(true);
+                        $message = "Deactivated {$item->getName()}.";
+
+                        $eventResponse = $gameController->eventController->processDeactivateItemEvents(
+                            $gameController,
+                            $item->getId()
+                        );
+
+                        if ($eventResponse) {
+                            $response->addMessages($eventResponse->getMessages());
+                        }
+                    }
+
+                    $response->addMessage($message);
+                } else {
+                    $response->addMessage("You can't deactivate {$item->getName()}.");
                 }
             }
         }
