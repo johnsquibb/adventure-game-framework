@@ -6,7 +6,7 @@ trait DeactivatableTrait
 {
     use ActivatableTrait;
 
-    private bool $deactivatable = true;
+    private bool $deactivatable = false;
 
     public function getDeactivatable(): bool
     {

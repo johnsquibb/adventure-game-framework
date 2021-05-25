@@ -71,6 +71,24 @@ class MapController
     }
 
     /**
+     * Get location by id.
+     * @param string $locationId
+     * @return Location|null
+     */
+    public function getLocationById(string $locationId): ?Location
+    {
+        foreach($this->locations as $location) {
+            if ($location instanceof Location) {
+                if ($location->getId() === $locationId) {
+                    return $location;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Get count of items in current player location.
      * @return int
      * @throws PlayerLocationNotSetException

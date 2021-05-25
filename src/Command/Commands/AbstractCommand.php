@@ -37,10 +37,10 @@ abstract class AbstractCommand
     ): Response {
         $response = new Response();
 
-        $gameController->playerController->addItemToPlayerInventory($item);
+        $gameController->getPlayerController()->addItemToPlayerInventory($item);
         $response->addMessage("Added \"{$item->getName()}\" to inventory.");
 
-        $eventResponse = $gameController->eventController->processTakeItemEvents(
+        $eventResponse = $gameController->getEventController()->processTakeItemEvents(
             $gameController,
             $item->getId()
         );
@@ -65,10 +65,10 @@ abstract class AbstractCommand
     ): Response {
         $response = new Response();
 
-        $gameController->playerController->removeItemFromPlayerInventory($item);
+        $gameController->getPlayerController()->removeItemFromPlayerInventory($item);
         $response->addMessage("Removed \"{$item->getName()}\" from inventory");
 
-        $eventResponse = $gameController->eventController->processDropItemEvents(
+        $eventResponse = $gameController->getEventController()->processDropItemEvents(
             $gameController,
             $item->getId()
         );
@@ -199,25 +199,25 @@ abstract class AbstractCommand
     {
         try {
             // Process leave current location events.
-            $exitLocationEventResponse = $gameController->eventController->processExitLocationEvents(
+            $exitLocationEventResponse = $gameController->getEventController()->processExitLocationEvents(
                 $gameController,
-                $gameController->mapController->getPlayerLocation()->getId()
+                $gameController->getMapController()->getPlayerLocation()->getId()
             );
 
-            $gameController->mapController->movePlayer($direction);
+            $gameController->getMapController()->movePlayer($direction);
             $response = $this->describePlayerLocation($gameController);
 
             // Process enter new location events.
-            $enterLocationEventResponse = $gameController->eventController->processEnterLocationEvents(
+            $enterLocationEventResponse = $gameController->getEventController()->processEnterLocationEvents(
                 $gameController,
-                $gameController->mapController->getPlayerLocation()->getId()
+                $gameController->getMapController()->getPlayerLocation()->getId()
             );
 
             // Process item-specific events when entering new location.
-            foreach ($gameController->playerController->getPlayerInventory()->getItems() as $item) {
+            foreach ($gameController->getPlayerController()->getPlayerInventory()->getItems() as $item) {
                 if ($item instanceof ItemInterface) {
                     if ($item->getActivated()) {
-                        $hasActivatedItemEventResponse = $gameController->eventController->processHasActivatedItemEvents(
+                        $hasActivatedItemEventResponse = $gameController->getEventController()->processHasActivatedItemEvents(
                             $gameController,
                             $item->getId()
                         );
@@ -238,7 +238,7 @@ abstract class AbstractCommand
             }
 
         } catch (ExitIsLockedException $e) {
-            $portal = $gameController->mapController
+            $portal = $gameController->getMapController()
                 ->getPlayerLocation()
                 ->getExitInDirection($direction);
 
@@ -259,7 +259,7 @@ abstract class AbstractCommand
     {
         $response = new Response();
 
-        $location = $gameController->mapController->getPlayerLocation();
+        $location = $gameController->getMapController()->getPlayerLocation();
 
         $description = $this->describeLocation($location);
         $response->addLocationDescription($description);
@@ -284,7 +284,7 @@ abstract class AbstractCommand
     {
         $response = new Response();
 
-        $inventory = $gameController->playerController->getPlayerInventory();
+        $inventory = $gameController->getPlayerController()->getPlayerInventory();
 
         foreach ($this->listContainerItems($inventory) as $description) {
             $response->addInventoryItemDescription($description);
@@ -345,6 +345,8 @@ abstract class AbstractCommand
 
             return "Unlocked {$entity->getName()} with {$key->getName()}.";
         }
+
+        return "Can't unlock that";
     }
 
     /**
@@ -360,7 +362,7 @@ abstract class AbstractCommand
     ): Response {
         $response = new Response();
 
-        $items = $gameController->mapController
+        $items = $gameController->getMapController()
             ->getPlayerLocation()->getContainer()->getItemsByTag($tag);
 
         if (empty($items)) {

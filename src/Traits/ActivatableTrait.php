@@ -4,7 +4,7 @@ namespace AdventureGame\Traits;
 
 trait ActivatableTrait
 {
-    private bool $activatable = true;
+    private bool $activatable = false;
     private bool $activated = false;
 
     public function getActivatable(): bool

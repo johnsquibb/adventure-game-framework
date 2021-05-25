@@ -133,6 +133,7 @@ class EventController
                 && $event->matchItemId($itemId)
                 && $event->matchLocationId($locationId)
             ) {
+                var_dump($event);
                 return $event->trigger($gameController);
             }
         }

@@ -6,7 +6,6 @@ use AdventureGame\Character\Character;
 use AdventureGame\Command\CommandController;
 use AdventureGame\Command\CommandFactory;
 use AdventureGame\Command\CommandParser;
-use AdventureGame\Event\AbstractInventoryEvent;
 use AdventureGame\Event\EventController;
 use AdventureGame\Event\Events\ActivateItemEvent;
 use AdventureGame\Event\Events\DropItemEvent;
@@ -16,7 +15,7 @@ use AdventureGame\Event\Events\HasActivatedItemEvent;
 use AdventureGame\Event\Events\TakeItemEvent;
 use AdventureGame\Event\Triggers\AddItemToInventoryTrigger;
 use AdventureGame\Event\Triggers\AddItemToLocationTrigger;
-use AdventureGame\Event\Triggers\AddItemTrigger;
+use AdventureGame\Event\Triggers\AddLocationToMapTrigger;
 use AdventureGame\Event\Triggers\DropItemFromInventoryTrigger;
 use AdventureGame\Game\Exception\InvalidSaveDirectoryException;
 use AdventureGame\Game\GameController;
@@ -278,6 +277,11 @@ class PlatformFactory
      */
     private function getMapController(): MapController
     {
+        $object = $this->getRegisteredObject(MapController::class);
+        if ($object instanceof MapController) {
+            return $object;
+        }
+
         // TODO load from configuration file.
 
         $chest = new ContainerItem(
@@ -300,6 +304,8 @@ class PlatformFactory
             'A battery powered flashlight.',
             ['flashlight'],
         );
+        $flashlight->setActivatable(true);
+        $flashlight->setDeactivatable(true);
         $keyToWoodenDoor = new Item(
             'keyToWoodenDoor',
             'Key to Wooden Door',
@@ -332,6 +338,14 @@ class PlatformFactory
         );
 
         $doorFromWestRoomToSpawn->setKeyEntityId($keyToWoodenDoor->getId());
+
+        $doorFromWestRoomToSecretRoom = new Portal(
+            'doorFromWestRoomToSecretRoom',
+            'Secret Door',
+            'A secret door has been revealed to the west.',
+            ['door'],
+            'west', 'secretRoom'
+        );
 
         $roomWestOfSpawn = new Location(
             'roomWestOfSpawn',
@@ -489,82 +503,102 @@ class PlatformFactory
         );
         $spawnRoom->getContainer()->addItem($chest);
 
-        $object = $this->getRegisteredObject(MapController::class);
-        if ($object === null) {
-            $object = new MapController(
-                [
-                    $spawnRoom,
-                    $roomWestOfSpawn,
-                    $hallwayLeadingSouth,
-                    $courtyard,
-                    $smallShed,
-                    $houseInTown,
-                    $cellar,
-                ]
-            );
+        $doorFromSecretRoomToWestRoom = new Portal(
+            'doorFromWestRoomToSecretRoom',
+            'Secret Door',
+            'Exit to the east',
+            ['door'],
+            'east', 'roomWestOfSpawn'
+        );
 
-            // Spawn player in room 1
-            $object->setPlayerLocationById($spawnRoom->getId());
-            $this->registerObject($object);
+        $secretRoom = new Location(
+            'secretRoom',
+            'The Secret Room',
+            'You have discovered a secret room.',
+            new Container(),
+            [$doorFromSecretRoomToWestRoom],
+        );
 
-            $gameController = $this->getGameController();
+        $object = new MapController(
+            [
+                $spawnRoom,
+                $roomWestOfSpawn,
+                $hallwayLeadingSouth,
+                $courtyard,
+                $smallShed,
+                $houseInTown,
+                $cellar,
+            ]
+        );
 
-            // Add the owner's manual to inventory when taking sword.
-            $swordOfPokingOwnersManual = new Item(
-                'swordOfPokingOwnersManual',
-                'Sword of Poking Owner\'s Manual',
-                'Your guide to all matters related to the sword of poking. Use it in good health.',
-                ['manual']
-            );
+        // Spawn player in room 1
+        $object->setPlayerLocationById($spawnRoom->getId());
+        $this->registerObject($object);
 
-            $trigger = new AddItemToInventoryTrigger($swordOfPokingOwnersManual);
-            $event = new TakeItemEvent($trigger, 'swordOfPoking', 'spawn');
-            $gameController->eventController->addEvent($event);
+        $gameController = $this->getGameController();
 
-            // Drop the sword when dropping the owner's manual from inventory.
-            $trigger = new DropItemFromInventoryTrigger($swordOfPoking->getId());
-            $event = new DropItemEvent($trigger, 'swordOfPokingOwnersManual', '*');
-            $gameController->eventController->addEvent($event);
+        // Add the owner's manual to inventory when taking sword.
+        $swordOfPokingOwnersManual = new Item(
+            'swordOfPokingOwnersManual',
+            'Sword of Poking Owner\'s Manual',
+            'Your guide to all matters related to the sword of poking. Use it in good health.',
+            ['manual']
+        );
 
-            // Give the player a reward for entering the west room.
-            $enteredWestRoomReward = new Item(
-                'enteredWestRoomReward',
-                'Reward for Entering West Room',
-                'You did it! You made it into the west room. This reward is proof of your achievement.',
-                ['enter reward', 'reward.enter', 'reward']
-            );
+        $trigger = new AddItemToInventoryTrigger($swordOfPokingOwnersManual);
+        $event = new TakeItemEvent($trigger, 'swordOfPoking', 'spawn');
+        $gameController->eventController->addEvent($event);
 
-            $trigger = new AddItemToInventoryTrigger($enteredWestRoomReward);
-            $event = new EnterLocationEvent($trigger, 'roomWestOfSpawn');
-            $gameController->eventController->addEvent($event);
+        // Drop the sword when dropping the owner's manual from inventory.
+        $trigger = new DropItemFromInventoryTrigger($swordOfPoking->getId());
+        $event = new DropItemEvent($trigger, 'swordOfPokingOwnersManual', '*');
+        $gameController->eventController->addEvent($event);
 
-            // Give the player a reward for exiting the west room.
-            $exitedWestRoomReward = new Item(
-                'exitedWestRoomReward',
-                'Reward for Exiting West Room',
-                'Great job getting out of the west room! This reward is proof of your achievement.',
-                ['exit reward', 'reward.exit', 'reward']
-            );
+        // When the player turns the flashlight on in the cellar, reveal the map to the secret room.
+        $mapToSecretRoom = new Item(
+            'mapToSecretRoom',
+            'Map to Secret Room',
+            'A map detailing the location of a secret room. A speakable word is written on the map.',
+            ['map']
+        );
+        $mapToSecretRoom->setActivatable(true);
+        $trigger = new AddItemToLocationTrigger($mapToSecretRoom);
+        $event = new ActivateItemEvent($trigger, 'flashlight', 'cellar');
+        $gameController->eventController->addEvent($event);
 
-            $trigger = new AddItemToInventoryTrigger($exitedWestRoomReward);
-            $event = new ExitLocationEvent($trigger, 'roomWestOfSpawn');
-            $gameController->eventController->addEvent($event);
+        // Apply the same trigger on room entry when the flashlight is already activated.
+        $event = new HasActivatedItemEvent($trigger, 'flashlight', 'cellar');
+        $gameController->eventController->addEvent($event);
 
-            // When the player turns the flashlight on in the cellar, reveal the map to the secret room.
-            $mapToSecretRoom = new Item(
-                'mapToSecretRoom',
-                'Map to Secret Room',
-                'A map detailing the location of a secret room. A speakable word is written on the map.',
-                ['map']
-            );
-            $trigger = new AddItemToLocationTrigger($mapToSecretRoom);
-            $event = new ActivateItemEvent($trigger, 'flashlight', 'cellar');
-            $gameController->eventController->addEvent($event);
+        // When reading the map, add the secret room as a new location.
+        $trigger = new AddLocationToMapTrigger($secretRoom);
+        $trigger->addEntrance('roomWestOfSpawn', $doorFromWestRoomToSecretRoom);
+        $event = new ActivateItemEvent($trigger, $mapToSecretRoom->getId(), '*');
+        $gameController->eventController->addEvent($event);
 
-            // Apply the same trigger on room entry when the flashlight is already activated.
-            $event = new HasActivatedItemEvent($trigger, 'flashlight', 'cellar');
-            $gameController->eventController->addEvent($event);
-        }
+        // Give the player a reward for entering the secret room.
+        $enteredSecretRoomReward = new Item(
+            'enteredSecretRoomReward',
+            'Reward for Entering Secret Room',
+            'You did it! You made it into the secret room. This reward is proof of your achievement.',
+            ['enter reward', 'reward.enter', 'reward']
+        );
+
+        $trigger = new AddItemToInventoryTrigger($enteredSecretRoomReward);
+        $event = new EnterLocationEvent($trigger, 'secretRoom');
+        $gameController->eventController->addEvent($event);
+
+        // Give the player a reward for exiting the secret room.
+        $exitedSecretRoomReward = new Item(
+            'exitedSecretRoomReward',
+            'Reward for Exiting Secret Room',
+            'Great job getting out of the secret room! This reward is proof of your achievement.',
+            ['exit reward', 'reward.exit', 'reward']
+        );
+
+        $trigger = new AddItemToInventoryTrigger($exitedSecretRoomReward);
+        $event = new ExitLocationEvent($trigger, 'secretRoom');
+        $gameController->eventController->addEvent($event);
 
         return $object;
     }

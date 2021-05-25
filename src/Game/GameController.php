@@ -20,6 +20,21 @@ class GameController
     ) {
     }
 
+    public function getEventController(): EventController
+    {
+        return $this->eventController;
+    }
+
+    public function getMapController(): MapController
+    {
+        return $this->mapController;
+    }
+
+    public function getPlayerController(): PlayerController
+    {
+        return $this->playerController;
+    }
+
     /**
      * Rehydrate this object from a save state object.
      * @param GameController $gameController
