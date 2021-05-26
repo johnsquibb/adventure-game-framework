@@ -3,6 +3,7 @@
 namespace AdventureGame\Command\Commands;
 
 use AdventureGame\Command\CommandInterface;
+use AdventureGame\Entity\ReadableEntityInterface;
 use AdventureGame\Game\Exception\InvalidExitException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
@@ -66,7 +67,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     }
 
     /**
-     * Try an inventory action on player's inventory at current player location.
+     * Try an inventory action with player's inventory items at current player location.
      * @param GameController $gameController
      * @return Response|null
      * @throws PlayerLocationNotSetException
@@ -82,6 +83,8 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
                 return $this->activateItemsByTagAtPlayerLocation($gameController, $this->noun);
             case 'deactivate':
                 return $this->deactivateItemsByTagAtPlayerLocation($gameController, $this->noun);
+            case 'read':
+                return $this->readItemsByTagAtPlayerLocation($gameController, $this->noun);
         }
 
         return null;
@@ -182,6 +185,46 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
                 $dropItemResponse = $this->removeItemFromPlayerInventory($gameController, $item);
                 $gameController->mapController->dropItem($item);
                 $response->addMessages($dropItemResponse->getMessages());
+            }
+        }
+
+        return $response;
+    }
+
+    /**
+     * Read all readable items matching tag at current player location into player inventory.
+     * @param GameController $gameController
+     * @param string $tag
+     * @return Response
+     * @throws PlayerLocationNotSetException
+     */
+    private function readItemsByTagAtPlayerLocation(
+        GameController $gameController,
+        string $tag
+    ): Response {
+        $response = new Response();
+
+        $items = $gameController->mapController->getItemsByTag($tag);
+
+        if (empty($items)) {
+            $response->addMessage("You don't have anything like that to read.");
+        }
+
+        if (count($items) > 1) {
+            $response->addMessage('Which item do you want to read?');
+            foreach ($items as $item) {
+                $response->addItemSummaryWithTag($this->listItem($item));
+            }
+            return $response;
+        }
+
+        foreach ($items as $item) {
+            if ($item instanceof ReadableEntityInterface) {
+                if ($item->getReadable()) {
+                    $response->addMessages($item->getLines());
+                } else {
+                    $response->addMessage("You can't read {$item->getName()}.");
+                }
             }
         }
 

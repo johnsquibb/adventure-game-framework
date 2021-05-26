@@ -9,6 +9,7 @@ use AdventureGame\Traits\DeactivatableTrait;
 use AdventureGame\Traits\DescriptionTrait;
 use AdventureGame\Traits\IdentityTrait;
 use AdventureGame\Traits\NameTrait;
+use AdventureGame\Traits\ReadableTrait;
 use AdventureGame\Traits\TagTrait;
 
 /**
@@ -25,6 +26,7 @@ class Item implements ItemInterface
     use AcquirableTrait;
     use ActivatableTrait;
     use DeactivatableTrait;
+    use ReadableTrait;
 
     public function __construct(
         string $id,

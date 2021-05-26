@@ -6,12 +6,14 @@ use AdventureGame\Entity\AccessibleEntityInterface;
 use AdventureGame\Entity\AcquirableEntityInterface;
 use AdventureGame\Entity\ActivatableEntityInterface;
 use AdventureGame\Entity\DeactivatableEntityInterface;
+use AdventureGame\Entity\ReadableEntityInterface;
 
 /**
  * Interface ItemInterface defines methods for objects that behave like items.
  * @package AdventureGame\Item
  */
 interface ItemInterface extends AccessibleEntityInterface, AcquirableEntityInterface,
-                                ActivatableEntityInterface, DeactivatableEntityInterface
+                                ActivatableEntityInterface, DeactivatableEntityInterface,
+                                ReadableEntityInterface
 {
 }

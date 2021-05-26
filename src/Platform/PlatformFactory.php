@@ -8,15 +8,11 @@ use AdventureGame\Command\CommandFactory;
 use AdventureGame\Command\CommandParser;
 use AdventureGame\Event\EventController;
 use AdventureGame\Event\Events\ActivateItemEvent;
-use AdventureGame\Event\Events\DropItemEvent;
 use AdventureGame\Event\Events\EnterLocationEvent;
-use AdventureGame\Event\Events\ExitLocationEvent;
 use AdventureGame\Event\Events\HasActivatedItemEvent;
-use AdventureGame\Event\Events\TakeItemEvent;
 use AdventureGame\Event\Triggers\AddItemToInventoryTrigger;
 use AdventureGame\Event\Triggers\AddItemToLocationTrigger;
 use AdventureGame\Event\Triggers\AddLocationToMapTrigger;
-use AdventureGame\Event\Triggers\DropItemFromInventoryTrigger;
 use AdventureGame\Game\Exception\InvalidSaveDirectoryException;
 use AdventureGame\Game\GameController;
 use AdventureGame\Game\MapController;
@@ -136,6 +132,7 @@ class PlatformFactory
             'drop',
             'look',
             'put',
+            'read',
             'lock',
             'unlock',
             'inventory',
@@ -144,8 +141,6 @@ class PlatformFactory
         ];
 
         $nouns = [
-            'sword',
-            'manual',
             'chest',
             'door',
             'flashlight',
@@ -162,6 +157,7 @@ class PlatformFactory
             'key.keyToCellarDoor',
             'key.keyToWoodenDoor',
             'map',
+            'letter'
         ];
 
         $articles = ['a', 'an', 'the'];
@@ -186,6 +182,7 @@ class PlatformFactory
             'turn flashlight off' => 'deactivate flashlight',
             'read map' => 'activate map',
             'look at map' => 'activate map',
+            'read secret letter' => 'read letter',
         ];
 
         $shortcuts = [
@@ -292,12 +289,6 @@ class PlatformFactory
         );
         $chest->setAcquirable(false);
 
-        $swordOfPoking = new Item(
-            'swordOfPoking',
-            'The Sword of Poking',
-            'An average sword, made for poking aggressive beasts.',
-            ['sword'],
-        );
         $flashlight = new Item(
             'flashlight',
             'Flashlight',
@@ -313,7 +304,6 @@ class PlatformFactory
             ['key to wooden door', 'key.keyToWoodenDoor', 'key']
         );
 
-        $chest->addItem($swordOfPoking);
         $chest->addItem($flashlight);
         $chest->addItem($keyToWoodenDoor);
 
@@ -519,6 +509,27 @@ class PlatformFactory
             [$doorFromSecretRoomToWestRoom],
         );
 
+        $secretLetter = new Item(
+            'secretLetter',
+            'A Secret Letter',
+            'A folded letter written on old paper.',
+            ['secret letter', 'letter']
+        );
+        $secretLetter->setReadable(true);
+        $secretLetter->setLines(
+            [
+                'Hello Adventurer!',
+                '',
+                'You have found my secret room, and have thus won the game!',
+                'I hope you have enjoyed this sample adventure.',
+                'Now, go forth, and create your own using the framework provided!',
+                '',
+                'Sincerely,',
+                'The Powerful Mage',
+            ]
+        );
+        $secretRoom->getContainer()->addItem($secretLetter);
+
         $object = new MapController(
             [
                 $spawnRoom,
@@ -536,23 +547,6 @@ class PlatformFactory
         $this->registerObject($object);
 
         $gameController = $this->getGameController();
-
-        // Add the owner's manual to inventory when taking sword.
-        $swordOfPokingOwnersManual = new Item(
-            'swordOfPokingOwnersManual',
-            'Sword of Poking Owner\'s Manual',
-            'Your guide to all matters related to the sword of poking. Use it in good health.',
-            ['manual']
-        );
-
-        $trigger = new AddItemToInventoryTrigger($swordOfPokingOwnersManual);
-        $event = new TakeItemEvent($trigger, 'swordOfPoking', 'spawn');
-        $gameController->eventController->addEvent($event);
-
-        // Drop the sword when dropping the owner's manual from inventory.
-        $trigger = new DropItemFromInventoryTrigger($swordOfPoking->getId());
-        $event = new DropItemEvent($trigger, 'swordOfPokingOwnersManual', '*');
-        $gameController->eventController->addEvent($event);
 
         // When the player turns the flashlight on in the cellar, reveal the map to the secret room.
         $mapToSecretRoom = new Item(
@@ -586,18 +580,6 @@ class PlatformFactory
 
         $trigger = new AddItemToInventoryTrigger($enteredSecretRoomReward);
         $event = new EnterLocationEvent($trigger, 'secretRoom');
-        $gameController->eventController->addEvent($event);
-
-        // Give the player a reward for exiting the secret room.
-        $exitedSecretRoomReward = new Item(
-            'exitedSecretRoomReward',
-            'Reward for Exiting Secret Room',
-            'Great job getting out of the secret room! This reward is proof of your achievement.',
-            ['exit reward', 'reward.exit', 'reward']
-        );
-
-        $trigger = new AddItemToInventoryTrigger($exitedSecretRoomReward);
-        $event = new ExitLocationEvent($trigger, 'secretRoom');
         $gameController->eventController->addEvent($event);
 
         return $object;
