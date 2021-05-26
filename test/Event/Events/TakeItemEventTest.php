@@ -7,10 +7,44 @@ use AdventureGame\Event\Triggers\AddItemToInventoryTrigger;
 use AdventureGame\Item\Container;
 use AdventureGame\Item\Item;
 use AdventureGame\Location\Location;
-use AdventureGame\Test\FrameworkTest;
+use AdventureGame\Response\Response;
+use AdventureGame\Test\Event\AbstractEventTest;
 
-class TakeItemEventTest extends FrameworkTest
+class TakeItemEventTest extends AbstractEventTest
 {
+    public function testTakeItemEvent()
+    {
+        $location = new Location(
+            'test-location-id',
+            'Test Location',
+            'A test location',
+            new Container(),
+            []
+        );
+
+        $mockResponse = new Response();
+        $mockTrigger = $this->createMockTrigger($mockResponse);
+
+        $event = new TakeItemEvent(
+            $mockTrigger,
+            'test-item-id',
+            'test-location-id',
+        );
+
+        $gameController = $this->createGameController();
+        $gameController->mapController->addLocation($location);
+        $gameController->mapController->setPlayerLocationById('test-location-id');
+        $gameController->eventController->addEvent($event);
+
+        $this->assertSame(
+            $mockResponse,
+            $gameController->eventController->processTakeItemEvents(
+                $gameController,
+                'test-item-id'
+            )
+        );
+    }
+
     public function testTakeItemEventWithSingleUseAddItemToInventoryTrigger()
     {
         $item = new Item(
