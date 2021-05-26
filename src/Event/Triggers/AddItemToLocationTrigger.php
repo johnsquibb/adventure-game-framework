@@ -10,8 +10,9 @@ use AdventureGame\Response\Response;
 
 class AddItemToLocationTrigger extends AbstractTrigger
 {
-    public function __construct(protected Item $item, protected int $numberOfUses = 1)
+    public function __construct(protected Item $item, int $numberOfUses = 1)
     {
+        $this->numberOfUses = $numberOfUses;
     }
 
     /**

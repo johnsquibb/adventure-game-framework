@@ -12,8 +12,9 @@ class AddLocationToMapTrigger extends AbstractTrigger
 {
     protected array $entrances = [];
 
-    public function __construct(protected Location $location, protected int $numberOfUses = 1)
+    public function __construct(protected Location $location, int $numberOfUses = 1)
     {
+        $this->numberOfUses = $numberOfUses;
     }
 
     /**

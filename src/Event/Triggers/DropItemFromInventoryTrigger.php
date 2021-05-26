@@ -3,33 +3,39 @@
 namespace AdventureGame\Event\Triggers;
 
 use AdventureGame\Event\AbstractTrigger;
+use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
 use AdventureGame\Item\ItemInterface;
 use AdventureGame\Response\Response;
 
 class DropItemFromInventoryTrigger extends AbstractTrigger
 {
-    public function __construct(private string $itemId)
+    public function __construct(private string $itemId, int $numberOfUses = 1)
     {
+        $this->numberOfUses = $numberOfUses;
     }
 
     /**
-     * Add item to player inventory.
+     * Drop item from player inventory.
      * @param GameController $gameController
      * @return Response|null
+     * @throws PlayerLocationNotSetException
      */
     public function execute(GameController $gameController): ?Response
     {
         $item = $gameController->playerController->getItemByIdFromPlayerInventory($this->itemId);
 
-        if ($item instanceof ItemInterface) {
-            $gameController->playerController->removeItemFromPlayerInventory($item);
-            $gameController->mapController->getPlayerLocation()->getContainer()->addItem($item);
+        if ($this->triggerCount < $this->numberOfUses) {
+            if ($item instanceof ItemInterface) {
+                $gameController->playerController->removeItemFromPlayerInventory($item);
+                $gameController->mapController->getPlayerLocation()->getContainer()->addItem($item);
+                $this->triggerCount++;
 
-            $response = new Response();
-            $response->addMessage("Removed \"{$item->getName()}\" from inventory.");
+                $response = new Response();
+                $response->addMessage("Removed \"{$item->getName()}\" from inventory.");
 
-            return $response;
+                return $response;
+            }
         }
 
         return null;

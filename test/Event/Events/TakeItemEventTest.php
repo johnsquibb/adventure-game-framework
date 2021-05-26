@@ -1,6 +1,6 @@
 <?php
 
-namespace AdventureGame\Test\Event;
+namespace AdventureGame\Test\Event\Events;
 
 use AdventureGame\Event\Events\TakeItemEvent;
 use AdventureGame\Event\Triggers\AddItemToInventoryTrigger;
@@ -9,12 +9,12 @@ use AdventureGame\Item\Item;
 use AdventureGame\Location\Location;
 use AdventureGame\Test\FrameworkTest;
 
-class EventControllerTest extends FrameworkTest
+class TakeItemEventTest extends FrameworkTest
 {
     public function testTakeItemEventWithSingleUseAddItemToInventoryTrigger()
     {
         $item = new Item(
-            'test-give-item-id',
+            'test-item-id',
             'Test Give Item',
             'A test item given to player on event trigger',
             ['given']
@@ -31,7 +31,7 @@ class EventControllerTest extends FrameworkTest
         $trigger = new AddItemToInventoryTrigger($item);
         $event = new TakeItemEvent(
             $trigger,
-            'test-item-id',
+            '*',
             'test-location-id',
         );
 
@@ -40,47 +40,47 @@ class EventControllerTest extends FrameworkTest
         $gameController->mapController->setPlayerLocationById('test-location-id');
 
         $this->assertNull(
-            $gameController->playerController->getItemByIdFromPlayerInventory('test-give-item-id')
+            $gameController->playerController->getItemByIdFromPlayerInventory('test-item-id')
         );
 
         // Event not added yet.
         $gameController->eventController->processTakeItemEvents(
             $gameController,
-            'test-item-id'
+            '*'
         );
 
         $this->assertNull(
-            $gameController->playerController->getItemByIdFromPlayerInventory('test-give-item-id')
+            $gameController->playerController->getItemByIdFromPlayerInventory('test-item-id')
         );
 
         $gameController->eventController->addEvent($event);
 
         $gameController->eventController->processTakeItemEvents(
             $gameController,
-            'test-item-id'
+            '*'
         );
 
         $this->assertEquals(
             $item,
-            $gameController->playerController->getItemByIdFromPlayerInventory('test-give-item-id')
+            $gameController->playerController->getItemByIdFromPlayerInventory('test-item-id')
         );
 
         // Number of uses exceeded.
         $gameController->eventController->processTakeItemEvents(
             $gameController,
-            'test-item-id'
+            '*'
         );
 
         $this->assertEquals(
             $item,
-            $gameController->playerController->getItemByIdFromPlayerInventory('test-give-item-id')
+            $gameController->playerController->getItemByIdFromPlayerInventory('test-item-id')
         );
     }
 
     public function testTakeItemEventWithMultipleUseAddItemToInventoryTrigger()
     {
         $item = new Item(
-            'test-give-item-id',
+            'test-item-id',
             'Test Give Item',
             'A test item given to player on event trigger',
             ['given']
@@ -97,7 +97,7 @@ class EventControllerTest extends FrameworkTest
         $trigger = new AddItemToInventoryTrigger($item, 3);
         $event = new TakeItemEvent(
             $trigger,
-            'test-item-id',
+            '*',
             'test-location-id',
         );
 
@@ -106,29 +106,29 @@ class EventControllerTest extends FrameworkTest
         $gameController->mapController->setPlayerLocationById('test-location-id');
 
         $this->assertNull(
-            $gameController->playerController->getItemByIdFromPlayerInventory('test-give-item-id')
+            $gameController->playerController->getItemByIdFromPlayerInventory('test-item-id')
         );
 
         // Event not added yet.
         $gameController->eventController->processTakeItemEvents(
             $gameController,
-            'test-item-id'
+            '*'
         );
 
         $this->assertNull(
-            $gameController->playerController->getItemByIdFromPlayerInventory('test-give-item-id')
+            $gameController->playerController->getItemByIdFromPlayerInventory('test-item-id')
         );
 
         $gameController->eventController->addEvent($event);
 
         $gameController->eventController->processTakeItemEvents(
             $gameController,
-            'test-item-id'
+            '*'
         );
 
         $this->assertEquals(
             $item,
-            $gameController->playerController->getItemByIdFromPlayerInventory('test-give-item-id')
+            $gameController->playerController->getItemByIdFromPlayerInventory('test-item-id')
         );
 
         $this->assertCount(
@@ -141,12 +141,12 @@ class EventControllerTest extends FrameworkTest
         // Number of uses not yet exceeded.
         $gameController->eventController->processTakeItemEvents(
             $gameController,
-            'test-item-id'
+            '*'
         );
 
         $this->assertEquals(
             $item,
-            $gameController->playerController->getItemByIdFromPlayerInventory('test-give-item-id')
+            $gameController->playerController->getItemByIdFromPlayerInventory('test-item-id')
         );
 
         $this->assertCount(
@@ -159,12 +159,12 @@ class EventControllerTest extends FrameworkTest
         // Number of uses not yet exceeded.
         $gameController->eventController->processTakeItemEvents(
             $gameController,
-            'test-item-id'
+            '*'
         );
 
         $this->assertEquals(
             $item,
-            $gameController->playerController->getItemByIdFromPlayerInventory('test-give-item-id')
+            $gameController->playerController->getItemByIdFromPlayerInventory('test-item-id')
         );
 
         $this->assertCount(
@@ -177,12 +177,12 @@ class EventControllerTest extends FrameworkTest
         // Number of uses exceeded.
         $gameController->eventController->processTakeItemEvents(
             $gameController,
-            'test-item-id'
+            '*'
         );
 
         $this->assertEquals(
             $item,
-            $gameController->playerController->getItemByIdFromPlayerInventory('test-give-item-id')
+            $gameController->playerController->getItemByIdFromPlayerInventory('test-item-id')
         );
 
         $this->assertCount(
