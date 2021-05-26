@@ -6,6 +6,7 @@ use AdventureGame\Character\Character;
 use AdventureGame\Command\CommandController;
 use AdventureGame\Command\CommandFactory;
 use AdventureGame\Command\CommandParser;
+use AdventureGame\Event\AbstractInventoryEvent;
 use AdventureGame\Event\EventController;
 use AdventureGame\Event\Events\ActivateItemEvent;
 use AdventureGame\Event\Events\DeactivateItemEvent;
@@ -14,7 +15,8 @@ use AdventureGame\Event\Events\HasActivatedItemEvent;
 use AdventureGame\Event\Triggers\AddItemToInventoryUseTrigger;
 use AdventureGame\Event\Triggers\AddItemToLocationUseTrigger;
 use AdventureGame\Event\Triggers\AddLocationToMapUseTrigger;
-use AdventureGame\Event\Triggers\TogglePortalLockTrigger;
+use AdventureGame\Event\Triggers\ItemComparison;
+use AdventureGame\Event\Triggers\MultipleActivatorPortalLockTrigger;
 use AdventureGame\Game\Exception\InvalidSaveDirectoryException;
 use AdventureGame\Game\GameController;
 use AdventureGame\Game\MapController;
@@ -159,7 +161,9 @@ class PlatformFactory
             'key.keyToWoodenDoor',
             'map',
             'letter',
-            'switch',
+            'switch.one',
+            'switch.two',
+            'switch.three',
         ];
 
         $articles = ['a', 'an', 'the'];
@@ -453,16 +457,46 @@ class PlatformFactory
             [$pathFromTownToCourtyard, $cellarDoorLeadingIn]
         );
 
-        $switchToCellarDoor = new Item(
-            'switchToCellarDoor',
-            'A Mysterious Switch',
+        $switch1 = new Item(
+            'switch1',
+            'Switch 1',
             "There's no telling what this switch does.",
-            ['switch']
+            ['switch.one']
         );
-        $switchToCellarDoor->setActivatable(true);
-        $switchToCellarDoor->setDeactivatable(true);
-        $switchToCellarDoor->setAcquirable(false);
-        $houseInTown->getContainer()->addItem($switchToCellarDoor);
+        $switch1->setActivatable(true);
+        $switch1->setDeactivatable(true);
+        $switch1->setAcquirable(false);
+        $houseInTown->getContainer()->addItem($switch1);
+
+        $switch2 = new Item(
+            'switch2',
+            'Switch 2',
+            "There's no telling what this switch does.",
+            ['switch.two']
+        );
+        $switch2->setActivatable(true);
+        $switch2->setDeactivatable(true);
+        $switch2->setAcquirable(false);
+        $houseInTown->getContainer()->addItem($switch2);
+
+        $switch3 = new Item(
+            'switch3',
+            'Switch 3',
+            "There's no telling what this switch does.",
+            ['switch.three']
+        );
+        $switch3->setActivatable(true);
+        $switch3->setDeactivatable(true);
+        $switch3->setAcquirable(false);
+        $houseInTown->getContainer()->addItem($switch3);
+
+        $activators = [$switch1, $switch2, $switch3];
+
+        $comp1 = new ItemComparison(true);
+        $comp2 = new ItemComparison(false);
+        $comp3 = new ItemComparison(true);
+
+        $comparisons = [$comp1, $comp2, $comp3];
 
         $stepsFromShedToCourtyard = new Portal(
             'stepsFromShedToCourtyard',
@@ -553,18 +587,29 @@ class PlatformFactory
 
         $gameController = $this->getGameController();
 
-        // When the player activates the switch in the house, unlock the cellar door.
-        // When the player deactivates the switch in the house, lock the cellar door.
-        $trigger = new TogglePortalLockTrigger($switchToCellarDoor, $cellarDoorLeadingIn);
-        $gameController->getEventController()->addEvent(
-            new ActivateItemEvent(
-                $trigger, $switchToCellarDoor->getId(), $houseInTown->getId()
-            )
+        // When the player activates the correct sequence of switches in house, unlock the cellar door.
+        $trigger = new MultipleActivatorPortalLockTrigger(
+            $activators,
+            $comparisons,
+            $cellarDoorLeadingIn
         );
         $gameController->getEventController()->addEvent(
-            new DeactivateItemEvent(
-                $trigger, $switchToCellarDoor->getId(), $houseInTown->getId()
-            )
+            new ActivateItemEvent($trigger, $switch1->getId(), $houseInTown->getId())
+        );
+        $gameController->getEventController()->addEvent(
+            new DeactivateItemEvent($trigger, $switch1->getId(), $houseInTown->getId())
+        );
+        $gameController->getEventController()->addEvent(
+            new ActivateItemEvent($trigger, $switch2->getId(), $houseInTown->getId())
+        );
+        $gameController->getEventController()->addEvent(
+            new DeactivateItemEvent($trigger, $switch2->getId(), $houseInTown->getId())
+        );
+        $gameController->getEventController()->addEvent(
+            new ActivateItemEvent($trigger, $switch3->getId(), $houseInTown->getId())
+        );
+        $gameController->getEventController()->addEvent(
+            new DeactivateItemEvent($trigger, $switch3->getId(), $houseInTown->getId())
         );
 
         // When the player turns the flashlight on in the cellar, reveal the map to the secret room.
