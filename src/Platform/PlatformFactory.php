@@ -8,11 +8,13 @@ use AdventureGame\Command\CommandFactory;
 use AdventureGame\Command\CommandParser;
 use AdventureGame\Event\EventController;
 use AdventureGame\Event\Events\ActivateItemEvent;
+use AdventureGame\Event\Events\DeactivateItemEvent;
 use AdventureGame\Event\Events\EnterLocationEvent;
 use AdventureGame\Event\Events\HasActivatedItemEvent;
-use AdventureGame\Event\Triggers\AddItemToInventoryTrigger;
-use AdventureGame\Event\Triggers\AddItemToLocationTrigger;
-use AdventureGame\Event\Triggers\AddLocationToMapTrigger;
+use AdventureGame\Event\Triggers\AddItemToInventoryUseTrigger;
+use AdventureGame\Event\Triggers\AddItemToLocationUseTrigger;
+use AdventureGame\Event\Triggers\AddLocationToMapUseTrigger;
+use AdventureGame\Event\Triggers\TogglePortalLockTrigger;
 use AdventureGame\Game\Exception\InvalidSaveDirectoryException;
 use AdventureGame\Game\GameController;
 use AdventureGame\Game\MapController;
@@ -154,10 +156,10 @@ class PlatformFactory
             'reward',
             'reward.exit',
             'reward.enter',
-            'key.keyToCellarDoor',
             'key.keyToWoodenDoor',
             'map',
-            'letter'
+            'letter',
+            'switch',
         ];
 
         $articles = ['a', 'an', 'the'];
@@ -174,7 +176,6 @@ class PlatformFactory
         $phrases = [
             'exit reward' => 'reward.exit',
             'enter reward' => 'reward.enter',
-            'key to cellar door' => 'key.keyToCellarDoor',
             'key to wooden door' => 'key.keyToWoodenDoor',
             'turn on flashlight' => 'activate flashlight',
             'turn flashlight on' => 'activate flashlight',
@@ -369,13 +370,6 @@ class PlatformFactory
             'south', 'courtyard'
         );
 
-        $keyToCellarDoor = new Item(
-            'keyToCellarDoor',
-            'Key to Cellar Door',
-            'A small key that unlocks the door to the cellar.',
-            ['key to cellar door', 'key.keyToCellarDoor', 'key']
-        );
-
         $hallwayLeadingSouth = new Location(
             'hallwayLeadingSouthFromSpawn',
             'Hallway Leading South',
@@ -383,7 +377,6 @@ class PlatformFactory
             new Container(),
             [$doorFromHallwayToCourtyard, $entryFromHallwayToSpawn]
         );
-        $hallwayLeadingSouth->getContainer()->addItem($keyToCellarDoor);
 
         $doorFromCourtyardToHallway = new Portal(
             'doorFromCourtyardToHallway',
@@ -430,13 +423,46 @@ class PlatformFactory
             'courtyard'
         );
 
+        $cellarDoorLeadingIn = new Portal(
+            'cellarDoor',
+            'Door to Cellar',
+            "A door leading down into a cellar.",
+            ['door'],
+            'down',
+            'cellar'
+        );
+        $cellarDoorLeadingIn->setMutable(true);
+
+        // The cellar door will be unlocked by activating a switch in the House location.
+        $cellarDoorLeadingIn->setLocked(true);
+
+        $cellarDoorLeadingOut = new Portal(
+            'cellarDoor',
+            'Cellar Door',
+            "The way out of the cellar.",
+            ['door'],
+            'up',
+            'houseInTown'
+        );
+
         $houseInTown = new Location(
             "houseInTown",
             "The House",
             "A house belonging to someone. They don't appear to be home.",
             new Container(),
-            [$pathFromTownToCourtyard]
+            [$pathFromTownToCourtyard, $cellarDoorLeadingIn]
         );
+
+        $switchToCellarDoor = new Item(
+            'switchToCellarDoor',
+            'A Mysterious Switch',
+            "There's no telling what this switch does.",
+            ['switch']
+        );
+        $switchToCellarDoor->setActivatable(true);
+        $switchToCellarDoor->setDeactivatable(true);
+        $switchToCellarDoor->setAcquirable(false);
+        $houseInTown->getContainer()->addItem($switchToCellarDoor);
 
         $stepsFromShedToCourtyard = new Portal(
             'stepsFromShedToCourtyard',
@@ -447,33 +473,12 @@ class PlatformFactory
             'courtyard'
         );
 
-        $cellarDoorLeadingIn = new Portal(
-            'cellarDoor',
-            'Door to Cellar',
-            "A door leading down into a cellar.",
-            ['door'],
-            'down',
-            'cellar'
-        );
-        $cellarDoorLeadingIn->setMutable(true);
-        $cellarDoorLeadingIn->setLocked(true);
-        $cellarDoorLeadingIn->setKeyEntityId($keyToCellarDoor->getId());
-
         $smallShed = new Location(
             "smallShed",
             "A small shed",
             "A small shed with weathered siding and a small window.",
             new Container(),
             [$stepsFromShedToCourtyard, $cellarDoorLeadingIn]
-        );
-
-        $cellarDoorLeadingOut = new Portal(
-            'cellarDoor',
-            'Cellar Door',
-            "The way out of the cellar.",
-            ['door'],
-            'up',
-            'smallShed'
         );
 
         $cellar = new Location(
@@ -548,6 +553,20 @@ class PlatformFactory
 
         $gameController = $this->getGameController();
 
+        // When the player activates the switch in the house, unlock the cellar door.
+        // When the player deactivates the switch in the house, lock the cellar door.
+        $trigger = new TogglePortalLockTrigger($switchToCellarDoor, $cellarDoorLeadingIn);
+        $gameController->getEventController()->addEvent(
+            new ActivateItemEvent(
+                $trigger, $switchToCellarDoor->getId(), $houseInTown->getId()
+            )
+        );
+        $gameController->getEventController()->addEvent(
+            new DeactivateItemEvent(
+                $trigger, $switchToCellarDoor->getId(), $houseInTown->getId()
+            )
+        );
+
         // When the player turns the flashlight on in the cellar, reveal the map to the secret room.
         $mapToSecretRoom = new Item(
             'mapToSecretRoom',
@@ -556,19 +575,19 @@ class PlatformFactory
             ['map']
         );
         $mapToSecretRoom->setActivatable(true);
-        $trigger = new AddItemToLocationTrigger($mapToSecretRoom);
+        $trigger = new AddItemToLocationUseTrigger($mapToSecretRoom);
         $event = new ActivateItemEvent($trigger, 'flashlight', 'cellar');
-        $gameController->eventController->addEvent($event);
+        $gameController->getEventController()->addEvent($event);
 
         // Apply the same trigger on room entry when the flashlight is already activated.
         $event = new HasActivatedItemEvent($trigger, 'flashlight', 'cellar');
-        $gameController->eventController->addEvent($event);
+        $gameController->getEventController()->addEvent($event);
 
         // When reading the map, add the secret room as a new location.
-        $trigger = new AddLocationToMapTrigger($secretRoom);
+        $trigger = new AddLocationToMapUseTrigger($secretRoom);
         $trigger->addEntrance('roomWestOfSpawn', $doorFromWestRoomToSecretRoom);
         $event = new ActivateItemEvent($trigger, $mapToSecretRoom->getId(), '*');
-        $gameController->eventController->addEvent($event);
+        $gameController->getEventController()->addEvent($event);
 
         // Give the player a reward for entering the secret room.
         $enteredSecretRoomReward = new Item(
@@ -578,7 +597,7 @@ class PlatformFactory
             ['enter reward', 'reward.enter', 'reward']
         );
 
-        $trigger = new AddItemToInventoryTrigger($enteredSecretRoomReward);
+        $trigger = new AddItemToInventoryUseTrigger($enteredSecretRoomReward);
         $event = new EnterLocationEvent($trigger, 'secretRoom');
         $gameController->eventController->addEvent($event);
 

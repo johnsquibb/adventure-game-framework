@@ -2,13 +2,13 @@
 
 namespace AdventureGame\Event\Triggers;
 
-use AdventureGame\Event\AbstractTrigger;
+use AdventureGame\Event\FiniteUseTrigger;
 use AdventureGame\Game\GameController;
 use AdventureGame\Location\Location;
 use AdventureGame\Location\Portal;
 use AdventureGame\Response\Response;
 
-class AddLocationToMapTrigger extends AbstractTrigger
+class AddLocationToMapUseTrigger extends FiniteUseTrigger
 {
     protected array $entrances = [];
 

@@ -3,7 +3,7 @@
 namespace AdventureGame\Test\Event\Events;
 
 use AdventureGame\Event\Events\TakeItemEvent;
-use AdventureGame\Event\Triggers\AddItemToInventoryTrigger;
+use AdventureGame\Event\Triggers\AddItemToInventoryUseTrigger;
 use AdventureGame\Item\Container;
 use AdventureGame\Item\Item;
 use AdventureGame\Location\Location;
@@ -62,7 +62,7 @@ class TakeItemEventTest extends AbstractEventTest
             []
         );
 
-        $trigger = new AddItemToInventoryTrigger($item);
+        $trigger = new AddItemToInventoryUseTrigger($item);
         $event = new TakeItemEvent(
             $trigger,
             '*',
@@ -128,7 +128,7 @@ class TakeItemEventTest extends AbstractEventTest
             []
         );
 
-        $trigger = new AddItemToInventoryTrigger($item, 3);
+        $trigger = new AddItemToInventoryUseTrigger($item, 3);
         $event = new TakeItemEvent(
             $trigger,
             '*',

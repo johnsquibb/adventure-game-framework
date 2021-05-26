@@ -13,7 +13,7 @@ use AdventureGame\Traits\ReadableTrait;
 use AdventureGame\Traits\TagTrait;
 
 /**
- * Class Item is an object that can be taken, dropped, or stored in a container.
+ * Class Item is an entity the player can interact with in a variety of ways.
  * @package AdventureGame\Item
  */
 class Item implements ItemInterface

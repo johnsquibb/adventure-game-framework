@@ -3,7 +3,7 @@
 namespace AdventureGame\Test\Event\Events;
 
 use AdventureGame\Event\Events\DropItemEvent;
-use AdventureGame\Event\Triggers\DropItemFromInventoryTrigger;
+use AdventureGame\Event\Triggers\DropItemFromInventoryUseTrigger;
 use AdventureGame\Item\Container;
 use AdventureGame\Item\Item;
 use AdventureGame\Location\Location;
@@ -62,7 +62,7 @@ class DropItemEventTest extends AbstractEventTest
             []
         );
 
-        $trigger = new DropItemFromInventoryTrigger($item->getId());
+        $trigger = new DropItemFromInventoryUseTrigger($item->getId());
         $event = new DropItemEvent(
             $trigger,
             'has-item-id',
@@ -128,7 +128,7 @@ class DropItemEventTest extends AbstractEventTest
             []
         );
 
-        $trigger = new DropItemFromInventoryTrigger($item->getId(), 2);
+        $trigger = new DropItemFromInventoryUseTrigger($item->getId(), 2);
         $event = new DropItemEvent(
             $trigger,
             'has-item-id',

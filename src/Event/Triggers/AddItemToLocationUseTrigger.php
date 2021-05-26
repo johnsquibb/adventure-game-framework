@@ -2,13 +2,13 @@
 
 namespace AdventureGame\Event\Triggers;
 
-use AdventureGame\Event\AbstractTrigger;
+use AdventureGame\Event\FiniteUseTrigger;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
 use AdventureGame\Item\Item;
 use AdventureGame\Response\Response;
 
-class AddItemToLocationTrigger extends AbstractTrigger
+class AddItemToLocationUseTrigger extends FiniteUseTrigger
 {
     public function __construct(protected Item $item, int $numberOfUses = 1)
     {

@@ -66,7 +66,6 @@ class PlatformController
      * Process user input.
      * @param string $input
      * @return Response
-     * @throws InvalidTokensLengthException
      */
     private function processInput(string $input): Response
     {
