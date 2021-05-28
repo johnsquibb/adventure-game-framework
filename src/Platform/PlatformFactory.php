@@ -14,7 +14,7 @@ use AdventureGame\Event\Events\HasActivatedItemEvent;
 use AdventureGame\Event\Triggers\AddItemToInventoryUseTrigger;
 use AdventureGame\Event\Triggers\AddItemToLocationUseTrigger;
 use AdventureGame\Event\Triggers\AddLocationToMapUseTrigger;
-use AdventureGame\Event\Triggers\ItemComparison;
+use AdventureGame\Event\Triggers\Comparisons\ItemComparison;
 use AdventureGame\Event\Triggers\MultipleActivatorPortalLockTrigger;
 use AdventureGame\Game\Exception\InvalidSaveDirectoryException;
 use AdventureGame\Game\GameController;
@@ -187,6 +187,9 @@ class PlatformFactory
             'read map' => 'activate map',
             'look at map' => 'activate map',
             'read secret letter' => 'read letter',
+            'first switch' => 'switch.one',
+            'second switch' => 'switch.two',
+            'third switch' => 'switch.three',
         ];
 
         $shortcuts = [

@@ -29,7 +29,7 @@ class CommandControllerTest extends FrameworkTest
         $commandController = $this->createCommandController();
 
         $response = $commandController->createAndProcessCommandFromTokens(
-            ['take', 'sword', 'from', 'chest']
+            ['take', 'item', 'from', 'container']
         );
 
         $this->assertNotNull($response);

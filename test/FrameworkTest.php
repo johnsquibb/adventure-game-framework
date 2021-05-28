@@ -37,7 +37,15 @@ abstract class FrameworkTest extends TestCase
     protected function createCommandParser(): CommandParser
     {
         $verbs = ['north', 'take', 'look', 'put'];
-        $nouns = ['sword', 'sheath', 'chest', 'test-container-item', 'test-item-in-container'];
+        $nouns = [
+            'sword',
+            'sheath',
+            'chest',
+            'test-container-item',
+            'test-item-in-container',
+            'item',
+            'container'
+        ];
         $articles = [];
         $prepositions = ['at', 'into', 'from'];
         $aliases = [];
@@ -80,7 +88,7 @@ abstract class FrameworkTest extends TestCase
             'test-container-item',
             'Test Container Item',
             'Test container item description',
-            ['test-container-item'],
+            ['container', 'test-container-item'],
         );
         $container->addItem($containerItem);
 
@@ -88,7 +96,7 @@ abstract class FrameworkTest extends TestCase
             'test-item-2',
             'Test Item 2',
             'Test Item 2 description',
-            ['test-item-in-container']
+            ['item','test-item-in-container']
         );
         $item->setAccessible(true);
         $containerItem->addItem($item);

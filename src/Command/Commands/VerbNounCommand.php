@@ -11,6 +11,7 @@ use AdventureGame\Item\ContainerItem;
 use AdventureGame\Item\ContainerItemInterface;
 use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Portal;
+use AdventureGame\Response\ItemDescription;
 use AdventureGame\Response\Response;
 
 /**
@@ -71,7 +72,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     }
 
     /**
-     * Try an inventory action with player's inventory items at current player location.
+     * Try an inventory action with player's inventory items at player location.
      * @param GameController $gameController
      * @return Response|null
      * @throws PlayerLocationNotSetException
@@ -86,15 +87,36 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
             case 'deactivate':
                 return $this->deactivateItemsByTagInPlayerInventory($gameController, $this->noun);
             case 'read':
-                // TODO read from player's inventory.
-                return null;
+                return $this->readItemsByTagInPlayerInventory($gameController, $this->noun);
         }
 
         return null;
     }
 
     /**
-     * Drop all items in player inventory matching tag to current player location.
+     * Try an action on items at player location.
+     * @param GameController $gameController
+     * @return Response|null
+     * @throws PlayerLocationNotSetException
+     */
+    private function tryLocationItemAction(GameController $gameController): ?Response
+    {
+        switch ($this->verb) {
+            case 'take':
+                return $this->takeItemsByTagAtPlayerLocation($gameController, $this->noun);
+            case 'activate':
+                return $this->activateItemsByTagAtPlayerLocation($gameController, $this->noun);
+            case 'deactivate':
+                return $this->deactivateItemsByTagAtPlayerLocation($gameController, $this->noun);
+            case 'read':
+                return $this->readItemsByTagAtPlayerLocation($gameController, $this->noun);
+        }
+
+        return null;
+    }
+
+    /**
+     * Drop all items in player inventory matching tag to player location.
      * @param GameController $gameController
      * @param string $tag
      * @return Response
@@ -136,7 +158,8 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
      * Activate items by tag in player inventory.
      * @param GameController $gameController
      * @param string $tag
-     * @return Response
+     * @return Response|null
+     * @throws PlayerLocationNotSetException
      */
     private function activateItemsByTagInPlayerInventory(
         GameController $gameController,
@@ -151,6 +174,13 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         return $this->activateItems($gameController, $items);
     }
 
+    /**
+     * Activate items.
+     * @param GameController $gameController
+     * @param array $items
+     * @return Response
+     * @throws PlayerLocationNotSetException
+     */
     private function activateItems(GameController $gameController, array $items): Response
     {
         $response = new Response();
@@ -196,7 +226,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
      * Deactivate items by tag in player inventory.
      * @param GameController $gameController
      * @param string $tag
-     * @return Response
+     * @return Response|null
      */
     private function deactivateItemsByTagInPlayerInventory(
         GameController $gameController,
@@ -253,44 +283,37 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     }
 
     /**
-     * Try an action on items at current player location.
-     * @param GameController $gameController
-     * @return Response|null
-     * @throws PlayerLocationNotSetException
-     */
-    private function tryLocationItemAction(GameController $gameController): ?Response
-    {
-        switch ($this->verb) {
-            case 'take':
-                return $this->takeItemsByTagAtPlayerLocation($gameController, $this->noun);
-            case 'activate':
-                return $this->activateItemsByTagAtPlayerLocation($gameController, $this->noun);
-            case 'deactivate':
-                return $this->deactivateItemsByTagAtPlayerLocation($gameController, $this->noun);
-            case 'read':
-                return $this->readItemsByTagAtPlayerLocation($gameController, $this->noun);
-        }
-
-        return null;
-    }
-
-    /**
-     * Take all acquirable items matching tag at current player location into player inventory.
+     * Take all acquirable items matching tag at player location into player inventory.
      * @param GameController $gameController
      * @param string $tag
-     * @return Response
+     * @return Response|null
      * @throws PlayerLocationNotSetException
      */
     private function takeItemsByTagAtPlayerLocation(
         GameController $gameController,
         string $tag
-    ): Response {
+    ): ?Response {
         $response = new Response();
 
         $items = $gameController->mapController->getItemsByTag($tag);
 
+        // If nothing in the location, try the first container.
         if (empty($items)) {
-            $response->addMessage("You don't see anything like that here.");
+            $containers = $gameController
+                ->getMapController()->getPlayerLocation()->getContainer()->getItems();
+
+            foreach ($containers as $container) {
+                if ($container instanceof ContainerItemInterface) {
+                    $response = $this->takeItemsByTagFromFirstContainerByTagAtPlayerLocation(
+                        $gameController,
+                        $tag,
+                        $container->getTags()[0]
+                    );
+                    if ($response instanceof Response) {
+                        return $response;
+                    }
+                }
+            }
         }
 
         if (count($items) > 1) {
@@ -317,6 +340,13 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         return $response;
     }
 
+    /**
+     * Activate items by tag at player location.
+     * @param GameController $gameController
+     * @param string $tag
+     * @return Response|null
+     * @throws PlayerLocationNotSetException
+     */
     private function activateItemsByTagAtPlayerLocation(
         GameController $gameController,
         string $tag
@@ -330,6 +360,13 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         return $this->activateItems($gameController, $items);
     }
 
+    /**
+     * Deactivate items by tag at player location.
+     * @param GameController $gameController
+     * @param string $tag
+     * @return Response|null
+     * @throws PlayerLocationNotSetException
+     */
     private function deactivateItemsByTagAtPlayerLocation(
         GameController $gameController,
         string $tag
@@ -344,43 +381,42 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     }
 
     /**
-     * Read all readable items matching tag at current player location into player inventory.
+     * Read items matching tag at player location.
      * @param GameController $gameController
      * @param string $tag
-     * @return Response
+     * @return Response|null
      * @throws PlayerLocationNotSetException
      */
     private function readItemsByTagAtPlayerLocation(
         GameController $gameController,
         string $tag
-    ): Response {
-        $response = new Response();
-
+    ): ?Response {
         $items = $gameController->mapController->getItemsByTag($tag);
 
         if (empty($items)) {
-            $response->addMessage("You don't have anything like that to read.");
+            return null;
         }
 
-        if (count($items) > 1) {
-            $response->addMessage('Which item do you want to read?');
-            foreach ($items as $item) {
-                $response->addItemSummaryWithTag($this->listItem($item));
-            }
-            return $response;
+        return $this->readItems($gameController, $items);
+    }
+
+    /**
+     * Read items matching tag in player inventory.
+     * @param GameController $gameController
+     * @param string $tag
+     * @return Response|null
+     */
+    private function readItemsByTagInPlayerInventory(
+        GameController $gameController,
+        string $tag
+    ): ?Response {
+        $items = $gameController->getPlayerController()->getPlayerInventory()->getItemsByTag($tag);
+
+        if (empty($items)) {
+            return null;
         }
 
-        foreach ($items as $item) {
-            if ($item instanceof ReadableEntityInterface) {
-                if ($item->getReadable()) {
-                    $response->addMessages($item->getLines());
-                } else {
-                    $response->addMessage("You can't read {$item->getName()}.");
-                }
-            }
-        }
-
-        return $response;
+        return $this->readItems($gameController, $items);
     }
 
     /**
@@ -403,7 +439,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     }
 
     /**
-     * Try an action using a key from player inventory at current player location.
+     * Try an action using a key from player inventory at player location.
      * @param GameController $gameController
      * @return Response|null
      * @throws PlayerLocationNotSetException
@@ -600,5 +636,42 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         }
 
         return "You don't have the required key.";
+    }
+
+    /**
+     * Read items.
+     * @param GameController $gameController
+     * @param array $items
+     * @return Response
+     */
+    private function readItems(GameController $gameController, array $items): Response
+    {
+        $response = new Response();
+
+        if (empty($items)) {
+            $response->addMessage("You don't have anything like that to read.");
+        }
+
+        if (count($items) > 1) {
+            $response->addMessage('Which item do you want to read?');
+            foreach ($items as $item) {
+                $response->addItemSummaryWithTag($this->listItem($item));
+            }
+            return $response;
+        }
+
+        foreach ($items as $item) {
+            if ($item instanceof ReadableEntityInterface) {
+                if ($item->getReadable()) {
+                    $response->addMessages($item->getLines());
+                } else {
+                    if ($item instanceof ItemDescription) {
+                        $response->addMessage("You can't read {$item->getName()}.");
+                    }
+                }
+            }
+        }
+
+        return $response;
     }
 }

@@ -379,4 +379,81 @@ abstract class AbstractCommand
 
         return "Can't unlock that";
     }
+
+    /**
+     * Take all the items by tag from container matching another tag at the current player location.
+     * @param GameController $gameController
+     * @param string $itemTag
+     * @param string $containerTag
+     * @return Response|null
+     * @throws PlayerLocationNotSetException
+     */
+    protected function takeItemsByTagFromFirstContainerByTagAtPlayerLocation(
+        GameController $gameController,
+        string $itemTag,
+        string $containerTag,
+    ): ?Response {
+
+        $container = $this->getFirstContainerByTagAtPlayerLocation($gameController, $containerTag);
+
+        if ($container) {
+            $items = $container->getItemsByTag($itemTag);
+
+            if (empty($items)) {
+                return null;
+            }
+
+            $response = new Response();
+
+            foreach ($items as $item) {
+                if ($item instanceof ItemInterface) {
+                    if ($item->getAccessible()) {
+                        if ($item->getAcquirable()) {
+                            $container->removeItemById($item->getId());
+
+                            $addItemResponse = $this->addItemToPlayerInventory(
+                                $gameController,
+                                $item
+                            );
+
+                            $response->addMessages($addItemResponse->getMessages());
+                        } else {
+                            $response->addMessage("You can't take that.");
+                        }
+                    } else {
+                        $response->addMessage("You haven't discovered anything like that here.");
+                    }
+                }
+            }
+
+            return $response;
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the first container by tag at current player location.
+     * @param GameController $gameController
+     * @param string $tag
+     * @return ContainerInterface|null
+     * @throws PlayerLocationNotSetException
+     */
+    protected function getFirstContainerByTagAtPlayerLocation(
+        GameController $gameController,
+        string $tag
+    ): ?ContainerInterface {
+        $location = $gameController->mapController->getPlayerLocation();
+
+        $containers = $location->getContainer()->getItemsByTypeAndTag(
+            ContainerInterface::class,
+            $tag
+        );
+
+        if (count($containers) && $containers[0] instanceof ContainerInterface) {
+            return $containers[0];
+        }
+
+        return null;
+    }
 }
