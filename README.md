@@ -9,7 +9,6 @@ The examples directory contains a game that demonstrates the framework abilities
 the command line using `composer example` command.
 
 ## TODO
-* Clean up Platform Factory
 * Basic Logging - errors, warnings, etc.
 * Stats tracking - number of moves, number of visits to location, number of item uses, etc.
 * Create abstraction for game-specific words in commands, e.g. "take", "drop" in VerbNounCommand.
