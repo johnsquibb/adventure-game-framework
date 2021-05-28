@@ -8,10 +8,10 @@ namespace AdventureGame\Location;
  */
 class Direction
 {
+    public const DOWN = 'down';
     public const EAST = 'east';
     public const NORTH = 'north';
     public const SOUTH = 'south';
-    public const WEST = 'west';
     public const UP = 'up';
-    public const DOWN = 'down';
+    public const WEST = 'west';
 }

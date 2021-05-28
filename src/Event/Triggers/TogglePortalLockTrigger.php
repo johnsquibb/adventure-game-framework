@@ -8,6 +8,11 @@ use AdventureGame\Game\GameController;
 use AdventureGame\Location\Portal;
 use AdventureGame\Response\Response;
 
+/**
+ * Class TogglePortalLockTrigger toggles the lock state of a portal based on the state of an
+ * activator.
+ * @package AdventureGame\Event\Triggers
+ */
 class TogglePortalLockTrigger extends InfiniteUseTrigger
 {
     public function __construct(
@@ -16,6 +21,11 @@ class TogglePortalLockTrigger extends InfiniteUseTrigger
     ) {
     }
 
+    /**
+     * Set the portal lock state to inverse of the activator state.
+     * @param GameController $gameController
+     * @return Response|null
+     */
     public function execute(GameController $gameController): ?Response
     {
         // Unlock

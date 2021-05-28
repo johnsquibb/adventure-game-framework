@@ -31,54 +31,6 @@ class CommandParser
     }
 
     /**
-     * Apply shortcuts for literal matches against input.
-     * @param string $input
-     * @return string
-     */
-    public function applyShortcuts(string $input): string
-    {
-        foreach ($this->shortcuts as $match => $shortcut) {
-            if ($input === $match) {
-                return $shortcut;
-            }
-        }
-
-        return $this->normalizeString($input);
-    }
-
-    /**
-     * Apply phrases for literal matches against portions of the input.
-     * @param string $input
-     * @return string
-     */
-    public function applyPhrases(string $input): string
-    {
-        foreach ($this->phrases as $match => $phrase) {
-            $input = str_ireplace($match, $phrase, $input);
-        }
-
-        return $this->normalizeString($input);
-    }
-
-    /**
-     * Filter tokens by removing irrelevant words.
-     * @param array $tokens
-     * @return array
-     */
-    public function filterTokens(array $tokens): array
-    {
-        $keep = [];
-
-        foreach ($tokens as $token) {
-            if (!in_array($token, $this->articles)) {
-                $keep[] = $token;
-            }
-        }
-
-        return $keep;
-    }
-
-    /**
      * Normalize tokens for consistency.
      * @param array $tokens
      * @return array
@@ -105,13 +57,33 @@ class CommandParser
     }
 
     /**
-     * Parse a command into tokens.
-     * @param string $command
-     * @return array
+     * Apply phrases for literal matches against portions of the input.
+     * @param string $input
+     * @return string
      */
-    public function parseCommand(string $command): array
+    public function applyPhrases(string $input): string
     {
-        return preg_split("/[\s,]+/", trim($command));
+        foreach ($this->phrases as $match => $phrase) {
+            $input = str_ireplace($match, $phrase, $input);
+        }
+
+        return $this->normalizeString($input);
+    }
+
+    /**
+     * Apply shortcuts for literal matches against input.
+     * @param string $input
+     * @return string
+     */
+    public function applyShortcuts(string $input): string
+    {
+        foreach ($this->shortcuts as $match => $shortcut) {
+            if ($input === $match) {
+                return $shortcut;
+            }
+        }
+
+        return $this->normalizeString($input);
     }
 
     /**
@@ -122,6 +94,34 @@ class CommandParser
     public function assembleCommandFromTokens(array $tokens): string
     {
         return trim(implode(' ', $tokens));
+    }
+
+    /**
+     * Filter tokens by removing irrelevant words.
+     * @param array $tokens
+     * @return array
+     */
+    public function filterTokens(array $tokens): array
+    {
+        $keep = [];
+
+        foreach ($tokens as $token) {
+            if (!in_array($token, $this->articles)) {
+                $keep[] = $token;
+            }
+        }
+
+        return $keep;
+    }
+
+    /**
+     * Parse a command into tokens.
+     * @param string $command
+     * @return array
+     */
+    public function parseCommand(string $command): array
+    {
+        return preg_split("/[\s,]+/", trim($command));
     }
 
     /**

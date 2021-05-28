@@ -8,7 +8,7 @@ interface ClientControllerInterface
 {
     public function getInput(): string;
 
-    public function setOutput(array $lines): void;
-
     public function processResponse(Response $response): void;
+
+    public function setOutput(array $lines): void;
 }

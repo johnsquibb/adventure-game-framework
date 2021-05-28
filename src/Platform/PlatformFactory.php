@@ -6,7 +6,6 @@ use AdventureGame\Character\Character;
 use AdventureGame\Command\CommandController;
 use AdventureGame\Command\CommandFactory;
 use AdventureGame\Command\CommandParser;
-use AdventureGame\Event\AbstractInventoryEvent;
 use AdventureGame\Event\EventController;
 use AdventureGame\Event\Events\ActivateItemEvent;
 use AdventureGame\Event\Events\DeactivateItemEvent;
@@ -42,6 +41,15 @@ class PlatformFactory
     }
 
     /**
+     * Clear the registry cache. This is important when starting a new game to ensure fresh game
+     * objects are loaded.
+     */
+    public function clearRegistry()
+    {
+        $this->registry = [];
+    }
+
+    /**
      * Initialize the registry and all its dependencies to ready a new game.
      * @return PlatformRegistry
      * @throws InvalidSaveDirectoryException
@@ -58,6 +66,21 @@ class PlatformFactory
         $platformRegistry->playerController = $this->getPlayerController();
 
         return $platformRegistry;
+    }
+
+    /**
+     * Get the output controller.
+     * @return OutputController
+     */
+    private function getOutputController(): OutputController
+    {
+        $object = $this->getRegisteredObject(OutputController::class);
+        if ($object === null) {
+            $object = new OutputController();
+            $this->registerObject($object);
+        }
+
+        return $object;
     }
 
     /**
@@ -80,15 +103,6 @@ class PlatformFactory
     }
 
     /**
-     * Clear the registry cache. This is important when starting a new game to ensure fresh game
-     * objects are loaded.
-     */
-    public function clearRegistry()
-    {
-        $this->registry = [];
-    }
-
-    /**
      * Get the input controller.
      * @return InputController
      * @throws InvalidSaveDirectoryException
@@ -98,21 +112,6 @@ class PlatformFactory
         $object = $this->getRegisteredObject(InputController::class);
         if ($object === null) {
             $object = new InputController($this->getCommandParser(), $this->getCommandController());
-            $this->registerObject($object);
-        }
-
-        return $object;
-    }
-
-    /**
-     * Get the output controller.
-     * @return OutputController
-     */
-    private function getOutputController(): OutputController
-    {
-        $object = $this->getRegisteredObject(OutputController::class);
-        if ($object === null) {
-            $object = new OutputController();
             $this->registerObject($object);
         }
 

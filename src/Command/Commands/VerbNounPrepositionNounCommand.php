@@ -114,6 +114,31 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
     }
 
     /**
+     * Get the first container by tag at current player location.
+     * @param GameController $gameController
+     * @param string $tag
+     * @return ContainerInterface|null
+     * @throws PlayerLocationNotSetException
+     */
+    private function getFirstContainerByTagAtPlayerLocation(
+        GameController $gameController,
+        string $tag
+    ): ?ContainerInterface {
+        $location = $gameController->mapController->getPlayerLocation();
+
+        $containers = $location->getContainer()->getItemsByTypeAndTag(
+            ContainerInterface::class,
+            $tag
+        );
+
+        if (count($containers) && $containers[0] instanceof ContainerInterface) {
+            return $containers[0];
+        }
+
+        return null;
+    }
+
+    /**
      * Drop all items matching tag from player inventory into the first container matching another
      * tag at current player location.
      * @param GameController $gameController
@@ -148,31 +173,6 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
         }
 
         return $response;
-    }
-
-    /**
-     * Get the first container by tag at current player location.
-     * @param GameController $gameController
-     * @param string $tag
-     * @return ContainerInterface|null
-     * @throws PlayerLocationNotSetException
-     */
-    private function getFirstContainerByTagAtPlayerLocation(
-        GameController $gameController,
-        string $tag
-    ): ?ContainerInterface {
-        $location = $gameController->mapController->getPlayerLocation();
-
-        $containers = $location->getContainer()->getItemsByTypeAndTag(
-            ContainerInterface::class,
-            $tag
-        );
-
-        if (count($containers) && $containers[0] instanceof ContainerInterface) {
-            return $containers[0];
-        }
-
-        return null;
     }
 
     /**

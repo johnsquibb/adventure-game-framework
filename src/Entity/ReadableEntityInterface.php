@@ -8,9 +8,9 @@ namespace AdventureGame\Entity;
  */
 interface ReadableEntityInterface
 {
+    public function getLines(): array;
+
     public function getReadable(): bool;
 
     public function setReadable(bool $readable): void;
-
-    public function getLines(): array;
 }

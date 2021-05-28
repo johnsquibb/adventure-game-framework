@@ -2,7 +2,6 @@
 
 namespace AdventureGame\Client;
 
-use AdventureGame\Entity\ActivatableEntityInterface;
 use AdventureGame\Response\Choice;
 use AdventureGame\Response\Description;
 use AdventureGame\Response\ItemDescription;
@@ -14,11 +13,10 @@ use AdventureGame\Response\Response;
  */
 class ConsoleResponseDecorator
 {
-    private const DIVIDER_WIDTH = 40;
-
     private const BLANK_CHARACTER = '';
-    private const DIVIDER_CHARACTER = '-';
     private const BULLET_CHARACTER = '*';
+    private const DIVIDER_CHARACTER = '-';
+    private const DIVIDER_WIDTH = 40;
     private const SPACE_CHARACTER = ' ';
     private const TAB_CHARACTER = '    ';
 
@@ -79,24 +77,6 @@ class ConsoleResponseDecorator
     }
 
     /**
-     * Render the message lines.
-     * @param array $message
-     * @return array
-     */
-    private function renderMessage(array $message): array
-    {
-        $lines = [];
-
-        if (!empty($message)) {
-            foreach ($message as $line) {
-                $lines[] = $line;
-            }
-        }
-
-        return $lines;
-    }
-
-    /**
      * Render the locations.
      * @param array $locations
      * @return array
@@ -146,6 +126,24 @@ class ConsoleResponseDecorator
     }
 
     /**
+     * Build a visible divider.
+     * @return string
+     */
+    private function divider(): string
+    {
+        return str_repeat(self::DIVIDER_CHARACTER, self::DIVIDER_WIDTH);
+    }
+
+    /**
+     * Build a blank character.
+     * @return string
+     */
+    private function blank(): string
+    {
+        return self::BLANK_CHARACTER;
+    }
+
+    /**
      * Render the items.
      * @param array $items
      * @return array
@@ -156,52 +154,6 @@ class ConsoleResponseDecorator
 
         $lines[] = $this->blank();
         $lines[] = "You see:";
-        $lines[] = $this->blank();
-
-        foreach ($items as $description) {
-            if ($description instanceof ItemDescription) {
-                array_push($lines, ...$this->renderItemDescription($description));
-                $lines[] = $this->blank();
-            }
-        }
-
-        return $lines;
-    }
-
-    /**
-     * Render the item summaries with suggested tags.
-     * @param array $items
-     * @return array
-     */
-    private function renderItemSummariesWithTags(array $items): array
-    {
-        $lines = [];
-
-        $lines[] = $this->blank();
-        $lines[] = "You see:";
-        $lines[] = $this->blank();
-
-        foreach ($items as $description) {
-            if ($description instanceof ItemDescription) {
-                array_push($lines, ...$this->renderItemSummaryWithTag($description));
-                $lines[] = $this->blank();
-            }
-        }
-
-        return $lines;
-    }
-
-    /**
-     * Render the inventory items.
-     * @param array $items
-     * @return array
-     */
-    private function renderInventoryItems(array $items): array
-    {
-        $lines = [];
-
-        $lines[] = $this->blank();
-        $lines[] = "You have:";
         $lines[] = $this->blank();
 
         foreach ($items as $description) {
@@ -246,6 +198,123 @@ class ConsoleResponseDecorator
     }
 
     /**
+     * Build a bullet character.
+     * @return string
+     */
+    private function bullet(): string
+    {
+        return self::BULLET_CHARACTER;
+    }
+
+    /**
+     * Build a space character.
+     * @return string
+     */
+    private function space(): string
+    {
+        return self::SPACE_CHARACTER;
+    }
+
+    /**
+     * Build a tab character.
+     * @return string
+     */
+    private function tab(): string
+    {
+        return self::TAB_CHARACTER;
+    }
+
+    /**
+     * Render the item summaries with suggested tags.
+     * @param array $items
+     * @return array
+     */
+    private function renderItemSummariesWithTags(array $items): array
+    {
+        $lines = [];
+
+        $lines[] = $this->blank();
+        $lines[] = "You see:";
+        $lines[] = $this->blank();
+
+        foreach ($items as $description) {
+            if ($description instanceof ItemDescription) {
+                array_push($lines, ...$this->renderItemSummaryWithTag($description));
+                $lines[] = $this->blank();
+            }
+        }
+
+        return $lines;
+    }
+
+    /**
+     * Render the summary with tag.
+     * @param ItemDescription $item
+     * @return array
+     */
+    private function renderItemSummaryWithTag(ItemDescription $item): array
+    {
+        $lines = [];
+
+        if (!empty($item->name)) {
+            $tag = $item->getTags()[0] ?? '';
+            $lines[] = $this->bullet() . $this->space() . $item->name . $this->tab() . "[$tag]";
+        }
+
+        if (!empty($item->summary)) {
+            $lines[] = $this->tab() . $item->summary;
+        }
+
+        return $lines;
+    }
+
+    /**
+     * Render the inventory items.
+     * @param array $items
+     * @return array
+     */
+    private function renderInventoryItems(array $items): array
+    {
+        $lines = [];
+
+        $lines[] = $this->blank();
+        $lines[] = "You have:";
+        $lines[] = $this->blank();
+
+        foreach ($items as $description) {
+            if ($description instanceof ItemDescription) {
+                array_push($lines, ...$this->renderItemDescription($description));
+                $lines[] = $this->blank();
+            }
+        }
+
+        return $lines;
+    }
+
+    /**
+     * Render the containers.
+     * @param array $containers
+     * @return array
+     */
+    private function renderContainers(array $containers): array
+    {
+        $lines = [];
+
+        $lines[] = $this->blank();
+        $lines[] = 'You see the following inside:';
+        $lines[] = $this->blank();
+
+        foreach ($containers as $description) {
+            if ($description instanceof Description) {
+                array_push($lines, ...$this->renderDescription($description));
+                $lines[] = $this->blank();
+            }
+        }
+
+        return $lines;
+    }
+
+    /**
      * Render the description for entity.
      * @param Description $entity
      * @return array
@@ -281,50 +350,6 @@ class ConsoleResponseDecorator
     }
 
     /**
-     * Render the summary with tag.
-     * @param ItemDescription $item
-     * @return array
-     */
-    private function renderItemSummaryWithTag(ItemDescription $item): array
-    {
-        $lines = [];
-
-        if (!empty($item->name)) {
-            $tag = $item->getTags()[0] ?? '';
-            $lines[] = $this->bullet() . $this->space() . $item->name . $this->tab() . "[$tag]";
-        }
-
-        if (!empty($item->summary)) {
-            $lines[] = $this->tab() . $item->summary;
-        }
-
-        return $lines;
-    }
-
-    /**
-     * Render the containers.
-     * @param array $containers
-     * @return array
-     */
-    private function renderContainers(array $containers): array
-    {
-        $lines = [];
-
-        $lines[] = $this->blank();
-        $lines[] = 'You see the following inside:';
-        $lines[] = $this->blank();
-
-        foreach ($containers as $description) {
-            if ($description instanceof Description) {
-                array_push($lines, ...$this->renderDescription($description));
-                $lines[] = $this->blank();
-            }
-        }
-
-        return $lines;
-    }
-
-    /**
      * Render the exits.
      * @param array $exits
      * @return array
@@ -348,6 +373,24 @@ class ConsoleResponseDecorator
     }
 
     /**
+     * Render the message lines.
+     * @param array $message
+     * @return array
+     */
+    private function renderMessage(array $message): array
+    {
+        $lines = [];
+
+        if (!empty($message)) {
+            foreach ($message as $line) {
+                $lines[] = $line;
+            }
+        }
+
+        return $lines;
+    }
+
+    /**
      * Render a choice.
      * @param Choice $choice
      * @return array
@@ -364,50 +407,5 @@ class ConsoleResponseDecorator
         }
 
         return $lines;
-    }
-
-    /**
-     * Build a visible divider.
-     * @return string
-     */
-    private function divider(): string
-    {
-        return str_repeat(self::DIVIDER_CHARACTER, self::DIVIDER_WIDTH);
-    }
-
-    /**
-     * Build a blank character.
-     * @return string
-     */
-    private function blank(): string
-    {
-        return self::BLANK_CHARACTER;
-    }
-
-    /**
-     * Build a bullet character.
-     * @return string
-     */
-    private function bullet(): string
-    {
-        return self::BULLET_CHARACTER;
-    }
-
-    /**
-     * Build a space character.
-     * @return string
-     */
-    private function space(): string
-    {
-        return self::SPACE_CHARACTER;
-    }
-
-    /**
-     * Build a tab character.
-     * @return string
-     */
-    private function tab(): string
-    {
-        return self::TAB_CHARACTER;
     }
 }

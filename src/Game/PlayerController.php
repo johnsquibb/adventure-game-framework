@@ -46,20 +46,20 @@ class PlayerController
     }
 
     /**
-     * Remove an item from player inventory.
-     * @param ItemInterface $item
-     */
-    public function removeItemFromPlayerInventory(ItemInterface $item): void
-    {
-        $this->player->inventory->removeItemById($item->getId());
-    }
-
-    /**
      * Get player inventory.
      * @return ContainerInterface
      */
     public function getPlayerInventory(): ContainerInterface
     {
         return $this->player->inventory;
+    }
+
+    /**
+     * Remove an item from player inventory.
+     * @param ItemInterface $item
+     */
+    public function removeItemFromPlayerInventory(ItemInterface $item): void
+    {
+        $this->player->inventory->removeItemById($item->getId());
     }
 }

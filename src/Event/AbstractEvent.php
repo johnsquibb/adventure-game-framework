@@ -14,16 +14,6 @@ abstract class AbstractEvent implements EventInterface
     protected string $matchLocationId = '';
 
     /**
-     * Execute the event trigger.
-     * @param GameController $gameController
-     * @return Response|null
-     */
-    public function trigger(GameController $gameController): ?Response
-    {
-        return $this->trigger->execute($gameController);
-    }
-
-    /**
      * Match Item.
      * @param string $itemId
      * @return bool
@@ -41,5 +31,15 @@ abstract class AbstractEvent implements EventInterface
     public function matchLocationId(string $locationId): bool
     {
         return $this->matchLocationId === self::MATCH_ALL || $this->matchLocationId === $locationId;
+    }
+
+    /**
+     * Execute the event trigger.
+     * @param GameController $gameController
+     * @return Response|null
+     */
+    public function trigger(GameController $gameController): ?Response
+    {
+        return $this->trigger->execute($gameController);
     }
 }

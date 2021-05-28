@@ -30,6 +30,11 @@ class ItemDescription extends Description
         return $this->status;
     }
 
+    public function setStatus(string $status): void
+    {
+        $this->status = $status;
+    }
+
     public function getTags(): array
     {
         return $this->tags;
@@ -38,10 +43,5 @@ class ItemDescription extends Description
     public function setName(string $name): void
     {
         $this->name = $name;
-    }
-
-    public function setStatus(string $status): void
-    {
-        $this->status = $status;
     }
 }

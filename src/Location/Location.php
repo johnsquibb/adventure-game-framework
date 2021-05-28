@@ -33,6 +33,15 @@ class Location implements EntityInterface
     }
 
     /**
+     * Add an exit.
+     * @param Portal $exit
+     */
+    public function addExit(Portal $exit): void
+    {
+        $this->exits[] = $exit;
+    }
+
+    /**
      * Get container for location.
      * @return ContainerInterface
      */
@@ -80,14 +89,5 @@ class Location implements EntityInterface
     public function getExits(): array
     {
         return $this->exits;
-    }
-
-    /**
-     * Add an exit.
-     * @param Portal $exit
-     */
-    public function addExit(Portal $exit): void
-    {
-        $this->exits[] = $exit;
     }
 }

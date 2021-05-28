@@ -18,6 +18,16 @@ class AddLocationToMapUseTrigger extends FiniteUseTrigger
     }
 
     /**
+     * Add an entrance to the location.
+     * @param string $fromLocationId
+     * @param Portal $portal
+     */
+    public function addEntrance(string $fromLocationId, Portal $portal): void
+    {
+        $this->entrances[$fromLocationId] = $portal;
+    }
+
+    /**
      * Add location to map.
      * @param GameController $gameController
      * @return Response|null
@@ -37,15 +47,5 @@ class AddLocationToMapUseTrigger extends FiniteUseTrigger
         }
 
         return null;
-    }
-
-    /**
-     * Add an entrance to the location.
-     * @param string $fromLocationId
-     * @param Portal $portal
-     */
-    public function addEntrance(string $fromLocationId, Portal $portal): void
-    {
-        $this->entrances[$fromLocationId] = $portal;
     }
 }

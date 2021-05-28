@@ -10,9 +10,9 @@ interface DeactivatableEntityInterface
 {
     public function getDeactivatable(): bool;
 
-    public function setDeactivated(bool $Deactivated): void;
-
     public function getDeactivated(): bool;
 
     public function setDeactivatable(bool $Deactivatable): void;
+
+    public function setDeactivated(bool $Deactivated): void;
 }

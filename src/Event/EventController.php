@@ -23,19 +23,47 @@ class EventController
     }
 
     /**
-     * Process take item events for current player location.
+     * Process activate item events.
      * @param GameController $gameController
      * @param string $itemId
      * @return Response|null
      * @throws PlayerLocationNotSetException
      */
-    public function processTakeItemEvents(GameController $gameController, string $itemId): ?Response
-    {
+    public function processActivateItemEvents(
+        GameController $gameController,
+        string $itemId
+    ): ?Response {
         $locationId = $gameController->mapController->getPlayerLocation()->getId();
 
         foreach ($this->events as $event) {
             if (
-                $event instanceof TakeItemEvent
+                $event instanceof ActivateItemEvent
+                && $event->matchItemId($itemId)
+                && $event->matchLocationId($locationId)
+            ) {
+                return $event->trigger($gameController);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Process deactivate item events.
+     * @param GameController $gameController
+     * @param string $itemId
+     * @return Response|null
+     * @throws PlayerLocationNotSetException
+     */
+    public function processDeactivateItemEvents(
+        GameController $gameController,
+        string $itemId
+    ): ?Response {
+        $locationId = $gameController->mapController->getPlayerLocation()->getId();
+
+        foreach ($this->events as $event) {
+            if (
+                $event instanceof DeactivateItemEvent
                 && $event->matchItemId($itemId)
                 && $event->matchLocationId($locationId)
             ) {
@@ -115,58 +143,6 @@ class EventController
     }
 
     /**
-     * Process activate item events.
-     * @param GameController $gameController
-     * @param string $itemId
-     * @return Response|null
-     * @throws PlayerLocationNotSetException
-     */
-    public function processActivateItemEvents(
-        GameController $gameController,
-        string $itemId
-    ): ?Response {
-        $locationId = $gameController->mapController->getPlayerLocation()->getId();
-
-        foreach ($this->events as $event) {
-            if (
-                $event instanceof ActivateItemEvent
-                && $event->matchItemId($itemId)
-                && $event->matchLocationId($locationId)
-            ) {
-                return $event->trigger($gameController);
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Process deactivate item events.
-     * @param GameController $gameController
-     * @param string $itemId
-     * @return Response|null
-     * @throws PlayerLocationNotSetException
-     */
-    public function processDeactivateItemEvents(
-        GameController $gameController,
-        string $itemId
-    ): ?Response {
-        $locationId = $gameController->mapController->getPlayerLocation()->getId();
-
-        foreach ($this->events as $event) {
-            if (
-                $event instanceof DeactivateItemEvent
-                && $event->matchItemId($itemId)
-                && $event->matchLocationId($locationId)
-            ) {
-                return $event->trigger($gameController);
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Process has activated item events.
      * @param GameController $gameController
      * @param string $itemId
@@ -182,6 +158,30 @@ class EventController
         foreach ($this->events as $event) {
             if (
                 $event instanceof HasActivatedItemEvent
+                && $event->matchItemId($itemId)
+                && $event->matchLocationId($locationId)
+            ) {
+                return $event->trigger($gameController);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Process take item events for current player location.
+     * @param GameController $gameController
+     * @param string $itemId
+     * @return Response|null
+     * @throws PlayerLocationNotSetException
+     */
+    public function processTakeItemEvents(GameController $gameController, string $itemId): ?Response
+    {
+        $locationId = $gameController->mapController->getPlayerLocation()->getId();
+
+        foreach ($this->events as $event) {
+            if (
+                $event instanceof TakeItemEvent
                 && $event->matchItemId($itemId)
                 && $event->matchLocationId($locationId)
             ) {

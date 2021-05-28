@@ -4,7 +4,7 @@ namespace AdventureGame\Traits;
 
 trait ReadableTrait
 {
-    private array $lines  = [];
+    private array $lines = [];
     private bool $readable = false;
 
     public function addLine(string $line): void

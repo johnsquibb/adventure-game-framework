@@ -10,9 +10,9 @@ interface ActivatableEntityInterface
 {
     public function getActivatable(): bool;
 
-    public function setActivated(bool $activated): void;
-
     public function getActivated(): bool;
 
     public function setActivatable(bool $activatable): void;
+
+    public function setActivated(bool $activated): void;
 }

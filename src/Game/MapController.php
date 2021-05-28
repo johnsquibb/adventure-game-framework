@@ -22,6 +22,18 @@ class MapController
     }
 
     /**
+     * Add an item to the current player location.
+     * @param ItemInterface $item
+     * @return void
+     * @throws PlayerLocationNotSetException
+     */
+    public function addItem(ItemInterface $item): void
+    {
+        $location = $this->getPlayerLocation();
+        $location->getContainer()->addItem($item);
+    }
+
+    /**
      * Add a location.
      * @param Location $location
      */
@@ -45,18 +57,6 @@ class MapController
     }
 
     /**
-     * Add an item to the current player location.
-     * @param ItemInterface $item
-     * @return void
-     * @throws PlayerLocationNotSetException
-     */
-    public function addItem(ItemInterface $item): void
-    {
-        $location = $this->getPlayerLocation();
-        $location->getContainer()->addItem($item);
-    }
-
-    /**
      * The current location of the player, if set.
      * @return Location
      * @throws PlayerLocationNotSetException
@@ -71,13 +71,36 @@ class MapController
     }
 
     /**
+     * Get count of items in current player location.
+     * @return int
+     * @throws PlayerLocationNotSetException
+     */
+    public function getItemCount(): int
+    {
+        return $this->getPlayerLocation()->getContainer()->countItems();
+    }
+
+    /**
+     * Get all items that match tag.
+     * @param string $tag
+     * @return array
+     * @throws PlayerLocationNotSetException
+     */
+    public function getItemsByTag(string $tag): array
+    {
+        $location = $this->getPlayerLocation();
+
+        return $location->getContainer()->getItemsByTag($tag);
+    }
+
+    /**
      * Get location by id.
      * @param string $locationId
      * @return Location|null
      */
     public function getLocationById(string $locationId): ?Location
     {
-        foreach($this->locations as $location) {
+        foreach ($this->locations as $location) {
             if ($location instanceof Location) {
                 if ($location->getId() === $locationId) {
                     return $location;
@@ -86,16 +109,6 @@ class MapController
         }
 
         return null;
-    }
-
-    /**
-     * Get count of items in current player location.
-     * @return int
-     * @throws PlayerLocationNotSetException
-     */
-    public function getItemCount(): int
-    {
-        return $this->getPlayerLocation()->getContainer()->countItems();
     }
 
     /**
@@ -148,19 +161,6 @@ class MapController
         }
 
         return null;
-    }
-
-    /**
-     * Get all items that match tag.
-     * @param string $tag
-     * @return array
-     * @throws PlayerLocationNotSetException
-     */
-    public function getItemsByTag(string $tag): array
-    {
-        $location = $this->getPlayerLocation();
-
-        return $location->getContainer()->getItemsByTag($tag);
     }
 
     /**

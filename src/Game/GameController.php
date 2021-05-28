@@ -36,13 +36,17 @@ class GameController
     }
 
     /**
-     * Rehydrate this object from a save state object.
-     * @param GameController $gameController
+     * Get the save directory path.
+     * @return string
+     * @throws InvalidSaveDirectoryException
      */
-    public function hydrateFromSave(GameController $gameController) {
-        $this->mapController = $gameController->mapController;
-        $this->playerController = $gameController->playerController;
-        $this->eventController = $gameController->eventController;
+    public function getSaveDirectory(): string
+    {
+        if (empty($this->saveDirectory)) {
+            throw new InvalidSaveDirectoryException('save directory not set');
+        }
+
+        return $this->saveDirectory;
     }
 
     /**
@@ -60,16 +64,13 @@ class GameController
     }
 
     /**
-     * Get the save directory path.
-     * @return string
-     * @throws InvalidSaveDirectoryException
+     * Rehydrate this object from a save state object.
+     * @param GameController $gameController
      */
-    public function getSaveDirectory(): string
+    public function hydrateFromSave(GameController $gameController)
     {
-        if (empty($this->saveDirectory)) {
-            throw new InvalidSaveDirectoryException('save directory not set');
-        }
-
-        return $this->saveDirectory;
+        $this->mapController = $gameController->mapController;
+        $this->playerController = $gameController->playerController;
+        $this->eventController = $gameController->eventController;
     }
 }

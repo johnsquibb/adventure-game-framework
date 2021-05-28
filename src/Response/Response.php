@@ -28,9 +28,9 @@ class Response
         $this->exits[] = $exit;
     }
 
-    public function addItemSummaryWithTag(ItemDescription $itemSummaryWithTag): void
+    public function addInventoryItemDescription(ItemDescription $inventoryItem): void
     {
-        $this->itemSummaryWithTags[] = $itemSummaryWithTag;
+        $this->inventoryItems[] = $inventoryItem;
     }
 
     public function addItemDescription(ItemDescription $item): void
@@ -38,9 +38,9 @@ class Response
         $this->items[] = $item;
     }
 
-    public function addInventoryItemDescription(ItemDescription $inventoryItem): void
+    public function addItemSummaryWithTag(ItemDescription $itemSummaryWithTag): void
     {
-        $this->inventoryItems[] = $inventoryItem;
+        $this->itemSummaryWithTags[] = $itemSummaryWithTag;
     }
 
     public function addLocationDescription(Description $location): void
@@ -48,16 +48,26 @@ class Response
         $this->locations[] = $location;
     }
 
-    public function addMessage(string $message): void
-    {
-        $this->messages[] = $message;
-    }
-
     public function addMessages(array $messages): void
     {
         foreach ($messages as $message) {
             $this->addMessage($message);
         }
+    }
+
+    public function addMessage(string $message): void
+    {
+        $this->messages[] = $message;
+    }
+
+    public function getChoice(): ?Choice
+    {
+        return $this->choice;
+    }
+
+    public function setChoice(Choice $choice): void
+    {
+        $this->choice = $choice;
     }
 
     public function getClearBefore(): bool
@@ -103,15 +113,5 @@ class Response
     public function getMessages(): array
     {
         return $this->messages;
-    }
-
-    public function getChoice(): ?Choice
-    {
-        return $this->choice;
-    }
-
-    public function setChoice(Choice $choice): void
-    {
-        $this->choice = $choice;
     }
 }

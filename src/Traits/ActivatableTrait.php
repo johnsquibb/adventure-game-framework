@@ -12,9 +12,9 @@ trait ActivatableTrait
         return $this->activatable;
     }
 
-    public function setActivated(bool $activated): void
+    public function setActivatable(bool $activatable): void
     {
-        $this->activated = $activated;
+        $this->activatable = $activatable;
     }
 
     public function getActivated(): bool
@@ -22,8 +22,8 @@ trait ActivatableTrait
         return $this->activated;
     }
 
-    public function setActivatable(bool $activatable): void
+    public function setActivated(bool $activated): void
     {
-        $this->activatable = $activatable;
+        $this->activated = $activated;
     }
 }

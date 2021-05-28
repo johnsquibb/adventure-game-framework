@@ -13,9 +13,9 @@ trait DeactivatableTrait
         return $this->deactivatable;
     }
 
-    public function setDeactivated(bool $deactivated): void
+    public function setDeactivatable(bool $deactivatable): void
     {
-        $this->activated = !$deactivated;
+        $this->deactivatable = $deactivatable;
     }
 
     public function getDeactivated(): bool
@@ -23,8 +23,8 @@ trait DeactivatableTrait
         return !$this->activated;
     }
 
-    public function setDeactivatable(bool $deactivatable): void
+    public function setDeactivated(bool $deactivated): void
     {
-        $this->deactivatable = $deactivatable;
+        $this->activated = !$deactivated;
     }
 }

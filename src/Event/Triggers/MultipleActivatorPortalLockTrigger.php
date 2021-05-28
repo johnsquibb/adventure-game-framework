@@ -4,11 +4,17 @@ namespace AdventureGame\Event\Triggers;
 
 use AdventureGame\Entity\ActivatableEntityInterface;
 use AdventureGame\Event\InfiniteUseTrigger;
+use AdventureGame\Event\Triggers\Comparisons\ItemComparison;
 use AdventureGame\Game\GameController;
 use AdventureGame\Location\Portal;
 use AdventureGame\Response\Response;
 use Exception;
 
+/**
+ * Class MultipleActivatorPortalLockTrigger locks or unlocks a portal based on the state on the
+ * state of activators vs. an equal number of comparisons.
+ * @package AdventureGame\Event\Triggers
+ */
 class MultipleActivatorPortalLockTrigger extends InfiniteUseTrigger
 {
     /**
@@ -24,24 +30,33 @@ class MultipleActivatorPortalLockTrigger extends InfiniteUseTrigger
         }
     }
 
+    /**
+     * Check states of activators against the comparisons and unlock or lock the portal.
+     * @param GameController $gameController
+     * @return Response|null
+     */
     public function execute(GameController $gameController): ?Response
     {
-        $locked = false;
+        $response = new Response();
 
         foreach ($this->activators as $index => $activator) {
             if ($activator instanceof ActivatableEntityInterface) {
                 $comparison = $this->comparisons[$index];
                 if ($comparison instanceof ItemComparison) {
                     if ($activator->getActivated() !== $comparison->getActivated()) {
-                        $locked = true;
-                        break;
+                        if (!$this->portal->getLocked()) {
+                            $response->addMessage($this->portal->getName() . ' locked');
+                        }
+                        $this->portal->setLocked(true);
+                        return $response;
                     }
                 }
             }
         }
 
-        $this->portal->setLocked($locked);
+        $this->portal->setLocked(false);
+        $response->addMessage($this->portal->getName() . ' unlocked');
 
-        return null;
+        return $response;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace AdventureGame\Event\Triggers;
+namespace AdventureGame\Event\Triggers\Comparisons;
 
 use AdventureGame\Entity\ActivatableEntityInterface;
 use AdventureGame\Traits\ActivatableTrait;

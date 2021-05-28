@@ -7,8 +7,8 @@ use AdventureGame\Command\Exception\StartNewGameException;
 use AdventureGame\Game\Exception\InvalidSaveDirectoryException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
-use AdventureGame\Response\Response;
 use AdventureGame\Response\Choice;
+use AdventureGame\Response\Response;
 
 /**
  * Class VerbCommand processes single-word verb commands, e.g. "take" or "eat".

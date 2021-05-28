@@ -94,6 +94,165 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     }
 
     /**
+     * Drop all items in player inventory matching tag to current player location.
+     * @param GameController $gameController
+     * @param string $tag
+     * @return Response
+     * @throws PlayerLocationNotSetException
+     */
+    private function dropItemsByTagAtPlayerLocation(
+        GameController $gameController,
+        string $tag
+    ): Response {
+        $response = new Response();
+
+        $items = $gameController->playerController->getItemsByTagFromPlayerInventory($tag);
+
+        if (empty($items)) {
+            $response->addMessage("You don't have anything like that.");
+            return $response;
+        }
+
+        if (count($items) > 1) {
+            $response->addMessage('Which item do you want to drop?');
+            foreach ($items as $item) {
+                $response->addItemSummaryWithTag($this->listItem($item));
+            }
+            return $response;
+        }
+
+        foreach ($items as $item) {
+            if ($item instanceof ItemInterface) {
+                $dropItemResponse = $this->removeItemFromPlayerInventory($gameController, $item);
+                $gameController->mapController->dropItem($item);
+                $response->addMessages($dropItemResponse->getMessages());
+            }
+        }
+
+        return $response;
+    }
+
+    /**
+     * Activate items by tag in player inventory.
+     * @param GameController $gameController
+     * @param string $tag
+     * @return Response
+     */
+    private function activateItemsByTagInPlayerInventory(
+        GameController $gameController,
+        string $tag
+    ): ?Response {
+        $items = $gameController->playerController->getPlayerInventory()->getItemsByTag($tag);
+
+        if (empty($items)) {
+            return null;
+        }
+
+        return $this->activateItems($gameController, $items);
+    }
+
+    private function activateItems(GameController $gameController, array $items): Response
+    {
+        $response = new Response();
+
+        if (count($items) > 1) {
+            $response->addMessage('Which item do you want to activate?');
+            foreach ($items as $item) {
+                $response->addItemSummaryWithTag($this->listItem($item));
+            }
+            return $response;
+        }
+
+        foreach ($items as $item) {
+            if ($item instanceof ItemInterface) {
+                if ($item->getActivatable()) {
+                    if ($item->getActivated() === true) {
+                        $message = "It's already activated.";
+                    } else {
+                        $item->setActivated(true);
+                        $message = "Activated {$item->getName()}.";
+
+                        $eventResponse = $gameController->eventController->processActivateItemEvents(
+                            $gameController,
+                            $item->getId()
+                        );
+
+                        if ($eventResponse) {
+                            $response->addMessages($eventResponse->getMessages());
+                        }
+                    }
+
+                    $response->addMessage($message);
+                } else {
+                    $response->addMessage("You can't activate {$item->getName()}.");
+                }
+            }
+        }
+
+        return $response;
+    }
+
+    /**
+     * Deactivate items by tag in player inventory.
+     * @param GameController $gameController
+     * @param string $tag
+     * @return Response
+     */
+    private function deactivateItemsByTagInPlayerInventory(
+        GameController $gameController,
+        string $tag
+    ): ?Response {
+        $items = $gameController->playerController->getPlayerInventory()->getItemsByTag($tag);
+
+        if (empty($items)) {
+            return null;
+        }
+
+        return $this->deactivateItems($gameController, $items);
+    }
+
+    private function deactivateItems(GameController $gameController, array $items): Response
+    {
+        $response = new Response();
+
+        if (count($items) > 1) {
+            $response->addMessage('Which item do you want to deactivate?');
+            foreach ($items as $item) {
+                $response->addItemSummaryWithTag($this->listItem($item));
+            }
+            return $response;
+        }
+
+        foreach ($items as $item) {
+            if ($item instanceof ItemInterface) {
+                if ($item->getDeactivatable()) {
+                    if ($item->getDeactivated() === true) {
+                        $message = "It's already deactivated.";
+                    } else {
+                        $item->setDeactivated(true);
+                        $message = "Deactivated {$item->getName()}.";
+
+                        $eventResponse = $gameController->eventController->processDeactivateItemEvents(
+                            $gameController,
+                            $item->getId()
+                        );
+
+                        if ($eventResponse) {
+                            $response->addMessages($eventResponse->getMessages());
+                        }
+                    }
+
+                    $response->addMessage($message);
+                } else {
+                    $response->addMessage("You can't deactivate {$item->getName()}.");
+                }
+            }
+        }
+
+        return $response;
+    }
+
+    /**
      * Try an action on items at current player location.
      * @param GameController $gameController
      * @return Response|null
@@ -110,25 +269,6 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
                 return $this->deactivateItemsByTagAtPlayerLocation($gameController, $this->noun);
             case 'read':
                 return $this->readItemsByTagAtPlayerLocation($gameController, $this->noun);
-        }
-
-        return null;
-    }
-
-    /**
-     * Attempt to look at objects, location.
-     * @param GameController $gameController
-     * @return Response|null
-     * @throws PlayerLocationNotSetException
-     */
-    private function tryLookAction(GameController $gameController): ?Response
-    {
-        switch ($this->verb) {
-            case 'look':
-                return $this->tryLookAtItemsByTagAtPlayerLocationAction(
-                    $gameController,
-                    $this->noun
-                );
         }
 
         return null;
@@ -177,43 +317,30 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         return $response;
     }
 
-    /**
-     * Drop all items in player inventory matching tag to current player location.
-     * @param GameController $gameController
-     * @param string $tag
-     * @return Response
-     * @throws PlayerLocationNotSetException
-     */
-    private function dropItemsByTagAtPlayerLocation(
+    private function activateItemsByTagAtPlayerLocation(
         GameController $gameController,
         string $tag
-    ): Response {
-        $response = new Response();
-
-        $items = $gameController->playerController->getItemsByTagFromPlayerInventory($tag);
+    ): ?Response {
+        $items = $gameController->getMapController()->getItemsByTag($tag);
 
         if (empty($items)) {
-            $response->addMessage("You don't have anything like that.");
-            return $response;
+            return null;
         }
 
-        if (count($items) > 1) {
-            $response->addMessage('Which item do you want to drop?');
-            foreach ($items as $item) {
-                $response->addItemSummaryWithTag($this->listItem($item));
-            }
-            return $response;
+        return $this->activateItems($gameController, $items);
+    }
+
+    private function deactivateItemsByTagAtPlayerLocation(
+        GameController $gameController,
+        string $tag
+    ): ?Response {
+        $items = $gameController->getMapController()->getItemsByTag($tag);
+
+        if (empty($items)) {
+            return null;
         }
 
-        foreach ($items as $item) {
-            if ($item instanceof ItemInterface) {
-                $dropItemResponse = $this->removeItemFromPlayerInventory($gameController, $item);
-                $gameController->mapController->dropItem($item);
-                $response->addMessages($dropItemResponse->getMessages());
-            }
-        }
-
-        return $response;
+        return $this->deactivateItems($gameController, $items);
     }
 
     /**
@@ -254,6 +381,25 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         }
 
         return $response;
+    }
+
+    /**
+     * Attempt to look at objects, location.
+     * @param GameController $gameController
+     * @return Response|null
+     * @throws PlayerLocationNotSetException
+     */
+    private function tryLookAction(GameController $gameController): ?Response
+    {
+        switch ($this->verb) {
+            case 'look':
+                return $this->tryLookAtItemsByTagAtPlayerLocationAction(
+                    $gameController,
+                    $this->noun
+                );
+        }
+
+        return null;
     }
 
     /**
@@ -454,151 +600,5 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         }
 
         return "You don't have the required key.";
-    }
-
-    /**
-     * Activate items by tag in player inventory.
-     * @param GameController $gameController
-     * @param string $tag
-     * @return Response
-     */
-    private function activateItemsByTagInPlayerInventory(
-        GameController $gameController,
-        string $tag
-    ): ?Response {
-        $items = $gameController->playerController->getPlayerInventory()->getItemsByTag($tag);
-
-        if (empty($items)) {
-            return null;
-        }
-
-        return $this->activateItems($gameController, $items);
-    }
-
-    /**
-     * Deactivate items by tag in player inventory.
-     * @param GameController $gameController
-     * @param string $tag
-     * @return Response
-     */
-    private function deactivateItemsByTagInPlayerInventory(
-        GameController $gameController,
-        string $tag
-    ): ?Response {
-        $items = $gameController->playerController->getPlayerInventory()->getItemsByTag($tag);
-
-        if (empty($items)) {
-            return null;
-        }
-
-        return $this->deactivateItems($gameController, $items);
-    }
-
-    private function activateItemsByTagAtPlayerLocation(
-        GameController $gameController,
-        string $tag
-    ): ?Response {
-        $items = $gameController->getMapController()->getItemsByTag($tag);
-
-        if (empty($items)) {
-            return null;
-        }
-
-        return $this->activateItems($gameController, $items);
-    }
-
-    private function deactivateItemsByTagAtPlayerLocation(
-        GameController $gameController,
-        string $tag
-    ): ?Response {
-        $items = $gameController->getMapController()->getItemsByTag($tag);
-
-        if (empty($items)) {
-            return null;
-        }
-
-        return $this->deactivateItems($gameController, $items);
-    }
-
-    private function activateItems(GameController $gameController, array $items): Response
-    {
-        $response = new Response();
-
-        if (count($items) > 1) {
-            $response->addMessage('Which item do you want to activate?');
-            foreach ($items as $item) {
-                $response->addItemSummaryWithTag($this->listItem($item));
-            }
-            return $response;
-        }
-
-        foreach ($items as $item) {
-            if ($item instanceof ItemInterface) {
-                if ($item->getActivatable()) {
-                    if ($item->getActivated() === true) {
-                        $message = "It's already activated.";
-                    } else {
-                        $item->setActivated(true);
-                        $message = "Activated {$item->getName()}.";
-
-                        $eventResponse = $gameController->eventController->processActivateItemEvents(
-                            $gameController,
-                            $item->getId()
-                        );
-
-                        if ($eventResponse) {
-                            $response->addMessages($eventResponse->getMessages());
-                        }
-                    }
-
-                    $response->addMessage($message);
-                } else {
-                    $response->addMessage("You can't activate {$item->getName()}.");
-                }
-            }
-        }
-
-        return $response;
-    }
-
-    private function deactivateItems(GameController $gameController, array $items): Response
-    {
-        $response = new Response();
-
-        if (count($items) > 1) {
-            $response->addMessage('Which item do you want to deactivate?');
-            foreach ($items as $item) {
-                $response->addItemSummaryWithTag($this->listItem($item));
-            }
-            return $response;
-        }
-
-        foreach ($items as $item) {
-            if ($item instanceof ItemInterface) {
-                if ($item->getDeactivatable()) {
-                    if ($item->getDeactivated() === true) {
-                        $message = "It's already deactivated.";
-                    } else {
-                        $item->setDeactivated(true);
-                        $message = "Deactivated {$item->getName()}.";
-
-                        $eventResponse = $gameController->eventController->processDeactivateItemEvents(
-                            $gameController,
-                            $item->getId()
-                        );
-
-                        if ($eventResponse) {
-                            $response->addMessages($eventResponse->getMessages());
-                        }
-                    }
-
-                    $response->addMessage($message);
-                } else {
-                    $response->addMessage("You can't deactivate {$item->getName()}.");
-                }
-            }
-        }
-
-        return $response;
     }
 }

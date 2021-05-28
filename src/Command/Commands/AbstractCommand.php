@@ -53,62 +53,21 @@ abstract class AbstractCommand
     }
 
     /**
-     * Remove an item from player inventory.
+     * Describe the items in the player inventory.
      * @param GameController $gameController
-     * @param ItemInterface $item
-     * @return Response response message
-     * @throws PlayerLocationNotSetException
+     * @return Response
      */
-    protected function removeItemFromPlayerInventory(
-        GameController $gameController,
-        ItemInterface $item
-    ): Response {
+    protected function describePlayerInventory(GameController $gameController): Response
+    {
         $response = new Response();
 
-        $gameController->getPlayerController()->removeItemFromPlayerInventory($item);
-        $response->addMessage("Removed \"{$item->getName()}\" from inventory");
+        $inventory = $gameController->getPlayerController()->getPlayerInventory();
 
-        $eventResponse = $gameController->getEventController()->processDropItemEvents(
-            $gameController,
-            $item->getId()
-        );
-
-        if ($eventResponse) {
-            $response->addMessages($eventResponse->getMessages());
+        foreach ($this->listContainerItems($inventory) as $description) {
+            $response->addInventoryItemDescription($description);
         }
 
         return $response;
-    }
-
-    /**
-     * Describe a list of items.
-     * @param array $items
-     * @return array
-     */
-    protected function describeItems(array $items): array
-    {
-        $descriptions = [];
-
-        foreach ($items as $item) {
-            $descriptions[] = $this->describeItem($item);
-        }
-
-        return $descriptions;
-    }
-
-    /**
-     * Describe an item.
-     * @param ItemInterface $item
-     * @return Description
-     */
-    protected function describeItem(ItemInterface $item): Description
-    {
-        return new ItemDescription(
-            $item->getName(),
-            $item->getSummary(),
-            $item->getDescription(),
-            $item->getTags()
-        );
     }
 
     /**
@@ -126,45 +85,6 @@ abstract class AbstractCommand
                 $item->setAccessible(true);
                 $descriptions[] = $this->listItem($item);
             }
-        }
-
-        return $descriptions;
-    }
-
-    /**
-     * List an item's name.
-     * @param ItemInterface $item
-     * @return ItemDescription
-     */
-    protected function listItem(ItemInterface $item): ItemDescription
-    {
-        $description = new ItemDescription(
-            $item->getName(),
-            $item->getSummary(),
-            $item->getDescription(),
-            $item->getTags()
-        );
-
-        if ($item instanceof ActivatableEntityInterface) {
-            if ($item->getActivated()) {
-                $description->setStatus('activated');
-            }
-        }
-
-        return $description;
-    }
-
-    /**
-     * List items for a location.
-     * @param Location $location
-     * @return array
-     */
-    protected function listLocationItems(Location $location): array
-    {
-        $descriptions = [];
-
-        foreach ($location->getContainer()->getItems() as $item) {
-            $descriptions[] = $this->listItem($item);
         }
 
         return $descriptions;
@@ -199,7 +119,8 @@ abstract class AbstractCommand
     {
         try {
             // Process leave current location events.
-            $exitLocationEventResponse = $gameController->getEventController()->processExitLocationEvents(
+            $exitLocationEventResponse = $gameController->getEventController(
+            )->processExitLocationEvents(
                 $gameController,
                 $gameController->getMapController()->getPlayerLocation()->getId()
             );
@@ -208,16 +129,20 @@ abstract class AbstractCommand
             $response = $this->describePlayerLocation($gameController);
 
             // Process enter new location events.
-            $enterLocationEventResponse = $gameController->getEventController()->processEnterLocationEvents(
+            $enterLocationEventResponse = $gameController->getEventController(
+            )->processEnterLocationEvents(
                 $gameController,
                 $gameController->getMapController()->getPlayerLocation()->getId()
             );
 
             // Process item-specific events when entering new location.
-            foreach ($gameController->getPlayerController()->getPlayerInventory()->getItems() as $item) {
+            foreach (
+                $gameController->getPlayerController()->getPlayerInventory()->getItems() as $item
+            ) {
                 if ($item instanceof ItemInterface) {
                     if ($item->getActivated()) {
-                        $hasActivatedItemEventResponse = $gameController->getEventController()->processHasActivatedItemEvents(
+                        $hasActivatedItemEventResponse = $gameController->getEventController(
+                        )->processHasActivatedItemEvents(
                             $gameController,
                             $item->getId()
                         );
@@ -236,7 +161,6 @@ abstract class AbstractCommand
             if ($enterLocationEventResponse) {
                 $response->addMessages($enterLocationEventResponse->getMessages());
             }
-
         } catch (ExitIsLockedException $e) {
             $portal = $gameController->getMapController()
                 ->getPlayerLocation()
@@ -270,24 +194,6 @@ abstract class AbstractCommand
 
         foreach ($this->listLocationItems($location) as $description) {
             $response->addItemDescription($description);
-        }
-
-        return $response;
-    }
-
-    /**
-     * Describe the items in the player inventory.
-     * @param GameController $gameController
-     * @return Response
-     */
-    protected function describePlayerInventory(GameController $gameController): Response
-    {
-        $response = new Response();
-
-        $inventory = $gameController->getPlayerController()->getPlayerInventory();
-
-        foreach ($this->listContainerItems($inventory) as $description) {
-            $response->addInventoryItemDescription($description);
         }
 
         return $response;
@@ -334,19 +240,70 @@ abstract class AbstractCommand
     }
 
     /**
-     * @param EntityInterface $entity
-     * @param ItemInterface $key
-     * @return string response message
+     * List items for a location.
+     * @param Location $location
+     * @return array
      */
-    protected function unlockEntityWithKey(EntityInterface $entity, ItemInterface $key): string
+    protected function listLocationItems(Location $location): array
     {
-        if (is_a($entity, LockableInterface::class)) {
-            $entity->setLocked(false);
+        $descriptions = [];
 
-            return "Unlocked {$entity->getName()} with {$key->getName()}.";
+        foreach ($location->getContainer()->getItems() as $item) {
+            $descriptions[] = $this->listItem($item);
         }
 
-        return "Can't unlock that";
+        return $descriptions;
+    }
+
+    /**
+     * List an item's name.
+     * @param ItemInterface $item
+     * @return ItemDescription
+     */
+    protected function listItem(ItemInterface $item): ItemDescription
+    {
+        $description = new ItemDescription(
+            $item->getName(),
+            $item->getSummary(),
+            $item->getDescription(),
+            $item->getTags()
+        );
+
+        if ($item instanceof ActivatableEntityInterface) {
+            if ($item->getActivated()) {
+                $description->setStatus('activated');
+            }
+        }
+
+        return $description;
+    }
+
+    /**
+     * Remove an item from player inventory.
+     * @param GameController $gameController
+     * @param ItemInterface $item
+     * @return Response response message
+     * @throws PlayerLocationNotSetException
+     */
+    protected function removeItemFromPlayerInventory(
+        GameController $gameController,
+        ItemInterface $item
+    ): Response {
+        $response = new Response();
+
+        $gameController->getPlayerController()->removeItemFromPlayerInventory($item);
+        $response->addMessage("Removed \"{$item->getName()}\" from inventory");
+
+        $eventResponse = $gameController->getEventController()->processDropItemEvents(
+            $gameController,
+            $item->getId()
+        );
+
+        if ($eventResponse) {
+            $response->addMessages($eventResponse->getMessages());
+        }
+
+        return $response;
     }
 
     /**
@@ -374,5 +331,52 @@ abstract class AbstractCommand
         }
 
         return $response;
+    }
+
+    /**
+     * Describe a list of items.
+     * @param array $items
+     * @return array
+     */
+    protected function describeItems(array $items): array
+    {
+        $descriptions = [];
+
+        foreach ($items as $item) {
+            $descriptions[] = $this->describeItem($item);
+        }
+
+        return $descriptions;
+    }
+
+    /**
+     * Describe an item.
+     * @param ItemInterface $item
+     * @return Description
+     */
+    protected function describeItem(ItemInterface $item): Description
+    {
+        return new ItemDescription(
+            $item->getName(),
+            $item->getSummary(),
+            $item->getDescription(),
+            $item->getTags()
+        );
+    }
+
+    /**
+     * @param EntityInterface $entity
+     * @param ItemInterface $key
+     * @return string response message
+     */
+    protected function unlockEntityWithKey(EntityInterface $entity, ItemInterface $key): string
+    {
+        if (is_a($entity, LockableInterface::class)) {
+            $entity->setLocked(false);
+
+            return "Unlocked {$entity->getName()} with {$key->getName()}.";
+        }
+
+        return "Can't unlock that";
     }
 }

@@ -2,7 +2,7 @@
 
 namespace AdventureGame\Test\Event\Triggers;
 
-use AdventureGame\Event\Triggers\ItemComparison;
+use AdventureGame\Event\Triggers\Comparisons\ItemComparison;
 use AdventureGame\Event\Triggers\MultipleActivatorPortalLockTrigger;
 use AdventureGame\Item\Item;
 use AdventureGame\Location\Portal;
