@@ -9,8 +9,12 @@ The examples directory contains a game that demonstrates the framework abilities
 the command line using `composer example` command.
 
 ## TODO
+### Major
+* Refactor response object to be more generic, return item/location etc. as part of response and 
+  use the decorators to figure out what messages should be. Create abstraction for output controller lines so Command objects don't control the flow of text. descriptions, etc. should be added to a template and styling should be handled by the client.
+* Create abstraction for game-specific words in commands, e.g. "take", "drop" in VerbNounCommand.
+
+### Minor
 * Basic Logging - errors, warnings, etc.
 * Stats tracking - number of moves, number of visits to location, number of item uses, etc.
-* Create abstraction for game-specific words in commands, e.g. "take", "drop" in VerbNounCommand.
 * Improve save/load system to allow for multiple files using choice system.
-* Create abstraction for output controller lines so Command objects don't control the flow of text. descriptions, etc. should be added to a template and styling should be handled by the client.

@@ -463,6 +463,5 @@ $platformManifest->setEvents($events);
 
 $platformFactory = new PlatformFactory($platformManifest);
 $platformController = new PlatformController($platformFactory);
-
 $consoleController = new ConsoleClientController();
 $platformController->run($consoleController);
