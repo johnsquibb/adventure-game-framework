@@ -27,10 +27,11 @@ $verbs = [
     'load',
     'quit',
     'new',
-    'go',
+    'move',
     'take',
     'drop',
-    'look',
+    'examine',
+    'open',
     'put',
     'read',
     'lock',
@@ -65,13 +66,14 @@ $nouns = [
 
 $articles = ['a', 'an', 'the'];
 
-$prepositions = ['at', 'inside', 'in', 'into', 'from', 'with'];
+$prepositions = ['at', 'in', 'into', 'from', 'with'];
 
 $aliases = [
-    'move' => 'go',
-    'ex' => 'look',
-    'examine' => 'look',
+    'go' => 'move',
+    'ex' => 'examine',
+    'look' => 'examine',
     'i' => 'inventory',
+    'inside' => 'in',
 ];
 
 $phrases = [
@@ -84,11 +86,12 @@ $phrases = [
     'turn off flashlight' => 'deactivate flashlight',
     'turn flashlight off' => 'deactivate flashlight',
     'read map' => 'activate map',
-    'look at map' => 'activate map',
     'read secret letter' => 'read letter',
     'first switch' => 'switch.one',
     'second switch' => 'switch.two',
     'third switch' => 'switch.three',
+    'look at' => 'examine',
+    'open' => 'look inside',
 ];
 
 $shortcuts = [

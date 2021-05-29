@@ -16,6 +16,9 @@ use AdventureGame\Response\Response;
  */
 class VerbPrepositionNounCommand extends AbstractCommand implements CommandInterface
 {
+    public const PREPOSITION_AT = 'at';
+    public const PREPOSITION_IN = 'in';
+
     public function __construct(
         private string $verb,
         private string $preposition,
@@ -43,15 +46,14 @@ class VerbPrepositionNounCommand extends AbstractCommand implements CommandInter
     private function tryLookAction(GameController $gameController): ?Response
     {
         switch ($this->verb) {
-            case 'look':
+            case self::COMMAND_EXAMINE:
                 switch ($this->preposition) {
-                    case 'at':
+                    case self::PREPOSITION_AT:
                         return $this->tryLookAtItemsByTagAtPlayerLocationAction(
                             $gameController,
                             $this->noun
                         );
-                    case 'in':
-                    case 'inside':
+                    case self::PREPOSITION_IN:
                         return $this->tryLookInsideContainersByTagAtPlayerLocationAction(
                             $gameController,
                             $this->noun

@@ -44,14 +44,14 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
     private function tryContainerItemAction(GameController $gameController): ?Response
     {
         switch ($this->verb) {
-            case 'take':
+            case self::COMMAND_TAKE:
                 return $this->takeItemsByTagFromFirstContainerByTagAtPlayerLocation(
                     $gameController,
                     $this->noun1,
                     $this->noun2
                 );
-            case 'drop':
-            case 'put':
+            case self::COMMAND_DROP:
+            case self::COMMAND_PUT:
                 return $this->dropItemsByTagIntoFirstContainerByTagAtPlayerLocation(
                     $gameController,
                     $this->noun1,
@@ -112,13 +112,13 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
     private function tryKeyAction(GameController $gameController): ?Response
     {
         switch ($this->verb) {
-            case 'unlock':
+            case self::COMMAND_UNLOCK:
                 return $this->unlockEntitiesByTagAtUsingKeyByTagAtPlayerLocation(
                     $gameController,
                     $this->noun1,
                     $this->noun2
                 );
-            case 'lock':
+            case self::COMMAND_LOCK:
                 return $this->lockEntitiesByTagAtUsingKeyByTagAtPlayerLocation(
                     $gameController,
                     $this->noun1,

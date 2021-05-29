@@ -50,7 +50,7 @@ class VerbCommand extends AbstractCommand implements CommandInterface
     private function tryLookAction(GameController $gameController): ?Response
     {
         switch ($this->verb) {
-            case 'look':
+            case self::COMMAND_EXAMINE:
                 return $this->describePlayerLocation($gameController);
         }
 
@@ -65,7 +65,7 @@ class VerbCommand extends AbstractCommand implements CommandInterface
     private function tryInventoryAction(GameController $gameController): ?Response
     {
         switch ($this->verb) {
-            case 'inventory':
+            case self::COMMAND_INVENTORY:
                 return $this->describePlayerInventory($gameController);
         }
 
@@ -81,13 +81,13 @@ class VerbCommand extends AbstractCommand implements CommandInterface
     private function tryGameAction(GameController $gameController): ?Response
     {
         switch ($this->verb) {
-            case "save":
+            case self::COMMAND_SAVE:
                 return $this->saveGame($gameController);
-            case 'load':
+            case self::COMMAND_LOAD:
                 return $this->loadGame($gameController);
-            case 'new':
+            case self::COMMAND_NEW:
                 return $this->newGame($gameController);
-            case 'quit':
+            case self::COMMAND_QUIT:
                 return $this->quitGame($gameController);
         }
 

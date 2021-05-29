@@ -67,7 +67,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     private function tryMoveAction(GameController $gameController): ?Response
     {
         switch ($this->verb) {
-            case 'go':
+            case self::COMMAND_MOVE:
                 return $this->movePlayer($gameController, $this->noun);
         }
 
@@ -83,13 +83,13 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     private function tryInventoryAction(GameController $gameController): ?Response
     {
         switch ($this->verb) {
-            case 'drop':
+            case self::COMMAND_DROP:
                 return $this->dropItemsByTagAtPlayerLocation($gameController, $this->noun);
-            case 'activate':
+            case self::COMMAND_ACTIVATE:
                 return $this->activateItemsByTagInPlayerInventory($gameController, $this->noun);
-            case 'deactivate':
+            case self::COMMAND_DEACTIVATE:
                 return $this->deactivateItemsByTagInPlayerInventory($gameController, $this->noun);
-            case 'read':
+            case self::COMMAND_READ:
                 return $this->readItemsByTagInPlayerInventory($gameController, $this->noun);
         }
 
@@ -342,13 +342,13 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     private function tryLocationItemAction(GameController $gameController): ?Response
     {
         switch ($this->verb) {
-            case 'take':
+            case self::COMMAND_TAKE:
                 return $this->takeItemsByTagAtPlayerLocation($gameController, $this->noun);
-            case 'activate':
+            case self::COMMAND_ACTIVATE:
                 return $this->activateItemsByTagAtPlayerLocation($gameController, $this->noun);
-            case 'deactivate':
+            case self::COMMAND_DEACTIVATE:
                 return $this->deactivateItemsByTagAtPlayerLocation($gameController, $this->noun);
-            case 'read':
+            case self::COMMAND_READ:
                 return $this->readItemsByTagAtPlayerLocation($gameController, $this->noun);
         }
 
@@ -483,7 +483,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     private function tryLookAction(GameController $gameController): ?Response
     {
         switch ($this->verb) {
-            case 'look':
+            case self::COMMAND_EXAMINE:
                 return $this->tryLookAtItemsByTagAtPlayerLocationAction(
                     $gameController,
                     $this->noun
@@ -502,9 +502,9 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     private function tryKeyAction(GameController $gameController): ?Response
     {
         switch ($this->verb) {
-            case 'unlock':
+            case self::COMMAND_UNLOCK:
                 return $this->unlockEntitiesByTagAtPlayerLocation($gameController, $this->noun);
-            case 'lock':
+            case self::COMMAND_LOCK:
                 return $this->lockEntitiesByTagAtPlayerLocation($gameController, $this->noun);
         }
 

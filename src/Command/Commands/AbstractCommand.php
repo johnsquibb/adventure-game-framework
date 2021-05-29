@@ -28,6 +28,22 @@ use AdventureGame\Response\Response;
  */
 abstract class AbstractCommand
 {
+    public const COMMAND_ACTIVATE = 'activate';
+    public const COMMAND_DEACTIVATE = 'deactivate';
+    public const COMMAND_DROP = 'drop';
+    public const COMMAND_EXAMINE = 'examine';
+    public const COMMAND_INVENTORY = 'inventory';
+    public const COMMAND_LOAD = 'load';
+    public const COMMAND_LOCK = 'lock';
+    public const COMMAND_MOVE = 'move';
+    public const COMMAND_NEW = 'new';
+    public const COMMAND_PUT = 'put';
+    public const COMMAND_QUIT = 'quit';
+    public const COMMAND_READ = 'read';
+    public const COMMAND_SAVE = 'save';
+    public const COMMAND_TAKE = 'take';
+    public const COMMAND_UNLOCK = 'unlock';
+
     /**
      * Describe the items in the player inventory.
      * @param GameController $gameController
