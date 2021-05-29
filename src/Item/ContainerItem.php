@@ -10,7 +10,7 @@ use AdventureGame\Traits\LockableTrait;
  * identified and interacted with.
  * @package AdventureGame\Item
  */
-class ContainerItem extends Item implements ContainerItemInterface
+class ContainerItem extends AbstractItem implements ContainerItemInterface
 {
     use ContainerTrait;
     use LockableTrait;
