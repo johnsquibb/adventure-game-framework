@@ -13,7 +13,7 @@ class VerbPrepositionNounCommandTest extends FrameworkTest
         $gameController = $this->createGameController();
 
         $command = new VerbPrepositionNounCommand(
-            'look', 'at', 'test'
+            'examine', 'at', 'test'
         );
         $response = $command->process($gameController);
         $this->assertNotNull($response);
@@ -23,7 +23,7 @@ class VerbPrepositionNounCommandTest extends FrameworkTest
             new Item('test2', 'test-item-2', 'another item', ['test'])
         );
 
-        $command = new VerbPrepositionNounCommand('look', 'at', 'test');
+        $command = new VerbPrepositionNounCommand('examine', 'at', 'test');
         $response = $command->process($gameController);
         $this->assertNotNull($response);
     }

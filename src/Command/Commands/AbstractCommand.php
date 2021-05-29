@@ -16,6 +16,7 @@ use AdventureGame\Location\Location;
 use AdventureGame\Location\Portal;
 use AdventureGame\Response\Description;
 use AdventureGame\Response\ItemDescription;
+use AdventureGame\Response\Message\ContainerMessage;
 use AdventureGame\Response\Message\InventoryMessage;
 use AdventureGame\Response\Message\ItemMessage;
 use AdventureGame\Response\Message\LockableEntityMessage;
@@ -43,6 +44,8 @@ abstract class AbstractCommand
     public const COMMAND_SAVE = 'save';
     public const COMMAND_TAKE = 'take';
     public const COMMAND_UNLOCK = 'unlock';
+
+    public const NOUN_EVERYTHING = 'everything';
 
     /**
      * Describe the items in the player inventory.
@@ -310,6 +313,45 @@ abstract class AbstractCommand
     }
 
     /**
+     * Take all items from container.
+     * @param GameController $gameController
+     * @param string $itemTag For display of anonymous item messages only, e.g. when item not discovered.
+     * @param string $containerTag
+     * @return Response
+     * @throws PlayerLocationNotSetException
+     */
+    protected function takeAllItemsFromFirstContainerByTagAtPlayerLocation(
+        GameController $gameController,
+        string $itemTag,
+        string $containerTag,
+    ): Response {
+        $container = $this->getFirstContainerByTagAtPlayerLocation($gameController, $containerTag);
+
+        // TODO check the container has been opened at least once before proceeding.
+
+        if ($container instanceof ContainerItem) {
+            $items = $container->getItems();
+
+            $response = new Response();
+            if (empty($items)) {
+                $itemMessage = new ContainerMessage(
+                    $container->getName(),
+                    ContainerMessage::TYPE_CONTAINER_EMPTY
+                );
+                $response->addMessage($itemMessage->toString());
+                return $response;
+            }
+
+            return $this->takeItemsFromContainer($gameController, $itemTag, $container, $items);
+        }
+
+        $response = new Response();
+        $message = new UnableMessage($containerTag, UnableMessage::TYPE_CONTAINER_NOT_FOUND);
+        $response->addMessage($message->toString());
+        return $response;
+    }
+
+    /**
      * Take all the items by tag from container matching another tag at the current player location.
      * @param GameController $gameController
      * @param string $itemTag
@@ -324,57 +366,20 @@ abstract class AbstractCommand
     ): Response {
         $container = $this->getFirstContainerByTagAtPlayerLocation($gameController, $containerTag);
 
-        if ($container instanceof ContainerInterface) {
+        if ($container instanceof ContainerItem) {
             $items = $container->getItemsByTag($itemTag);
 
             $response = new Response();
             if (empty($items)) {
-                $itemMessage = new UnableMessage($itemTag, UnableMessage::TYPE_ITEM_NOT_FOUND);
+                $itemMessage = new ContainerMessage(
+                    $container->getName(),
+                    ContainerMessage::TYPE_CONTAINER_EMPTY
+                );
                 $response->addMessage($itemMessage->toString());
                 return $response;
             }
 
-            foreach ($items as $item) {
-                if ($item instanceof ItemInterface) {
-                    if ($item->getDiscovered()) {
-                        if ($item->getAccessible()) {
-                            if ($item->getAcquirable()) {
-                                $container->removeItemById($item->getId());
-
-                                $addItemResponse = $this->addItemToPlayerInventory(
-                                    $gameController,
-                                    $item
-                                );
-
-                                $response->addMessages($addItemResponse->getMessages());
-                            } else {
-                                $message = new UnableMessage(
-                                    $item->getName(),
-                                    UnableMessage::TYPE_CANNOT_TAKE
-                                );
-                                $response->addMessage($message->toString());
-                                return $response;
-                            }
-                        } else {
-                            $message = new UnableMessage(
-                                $itemTag,
-                                UnableMessage::TYPE_ITEM_NOT_ACCESSIBLE
-                            );
-                            $response->addMessage($message->toString());
-                            return $response;
-                        }
-                    } else {
-                        $message = new UnableMessage(
-                            $itemTag,
-                            UnableMessage::TYPE_ITEM_NOT_DISCOVERED
-                        );
-                        $response->addMessage($message->toString());
-                        return $response;
-                    }
-                }
-            }
-
-            return $response;
+            return $this->takeItemsFromContainer($gameController, $itemTag, $container, $items);
         }
 
         $response = new Response();
@@ -406,6 +411,66 @@ abstract class AbstractCommand
         }
 
         return null;
+    }
+
+    /**
+     * Take items from container.
+     * @param GameController $gameController
+     * @param string $itemTag For display of anonymous item messages only, e.g. when item not discovered.
+     * @param ContainerInterface $container
+     * @param array $items
+     * @return Response
+     * @throws PlayerLocationNotSetException
+     */
+    private function takeItemsFromContainer(
+        GameController $gameController,
+        string $itemTag,
+        ContainerInterface $container,
+        array $items
+    ): Response {
+        $response = new Response();
+
+        foreach ($items as $item) {
+            if ($item instanceof ItemInterface) {
+                if ($item->getDiscovered()) {
+                    if ($item->getAccessible()) {
+                        if ($item->getAcquirable()) {
+                            $container->removeItemById($item->getId());
+
+                            $addItemResponse = $this->addItemToPlayerInventory(
+                                $gameController,
+                                $item
+                            );
+
+                            $response->addMessages($addItemResponse->getMessages());
+                        } else {
+                            $message = new UnableMessage(
+                                $item->getName(),
+                                UnableMessage::TYPE_CANNOT_TAKE
+                            );
+                            $response->addMessage($message->toString());
+                            return $response;
+                        }
+                    } else {
+                        $message = new UnableMessage(
+                            $itemTag,
+                            UnableMessage::TYPE_ITEM_NOT_ACCESSIBLE
+                        );
+                        $response->addMessage($message->toString());
+                        return $response;
+                    }
+                } else {
+                    $message = new UnableMessage(
+                        $itemTag,
+                        UnableMessage::TYPE_ITEM_NOT_DISCOVERED
+                    );
+                    $response->addMessage($message->toString());
+                    return $response;
+                }
+            }
+        }
+
+        return $response;
     }
 
     /**

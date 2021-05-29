@@ -45,7 +45,7 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
     {
         switch ($this->verb) {
             case self::COMMAND_TAKE:
-                return $this->takeItemsByTagFromFirstContainerByTagAtPlayerLocation(
+                return $this->takeItemsFromFirstContainerByTagAtPlayerLocation(
                     $gameController,
                     $this->noun1,
                     $this->noun2
@@ -60,6 +60,33 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
         }
 
         return null;
+    }
+
+    /**
+     * Take items from first container at location.
+     * @param GameController $gameController
+     * @param string $itemTag
+     * @param string $containerTag
+     * @return Response
+     * @throws PlayerLocationNotSetException
+     */
+    private function takeItemsFromFirstContainerByTagAtPlayerLocation(
+        GameController $gameController,
+        string $itemTag,
+        string $containerTag
+    ): Response {
+        return match ($itemTag) {
+            self::NOUN_EVERYTHING => $this->takeAllItemsFromFirstContainerByTagAtPlayerLocation(
+                $gameController,
+                $itemTag,
+                $containerTag
+            ),
+            default => $this->takeItemsByTagFromFirstContainerByTagAtPlayerLocation(
+                $gameController,
+                $this->noun1,
+                $this->noun2
+            ),
+        };
     }
 
     /**

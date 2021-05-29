@@ -17,14 +17,14 @@ class VerbNounCommandTest extends FrameworkTest
         $this->assertEquals('test-room-1', $location->getId());
 
         // Move player east.
-        $command = new VerbNounCommand('go', 'east');
+        $command = new VerbNounCommand('move', 'east');
         $response = $command->process($gameController);
         $this->assertNotNull($response);
         $location = $gameController->mapController->getPlayerLocation();
         $this->assertEquals('test-room-2', $location->getId());
 
         // Move player west.
-        $command = new VerbNounCommand('go', 'west');
+        $command = new VerbNounCommand('move', 'west');
         $response = $command->process($gameController);
         $this->assertNotNull($response);
         $location = $gameController->mapController->getPlayerLocation();
@@ -39,7 +39,7 @@ class VerbNounCommandTest extends FrameworkTest
         $this->assertEquals('test-room-1', $location->getId());
 
         // Try to move player south.
-        $command = new VerbNounCommand('go', 'south');
+        $command = new VerbNounCommand('move', 'south');
         $this->expectException(InvalidExitException::class);
         $response = $command->process($gameController);
         $this->assertNotNull($response);

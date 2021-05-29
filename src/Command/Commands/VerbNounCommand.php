@@ -13,6 +13,7 @@ use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Portal;
 use AdventureGame\Response\ItemDescription;
 use AdventureGame\Response\ListOfItems;
+use AdventureGame\Response\Message\InventoryMessage;
 use AdventureGame\Response\Message\ItemMessage;
 use AdventureGame\Response\Message\UnableMessage;
 use AdventureGame\Response\Response;
@@ -84,7 +85,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     {
         switch ($this->verb) {
             case self::COMMAND_DROP:
-                return $this->dropItemsByTagAtPlayerLocation($gameController, $this->noun);
+                return $this->dropItemsAtPlayerLocation($gameController, $this->noun);
             case self::COMMAND_ACTIVATE:
                 return $this->activateItemsByTagInPlayerInventory($gameController, $this->noun);
             case self::COMMAND_DEACTIVATE:
@@ -94,6 +95,66 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         }
 
         return null;
+    }
+
+    /**
+     * Drop items from player inventory at location.
+     * @param GameController $gameController
+     * @param string $noun
+     * @return Response
+     * @throws PlayerLocationNotSetException
+     */
+    private function dropItemsAtPlayerLocation(
+        GameController $gameController,
+        string $noun
+    ): Response {
+        return match ($noun) {
+            self::NOUN_EVERYTHING => $this->dropAllItemsAtPlayerLocation($gameController),
+            default => $this->dropItemsByTagAtPlayerLocation($gameController, $this->noun),
+        };
+    }
+
+    /**
+     * Drop all items in player inventory to location.
+     * @param GameController $gameController
+     * @param string $tag
+     * @return Response
+     * @throws PlayerLocationNotSetException
+     */
+    private function dropAllItemsAtPlayerLocation(GameController $gameController): Response
+    {
+        $items = $gameController->playerController->getPlayerInventory()->getItems();
+
+        if (empty($items)) {
+            $response = new Response();
+            $message = new InventoryMessage(InventoryMessage::TYPE_INVENTORY_EMPTY);
+            $response->addMessage($message->toString());
+            return $response;
+        }
+
+        return $this->dropItemsToLocation($gameController, $items);
+    }
+
+    /**
+     * Drop items to location.
+     * @param GameController $gameController
+     * @param array $items
+     * @return Response
+     * @throws PlayerLocationNotSetException
+     */
+    private function dropItemsToLocation(GameController $gameController, array $items): Response
+    {
+        $response = new Response();
+
+        foreach ($items as $item) {
+            if ($item instanceof ItemInterface) {
+                $dropItemResponse = $this->removeItemFromPlayerInventory($gameController, $item);
+                $gameController->mapController->dropItem($item);
+                $response->addMessages($dropItemResponse->getMessages());
+            }
+        }
+
+        return $response;
     }
 
     /**
@@ -107,12 +168,11 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         GameController $gameController,
         string $tag
     ): Response {
-        $response = new Response();
-
         $items = $gameController->playerController->getItemsByTagFromPlayerInventory($tag);
 
         if (empty($items)) {
-            $message = new UnableMessage($tag, UnableMessage::TYPE_ITEM_NOT_IN_INVENTORY);
+            $response = new Response();
+            $message = new InventoryMessage(InventoryMessage::TYPE_INVENTORY_EMPTY);
             $response->addMessage($message->toString());
             return $response;
         }
@@ -122,15 +182,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
             return $listOfItems->getResponse();
         }
 
-        foreach ($items as $item) {
-            if ($item instanceof ItemInterface) {
-                $dropItemResponse = $this->removeItemFromPlayerInventory($gameController, $item);
-                $gameController->mapController->dropItem($item);
-                $response->addMessages($dropItemResponse->getMessages());
-            }
-        }
-
-        return $response;
+        return $this->dropItemsToLocation($gameController, $items);
     }
 
     /**
@@ -182,7 +234,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
                         $item->setActivated(true);
                         $message = new ItemMessage(
                             $item,
-                            ItemMessage::TYPE_DEACTIVATE
+                            ItemMessage::TYPE_ACTIVATE
                         );
 
                         $eventResponse = $gameController->eventController->processActivateItemEvents(
@@ -199,7 +251,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
                 } else {
                     $message = new UnableMessage(
                         $item->getName(),
-                        UnableMessage::TYPE_CANNOT_DEACTIVATE
+                        UnableMessage::TYPE_CANNOT_ACTIVATE
                     );
                     $response->addMessage($message->toString());
                 }
@@ -228,6 +280,13 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         return $this->deactivateItems($gameController, $items);
     }
 
+    /**
+     * Deactivate items.
+     * @param GameController $gameController
+     * @param array $items
+     * @return Response
+     * @throws PlayerLocationNotSetException
+     */
     private function deactivateItems(GameController $gameController, array $items): Response
     {
         $response = new Response();
@@ -343,7 +402,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     {
         switch ($this->verb) {
             case self::COMMAND_TAKE:
-                return $this->takeItemsByTagAtPlayerLocation($gameController, $this->noun);
+                return $this->takeItemsAtPlayerLocation($gameController, $this->noun);
             case self::COMMAND_ACTIVATE:
                 return $this->activateItemsByTagAtPlayerLocation($gameController, $this->noun);
             case self::COMMAND_DEACTIVATE:
@@ -356,43 +415,46 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     }
 
     /**
-     * Take all acquirable items matching tag at player location into player inventory.
+     * Take items into player inventory from location.
      * @param GameController $gameController
-     * @param string $tag
+     * @param string $noun
+     * @return Response
+     * @throws PlayerLocationNotSetException
+     */
+    private function takeItemsAtPlayerLocation(
+        GameController $gameController,
+        string $noun
+    ): Response {
+        return match ($noun) {
+            self::NOUN_EVERYTHING => $this->takeAllItemsAtPlayerLocation($gameController),
+            default => $this->takeItemsByTagAtPlayerLocation($gameController, $this->noun),
+        };
+    }
+
+    /**
+     * Take all items at player location.
+     * @param GameController $gameController
      * @return Response|null
      * @throws PlayerLocationNotSetException
      */
-    private function takeItemsByTagAtPlayerLocation(
-        GameController $gameController,
-        string $tag
-    ): ?Response {
+    private function takeAllItemsAtPlayerLocation(GameController $gameController): ?Response
+    {
+        $items = $gameController->getMapController()
+            ->getPlayerLocation()->getContainer()->getItems();
+
+        return $this->takeItems($gameController, $items);
+    }
+
+    /**
+     * Take items into inventory.
+     * @param GameController $gameController
+     * @param array $items
+     * @return Response
+     * @throws PlayerLocationNotSetException
+     */
+    private function takeItems(GameController $gameController, array $items): Response
+    {
         $response = new Response();
-
-        $items = $gameController->mapController->getItemsByTag($tag);
-
-        // If nothing in the location, try the first container.
-        if (empty($items)) {
-            $containers = $gameController
-                ->getMapController()->getPlayerLocation()->getContainer()->getItems();
-
-            foreach ($containers as $container) {
-                if ($container instanceof ContainerItemInterface) {
-                    $response = $this->takeItemsByTagFromFirstContainerByTagAtPlayerLocation(
-                        $gameController,
-                        $tag,
-                        $container->getTags()[0]
-                    );
-                    if ($response instanceof Response) {
-                        return $response;
-                    }
-                }
-            }
-        }
-
-        if (count($items) > 1) {
-            $listOfItems = new ListOfItems($items, ListOfItems::ACTION_TAKE);
-            return $listOfItems->getResponse();
-        }
 
         foreach ($items as $item) {
             if ($item instanceof ItemInterface) {
@@ -409,6 +471,43 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         }
 
         return $response;
+    }
+
+    /**
+     * Take all acquirable items matching tag at player location into player inventory.
+     * @param GameController $gameController
+     * @param string $tag
+     * @return Response
+     * @throws PlayerLocationNotSetException
+     */
+    private function takeItemsByTagAtPlayerLocation(
+        GameController $gameController,
+        string $tag
+    ): ?Response {
+        $items = $gameController->mapController->getItemsByTag($tag);
+
+        // If nothing in the location, try the first container.
+        if (empty($items)) {
+            $containers = $gameController
+                ->getMapController()->getPlayerLocation()->getContainer()->getItems();
+
+            foreach ($containers as $container) {
+                if ($container instanceof ContainerItemInterface) {
+                    return $this->takeItemsByTagFromFirstContainerByTagAtPlayerLocation(
+                        $gameController,
+                        $tag,
+                        $container->getTags()[0]
+                    );
+                }
+            }
+        }
+
+        if (count($items) > 1) {
+            $listOfItems = new ListOfItems($items, ListOfItems::ACTION_TAKE);
+            return $listOfItems->getResponse();
+        }
+
+        return $this->takeItems($gameController, $items);
     }
 
     /**

@@ -16,7 +16,7 @@ class VerbCommandTest extends FrameworkTest
         $this->assertEquals('test-room-1', $location->getId());
 
         // Describe current room.
-        $command = new VerbCommand('look');
+        $command = new VerbCommand('examine');
         $response = $command->process($gameController);
         $this->assertNotNull($response);
         $location = $gameController->mapController->getPlayerLocation();

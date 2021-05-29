@@ -42,6 +42,7 @@ $verbs = [
 ];
 
 $nouns = [
+    'everything',
     'chest',
     'door',
     'flashlight',
@@ -70,6 +71,7 @@ $prepositions = ['at', 'in', 'into', 'from', 'with'];
 
 $aliases = [
     'go' => 'move',
+    'all' => 'everything',
     'ex' => 'examine',
     'look' => 'examine',
     'i' => 'inventory',

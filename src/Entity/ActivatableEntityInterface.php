@@ -9,7 +9,6 @@ namespace AdventureGame\Entity;
 interface ActivatableEntityInterface
 {
     public const STATUS_ACTIVATED = 'activated';
-    public const STATUS_DEACTIVATED = 'deactivated';
 
     public function getActivatable(): bool;
 
