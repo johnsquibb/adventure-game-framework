@@ -1,6 +1,6 @@
 # adventure-game-framework
 
-A PHP framework for console text-based adventure games.
+A PHP framework for console text adventure games.
 
 Build and play games that use text commands such as:
 
@@ -27,7 +27,7 @@ Run the tests with the `composer test` command.
 The [examples directory](examples/demo-game) contains a game that demonstrates the framework
 abilities. Run the game on the command line using `composer example` command.
 
-In the same directory is a [diagram](examples/demo-game/Example Game Map.png) showing the layout of
+In the same directory is a [diagram](examples/demo-game/Example%20Game%20Map.png) showing the layout of
 the demo game.
 
 ## TODO
