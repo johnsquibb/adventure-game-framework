@@ -88,7 +88,8 @@ class VerbPrepositionNounCommand extends AbstractCommand implements CommandInter
 
         foreach ($items as $container) {
             if ($container instanceof ContainerInterface) {
-                if (empty($container->getItems())) {
+
+                if (empty($container->revealItems())) {
                     $message = new ContainerMessage($tag, ContainerMessage::TYPE_CONTAINER_EMPTY);
                     $response->addMessage($message->toString());
                 }

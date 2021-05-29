@@ -11,6 +11,11 @@ use AdventureGame\Item\ItemInterface;
 trait ContainerTrait
 {
     /**
+     * @var bool Whether the items in the container have been revealed.
+     */
+    private bool $revealed = false;
+
+    /**
      * @var array of ItemInterface
      */
     private array $items = [];
@@ -106,6 +111,15 @@ trait ContainerTrait
     }
 
     /**
+     * Get revealed state.
+     * @return bool
+     */
+    public function getRevealed(): bool
+    {
+        return $this->revealed;
+    }
+
+    /**
      * Remove an item by id, if it exists.
      * @param string $itemId
      */
@@ -116,5 +130,15 @@ trait ContainerTrait
                 unset($this->items[$key]);
             }
         }
+    }
+
+    /**
+     * Reveal items in container.
+     * @return array
+     */
+    public function revealItems(): array
+    {
+        $this->revealed = true;
+        return $this->items;
     }
 }

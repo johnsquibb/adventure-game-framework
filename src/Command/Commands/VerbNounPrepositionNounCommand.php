@@ -52,7 +52,7 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
                 );
             case self::COMMAND_DROP:
             case self::COMMAND_PUT:
-                return $this->dropItemsByTagIntoFirstContainerByTagAtPlayerLocation(
+                return $this->dropItemsIntoFirstContainerByTagAtPlayerLocation(
                     $gameController,
                     $this->noun1,
                     $this->noun2
@@ -90,6 +90,33 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
     }
 
     /**
+     * Drop items from player inventory into first container found by tag at player location.
+     * @param GameController $gameController
+     * @param string $itemTag
+     * @param string $containerTag
+     * @return Response
+     * @throws PlayerLocationNotSetException
+     */
+    private function dropItemsIntoFirstContainerByTagAtPlayerLocation(
+        GameController $gameController,
+        string $itemTag,
+        string $containerTag
+    ): Response {
+        return match ($itemTag) {
+            self::NOUN_EVERYTHING => $this->dropAllItemsIntoFirstContainerByTagAtPlayerLocation(
+                $gameController,
+                $itemTag,
+                $containerTag
+            ),
+            default => $this->dropItemsByTagIntoFirstContainerByTagAtPlayerLocation(
+                $gameController,
+                $this->noun1,
+                $this->noun2
+            ),
+        };
+    }
+
+    /**
      * Drop all items matching tag from player inventory into the first container matching another
      * tag at current player location.
      * @param GameController $gameController
@@ -105,24 +132,67 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
     ): Response {
         $response = new Response();
 
+        $items = $gameController->playerController->getItemsByTagFromPlayerInventory($itemTag);
+
+        if (empty($items)) {
+            $message = new UnableMessage($itemTag, UnableMessage::TYPE_ITEM_NOT_IN_INVENTORY);
+            $response->addMessage($message->toString());
+            return $response;
+        }
+
+        return $this->dropItemsIntoContainerByTag($gameController, $containerTag, $items);
+    }
+
+    /**
+     * Drop all items in player inventory into container by tag.
+     * @param GameController $gameController
+     * @param string $itemTag
+     * @param string $containerTag
+     * @return Response
+     * @throws PlayerLocationNotSetException
+     */
+    private function dropAllItemsIntoFirstContainerByTagAtPlayerLocation(
+        GameController $gameController,
+        string $itemTag,
+        string $containerTag
+    ) {
+        $response = new Response();
+
+        $items = $gameController->playerController->getPlayerInventory()->getItems();
+        if (empty($items)) {
+            $message = new UnableMessage($itemTag, UnableMessage::TYPE_ITEM_NOT_IN_INVENTORY);
+            $response->addMessage($message->toString());
+            return $response;
+        }
+
+        return $this->dropItemsIntoContainerByTag($gameController, $containerTag, $items);
+    }
+
+    /**
+     * Drop items into container by tag.
+     * @param GameController $gameController
+     * @param string $containerTag
+     * @param array $items
+     * @return Response
+     * @throws PlayerLocationNotSetException
+     */
+    private function dropItemsIntoContainerByTag(
+        GameController $gameController,
+        string $containerTag,
+        array $items
+    ): Response {
+        $response = new Response();
+
         $container = $this->getFirstContainerByTagAtPlayerLocation($gameController, $containerTag);
 
         if ($container) {
-            $items = $gameController->playerController->getItemsByTagFromPlayerInventory($itemTag);
-
-            if (empty($items)) {
-                $message = new UnableMessage($itemTag, UnableMessage::TYPE_ITEM_NOT_IN_INVENTORY);
-                $response->addMessage($message->toString());
-                return $response;
-            }
-
             foreach ($items as $item) {
                 $container->addItem($item);
                 $removeItemResponse = $this->removeItemFromPlayerInventory($gameController, $item);
                 $response->addMessages($removeItemResponse->getMessages());
             }
         } else {
-            $message = new UnableMessage($itemTag, UnableMessage::TYPE_ITEM_CANNOT_PUT_THERE);
+            $message = new UnableMessage($containerTag, UnableMessage::TYPE_CONTAINER_NOT_FOUND);
             $response->addMessage($message->toString());
             return $response;
         }

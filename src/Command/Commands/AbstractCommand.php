@@ -327,9 +327,14 @@ abstract class AbstractCommand
     ): Response {
         $container = $this->getFirstContainerByTagAtPlayerLocation($gameController, $containerTag);
 
-        // TODO check the container has been opened at least once before proceeding.
-
         if ($container instanceof ContainerItem) {
+            if (!$container->getRevealed()) {
+                $response = new Response();
+                $message = new UnableMessage($containerTag, UnableMessage::TYPE_CONTAINER_NOT_REVEALED);
+                $response->addMessage($message->toString());
+                return $response;
+            }
+
             $items = $container->getItems();
 
             $response = new Response();

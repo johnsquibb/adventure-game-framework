@@ -15,6 +15,7 @@ class UnableMessage implements MessageInterface
     public const TYPE_CANNOT_TAKE = 'cannot-take';
     public const TYPE_CANNOT_UNLOCK = 'cannot-unlock';
     public const TYPE_CONTAINER_NOT_FOUND = 'container-not-found';
+    public const TYPE_CONTAINER_NOT_REVEALED = 'container-not-revealed';
     public const TYPE_CONTAINER_NOT_LOCKABLE = 'container-not-lockable';
     public const TYPE_CONTAINER_NOT_UNLOCKABLE = 'container-not-unlockable';
     public const TYPE_ITEM_CANNOT_PUT_THERE = 'item-cannot-put-there';
@@ -40,6 +41,7 @@ class UnableMessage implements MessageInterface
             self::TYPE_ITEM_NOT_DISCOVERED => sprintf("You haven't found '%s'", $this->name),
             self::TYPE_ITEM_NOT_ACCESSIBLE => sprintf("You can't access '%s'", $this->name),
             self::TYPE_CONTAINER_NOT_FOUND => sprintf("You don't see '%s'", $this->name),
+            self::TYPE_CONTAINER_NOT_REVEALED => sprintf("You haven't opened '%s' yet", $this->name),
             self::TYPE_NOTHING_TO_UNLOCK => sprintf("There is no '%s' to unlock", $this->name),
             self::TYPE_NOTHING_TO_LOCK => sprintf("There is no '%s' to lock", $this->name),
             self::TYPE_CANNOT_UNLOCK => sprintf("Can't unlock '%s'", $this->name),

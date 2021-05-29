@@ -349,7 +349,7 @@ $smallShed = new Location(
     "A small shed",
     "A small shed with weathered siding and a small window.",
     new Container(),
-    [$stepsFromShedToCourtyard, $cellarDoorLeadingIn]
+    [$stepsFromShedToCourtyard]
 );
 
 $cellar = new Location(

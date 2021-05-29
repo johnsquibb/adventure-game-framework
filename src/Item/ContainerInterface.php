@@ -21,4 +21,8 @@ interface ContainerInterface
     public function getItemsByTypeAndTag(string $type, string $tag): array;
 
     public function removeItemById(string $itemId): void;
+
+    public function revealItems(): array;
+
+    public function getRevealed(): bool;
 }
