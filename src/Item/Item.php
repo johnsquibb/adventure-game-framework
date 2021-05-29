@@ -7,6 +7,7 @@ use AdventureGame\Traits\AcquirableTrait;
 use AdventureGame\Traits\ActivatableTrait;
 use AdventureGame\Traits\DeactivatableTrait;
 use AdventureGame\Traits\DescriptionTrait;
+use AdventureGame\Traits\DiscoverableTrait;
 use AdventureGame\Traits\IdentityTrait;
 use AdventureGame\Traits\NameTrait;
 use AdventureGame\Traits\ReadableTrait;
@@ -23,6 +24,7 @@ class Item implements ItemInterface
     use DescriptionTrait;
     use TagTrait;
     use AccessibleTrait;
+    use DiscoverableTrait;
     use AcquirableTrait;
     use ActivatableTrait;
     use DeactivatableTrait;

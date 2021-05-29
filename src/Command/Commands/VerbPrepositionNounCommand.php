@@ -6,6 +6,9 @@ use AdventureGame\Command\CommandInterface;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
 use AdventureGame\Item\ContainerInterface;
+use AdventureGame\Response\Message\ContainerMessage;
+use AdventureGame\Response\Message\ItemMessage;
+use AdventureGame\Response\Message\UnableMessage;
 use AdventureGame\Response\Response;
 
 /**
@@ -77,17 +80,23 @@ class VerbPrepositionNounCommand extends AbstractCommand implements CommandInter
             ->getPlayerLocation()->getContainer()->getItemsByTag($tag);
 
         if (empty($items)) {
-            $response->addMessage("Can't find that here.");
+            $message = new UnableMessage($tag, UnableMessage::TYPE_ITEM_NOT_FOUND);
+            $response->addMessage($message->toString());
+            return $response;
         }
 
         foreach ($items as $container) {
             if ($container instanceof ContainerInterface) {
+                if (empty($container->getItems())) {
+                    $message = new ContainerMessage($tag, ContainerMessage::TYPE_CONTAINER_EMPTY);
+                    $response->addMessage($message->toString());
+                }
+
                 foreach ($this->listContainerItems($container) as $description) {
                     $response->addContainerDescription($description);
                 }
             }
         }
-
 
         return $response;
     }

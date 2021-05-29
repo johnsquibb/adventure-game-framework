@@ -21,12 +21,20 @@ class ItemTest extends TestCase
         $this->assertEquals($tags, $item->getTags());
     }
 
+    public function testItemDiscovered()
+    {
+        $item = new Item('', '', '', ['']);
+
+        $this->assertFalse($item->getDiscovered());
+
+        $item->setDiscovered(false);
+        $this->assertFalse($item->getDiscovered());
+    }
+
     public function testItemAccessible()
     {
         $item = new Item('', '', '', ['']);
 
-        $this->assertFalse($item->getAccessible());
-        $item->setAccessible(true);
         $this->assertTrue($item->getAccessible());
 
         $item->setAccessible(false);

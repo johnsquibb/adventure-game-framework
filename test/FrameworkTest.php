@@ -81,7 +81,7 @@ abstract class FrameworkTest extends TestCase
             'Test Item 1 description',
             ['test']
         );
-        $item->setAccessible(true);
+        $item->setDiscovered(true);
         $container->addItem($item);
 
         $containerItem = new ContainerItem(
@@ -98,7 +98,7 @@ abstract class FrameworkTest extends TestCase
             'Test Item 2 description',
             ['item','test-item-in-container']
         );
-        $item->setAccessible(true);
+        $item->setDiscovered(true);
         $containerItem->addItem($item);
 
         $item = new Item(
@@ -107,7 +107,7 @@ abstract class FrameworkTest extends TestCase
             'Test Item 3 description',
             ['test-item-2-in-container']
         );
-        $item->setAccessible(true);
+        $item->setDiscovered(true);
         $containerItem->addItem($item);
 
         $door1 = new Portal(

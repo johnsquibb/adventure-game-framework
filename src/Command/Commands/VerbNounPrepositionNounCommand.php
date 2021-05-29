@@ -5,10 +5,9 @@ namespace AdventureGame\Command\Commands;
 use AdventureGame\Command\CommandInterface;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
-use AdventureGame\Item\ContainerInterface;
 use AdventureGame\Item\ContainerItem;
-use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Portal;
+use AdventureGame\Response\Message\UnableMessage;
 use AdventureGame\Response\Response;
 
 class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandInterface
@@ -85,7 +84,9 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
             $items = $gameController->playerController->getItemsByTagFromPlayerInventory($itemTag);
 
             if (empty($items)) {
-                $response->addMessage("You don't have that.");
+                $message = new UnableMessage($itemTag, UnableMessage::TYPE_ITEM_NOT_IN_INVENTORY);
+                $response->addMessage($message->toString());
+                return $response;
             }
 
             foreach ($items as $item) {
@@ -94,7 +95,9 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
                 $response->addMessages($removeItemResponse->getMessages());
             }
         } else {
-            $response->addMessage("Can't put that there.");
+            $message = new UnableMessage($itemTag, UnableMessage::TYPE_ITEM_CANNOT_PUT_THERE);
+            $response->addMessage($message->toString());
+            return $response;
         }
 
         return $response;
@@ -146,7 +149,8 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
 
         $keys = $gameController->playerController->getItemsByTagFromPlayerInventory($keyTag);
         if (empty($keys)) {
-            $response->addMessage("You don't have {$keyTag}.");
+            $message = new UnableMessage($keyTag, UnableMessage::TYPE_ITEM_NOT_IN_INVENTORY);
+            $response->addMessage($message->toString());
             return $response;
         }
 
@@ -160,7 +164,8 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
                 $message = $this->unlockEntityWithKey($portal, $key);
                 $response->addMessage($message);
             } else {
-                $response->addMessage("You can't unlock {$portal->getName()} with {$keyTag}");
+                $message = new UnableMessage($keyTag, UnableMessage::TYPE_PORTAL_NOT_UNLOCKABLE);
+                $response->addMessage($message->toString());
             }
             return $response;
         }
@@ -172,7 +177,8 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
         );
 
         if (empty($containers)) {
-            $response->addMessage("There is nothing to unlock with {$keyTag}.");
+            $message = new UnableMessage($keyTag, UnableMessage::TYPE_CONTAINER_NOT_FOUND);
+            $response->addMessage($message->toString());
             return $response;
         }
 
@@ -181,7 +187,8 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
                 $message = $this->unlockEntityWithKey($container, $key);
                 $response->addMessage($message);
             } else {
-                $response->addMessage("You can't unlock {$container->getName()}");
+                $message = new UnableMessage($keyTag, UnableMessage::TYPE_CONTAINER_NOT_UNLOCKABLE);
+                $response->addMessage($message->toString());
             }
         }
 
@@ -203,12 +210,12 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
     ): Response {
         $response = new Response();
 
-
         $location = $gameController->mapController->getPlayerLocation();
 
         $keys = $gameController->playerController->getItemsByTagFromPlayerInventory($keyTag);
         if (empty($keys)) {
-            $response->addMessage("You don't have {$keyTag}.");
+            $message = new UnableMessage($keyTag, UnableMessage::TYPE_ITEM_NOT_IN_INVENTORY);
+            $response->addMessage($message->toString());
             return $response;
         }
 
@@ -222,7 +229,8 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
                 $message = $this->lockEntityWithKey($portal, $key);
                 $response->addMessage($message);
             } else {
-                $response->addMessage("You can't lock {$portal->getName()} with {$keyTag}");
+                $message = new UnableMessage($keyTag, UnableMessage::TYPE_PORTAL_NOT_LOCKABLE);
+                $response->addMessage($message->toString());
             }
             return $response;
         }
@@ -234,7 +242,8 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
         );
 
         if (empty($containers)) {
-            $response->addMessage("The is nothing to lock with {$keyTag}.");
+            $message = new UnableMessage($keyTag, UnableMessage::TYPE_CONTAINER_NOT_FOUND);
+            $response->addMessage($message->toString());
             return $response;
         }
 
@@ -243,7 +252,8 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
                 $message = $this->lockEntityWithKey($container, $key);
                 $response->addMessage($message);
             } else {
-                $response->addMessage("You can't lock {$container->getName()}");
+                $message = new UnableMessage($keyTag, UnableMessage::TYPE_CONTAINER_NOT_LOCKABLE);
+                $response->addMessage($message->toString());
             }
         }
 

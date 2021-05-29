@@ -4,7 +4,7 @@ namespace AdventureGame\Traits;
 
 trait AccessibleTrait
 {
-    private bool $accessible = false;
+    private bool $accessible = true;
 
     public function getAccessible(): bool
     {

@@ -16,6 +16,10 @@ use AdventureGame\Location\Location;
 use AdventureGame\Location\Portal;
 use AdventureGame\Response\Description;
 use AdventureGame\Response\ItemDescription;
+use AdventureGame\Response\Message\InventoryMessage;
+use AdventureGame\Response\Message\ItemMessage;
+use AdventureGame\Response\Message\LockableEntityMessage;
+use AdventureGame\Response\Message\UnableMessage;
 use AdventureGame\Response\Response;
 
 /**
@@ -38,7 +42,8 @@ abstract class AbstractCommand
         $response = new Response();
 
         $gameController->getPlayerController()->addItemToPlayerInventory($item);
-        $response->addMessage("Added \"{$item->getName()}\" to inventory.");
+        $itemMessage = new ItemMessage($item, ItemMessage::TYPE_ADD);
+        $response->addMessage($itemMessage->toString());
 
         $eventResponse = $gameController->getEventController()->processTakeItemEvents(
             $gameController,
@@ -63,6 +68,12 @@ abstract class AbstractCommand
 
         $inventory = $gameController->getPlayerController()->getPlayerInventory();
 
+        if (empty($inventory->getItems())) {
+            $message = new InventoryMessage(InventoryMessage::TYPE_INVENTORY_EMPTY);
+            $response->addMessage($message->toString());
+            return $response;
+        }
+
         foreach ($this->listContainerItems($inventory) as $description) {
             $response->addInventoryItemDescription($description);
         }
@@ -81,8 +92,8 @@ abstract class AbstractCommand
 
         foreach ($container->getItems() as $item) {
             if ($item instanceof ItemInterface) {
-                // Now that it's been discovered, it can be taken.
-                $item->setAccessible(true);
+                // Now that item has been discovered, it can be interacted with.
+                $item->setDiscovered(true);
                 $descriptions[] = $this->listItem($item);
             }
         }
@@ -101,17 +112,20 @@ abstract class AbstractCommand
         if (is_a($entity, LockableInterface::class)) {
             $entity->setLocked(true);
 
-            return "Locked {$entity->getName()} with {$key->getName()}.";
+            $message = new LockableEntityMessage($entity, $key, LockableEntityMessage::TYPE_LOCK);
+
+            return $message->toString();
         }
 
-        return "Can't lock that.";
+        $message = new UnableMessage($entity->getName(), UnableMessage::TYPE_CANNOT_LOCK);
+        return $message->toString();
     }
 
     /**
      * Move player, describe the new location.
      * @param GameController $gameController
      * @param string $direction
-     * @return Response|null
+     * @return Response
      * @throws InvalidExitException
      * @throws PlayerLocationNotSetException
      */
@@ -167,7 +181,8 @@ abstract class AbstractCommand
                 ->getExitInDirection($direction);
 
             $response = new Response();
-            $response->addMessage("{$portal->getName()} is locked!");
+            $message = new UnableMessage($portal->getName(), UnableMessage::TYPE_PORTAL_LOCKED);
+            $response->addMessage($message->toString());
         }
 
         return $response;
@@ -271,7 +286,7 @@ abstract class AbstractCommand
 
         if ($item instanceof ActivatableEntityInterface) {
             if ($item->getActivated()) {
-                $description->setStatus('activated');
+                $description->setStatus(ActivatableEntityInterface::STATUS_ACTIVATED);
             }
         }
 
@@ -292,7 +307,8 @@ abstract class AbstractCommand
         $response = new Response();
 
         $gameController->getPlayerController()->removeItemFromPlayerInventory($item);
-        $response->addMessage("Removed \"{$item->getName()}\" from inventory");
+        $itemMessage = new ItemMessage($item, ItemMessage::TYPE_REMOVE);
+        $response->addMessage($itemMessage->toString());
 
         $eventResponse = $gameController->getEventController()->processDropItemEvents(
             $gameController,
@@ -323,7 +339,9 @@ abstract class AbstractCommand
             ->getPlayerLocation()->getContainer()->getItemsByTag($tag);
 
         if (empty($items)) {
-            $response->addMessage("You don't see anything like that here.");
+            $itemMessage = new UnableMessage($tag, UnableMessage::TYPE_ITEM_NOT_FOUND);
+            $response->addMessage($itemMessage->toString());
+            return $response;
         }
 
         foreach ($this->describeItems($items) as $description) {
@@ -373,11 +391,15 @@ abstract class AbstractCommand
     {
         if (is_a($entity, LockableInterface::class)) {
             $entity->setLocked(false);
-
-            return "Unlocked {$entity->getName()} with {$key->getName()}.";
+            $message = new LockableEntityMessage($entity, $key, LockableEntityMessage::TYPE_UNLOCK);
+            return $message->toString();
         }
 
-        return "Can't unlock that";
+        $message = new UnableMessage(
+            $entity->getName(),
+            UnableMessage::TYPE_CANNOT_UNLOCK
+        );
+        return $message->toString();
     }
 
     /**
@@ -385,43 +407,62 @@ abstract class AbstractCommand
      * @param GameController $gameController
      * @param string $itemTag
      * @param string $containerTag
-     * @return Response|null
+     * @return Response
      * @throws PlayerLocationNotSetException
      */
     protected function takeItemsByTagFromFirstContainerByTagAtPlayerLocation(
         GameController $gameController,
         string $itemTag,
         string $containerTag,
-    ): ?Response {
-
+    ): Response {
         $container = $this->getFirstContainerByTagAtPlayerLocation($gameController, $containerTag);
 
-        if ($container) {
+        if ($container instanceof ContainerInterface) {
             $items = $container->getItemsByTag($itemTag);
 
-            if (empty($items)) {
-                return null;
-            }
-
             $response = new Response();
+            if (empty($items)) {
+                $itemMessage = new UnableMessage($itemTag, UnableMessage::TYPE_ITEM_NOT_FOUND);
+                $response->addMessage($itemMessage->toString());
+                return $response;
+            }
 
             foreach ($items as $item) {
                 if ($item instanceof ItemInterface) {
-                    if ($item->getAccessible()) {
-                        if ($item->getAcquirable()) {
-                            $container->removeItemById($item->getId());
+                    if ($item->getDiscovered()) {
+                        if ($item->getAccessible()) {
+                            if ($item->getAcquirable()) {
+                                $container->removeItemById($item->getId());
 
-                            $addItemResponse = $this->addItemToPlayerInventory(
-                                $gameController,
-                                $item
-                            );
+                                $addItemResponse = $this->addItemToPlayerInventory(
+                                    $gameController,
+                                    $item
+                                );
 
-                            $response->addMessages($addItemResponse->getMessages());
+                                $response->addMessages($addItemResponse->getMessages());
+                            } else {
+                                $message = new UnableMessage(
+                                    $item->getName(),
+                                    UnableMessage::TYPE_CANNOT_TAKE
+                                );
+                                $response->addMessage($message->toString());
+                                return $response;
+                            }
                         } else {
-                            $response->addMessage("You can't take that.");
+                            $message = new UnableMessage(
+                                $itemTag,
+                                UnableMessage::TYPE_ITEM_NOT_ACCESSIBLE
+                            );
+                            $response->addMessage($message->toString());
+                            return $response;
                         }
                     } else {
-                        $response->addMessage("You haven't discovered anything like that here.");
+                        $message = new UnableMessage(
+                            $itemTag,
+                            UnableMessage::TYPE_ITEM_NOT_DISCOVERED
+                        );
+                        $response->addMessage($message->toString());
+                        return $response;
                     }
                 }
             }
@@ -429,7 +470,10 @@ abstract class AbstractCommand
             return $response;
         }
 
-        return null;
+        $response = new Response();
+        $message = new UnableMessage($containerTag, UnableMessage::TYPE_CONTAINER_NOT_FOUND);
+        $response->addMessage($message->toString());
+        return $response;
     }
 
     /**

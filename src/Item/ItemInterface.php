@@ -6,6 +6,7 @@ use AdventureGame\Entity\AccessibleEntityInterface;
 use AdventureGame\Entity\AcquirableEntityInterface;
 use AdventureGame\Entity\ActivatableEntityInterface;
 use AdventureGame\Entity\DeactivatableEntityInterface;
+use AdventureGame\Entity\DiscoverableEntityInterface;
 use AdventureGame\Entity\ReadableEntityInterface;
 
 /**
@@ -14,6 +15,6 @@ use AdventureGame\Entity\ReadableEntityInterface;
  */
 interface ItemInterface extends AccessibleEntityInterface, AcquirableEntityInterface,
                                 ActivatableEntityInterface, DeactivatableEntityInterface,
-                                ReadableEntityInterface
+                                ReadableEntityInterface, DiscoverableEntityInterface
 {
 }

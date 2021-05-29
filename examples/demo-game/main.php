@@ -55,6 +55,7 @@ $nouns = [
     'reward.exit',
     'reward.enter',
     'key.keyToWoodenDoor',
+    'key.copyOfKeyToWoodenDoor',
     'map',
     'letter',
     'switch.one',
@@ -77,6 +78,7 @@ $phrases = [
     'exit reward' => 'reward.exit',
     'enter reward' => 'reward.enter',
     'key to wooden door' => 'key.keyToWoodenDoor',
+    'copy of key' => 'key.copyOfKeyToWoodenDoor',
     'turn on flashlight' => 'activate flashlight',
     'turn flashlight on' => 'activate flashlight',
     'turn off flashlight' => 'deactivate flashlight',
@@ -131,8 +133,16 @@ $keyToWoodenDoor = new Item(
     ['key to wooden door', 'key.keyToWoodenDoor', 'key']
 );
 
+$keyToWoodenDoor2 = new Item(
+    'keyToWoodenDoor2',
+    'Copy of Key to Wooden Door',
+    'A metal key that unlocks the wooden door at spawn.',
+    ['copy of key', 'key.copyOfKeyToWoodenDoor', 'key']
+);
+
 $chest->addItem($flashlight);
 $chest->addItem($keyToWoodenDoor);
+$chest->addItem($keyToWoodenDoor2);
 
 $doorFromSpawnToWestRoom = new Portal(
     'doorFromSpawnToWestRoom',

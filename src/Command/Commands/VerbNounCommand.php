@@ -12,6 +12,9 @@ use AdventureGame\Item\ContainerItemInterface;
 use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Portal;
 use AdventureGame\Response\ItemDescription;
+use AdventureGame\Response\ListOfItems;
+use AdventureGame\Response\Message\ItemMessage;
+use AdventureGame\Response\Message\UnableMessage;
 use AdventureGame\Response\Response;
 
 /**
@@ -131,16 +134,14 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         $items = $gameController->playerController->getItemsByTagFromPlayerInventory($tag);
 
         if (empty($items)) {
-            $response->addMessage("You don't have anything like that.");
+            $message = new UnableMessage($tag, UnableMessage::TYPE_ITEM_NOT_IN_INVENTORY);
+            $response->addMessage($message->toString());
             return $response;
         }
 
         if (count($items) > 1) {
-            $response->addMessage('Which item do you want to drop?');
-            foreach ($items as $item) {
-                $response->addItemSummaryWithTag($this->listItem($item));
-            }
-            return $response;
+            $listOfItems = new ListOfItems($items, ListOfItems::ACTION_DROP);
+            return $listOfItems->getResponse();
         }
 
         foreach ($items as $item) {
@@ -186,21 +187,25 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         $response = new Response();
 
         if (count($items) > 1) {
-            $response->addMessage('Which item do you want to activate?');
-            foreach ($items as $item) {
-                $response->addItemSummaryWithTag($this->listItem($item));
-            }
-            return $response;
+            $listOfItems = new ListOfItems($items, ListOfItems::ACTION_ACTIVATE);
+            return $listOfItems->getResponse();
         }
 
         foreach ($items as $item) {
             if ($item instanceof ItemInterface) {
                 if ($item->getActivatable()) {
                     if ($item->getActivated() === true) {
-                        $message = "It's already activated.";
+                        $message = new UnableMessage(
+                            $item->getName(),
+                            UnableMessage::TYPE_ALREADY_ACTIVATED
+                        );
+                        $response->addMessage($message->toString());
                     } else {
                         $item->setActivated(true);
-                        $message = "Activated {$item->getName()}.";
+                        $message = new ItemMessage(
+                            $item,
+                            ItemMessage::TYPE_DEACTIVATE
+                        );
 
                         $eventResponse = $gameController->eventController->processActivateItemEvents(
                             $gameController,
@@ -212,9 +217,13 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
                         }
                     }
 
-                    $response->addMessage($message);
+                    $response->addMessage($message->toString());
                 } else {
-                    $response->addMessage("You can't activate {$item->getName()}.");
+                    $message = new UnableMessage(
+                        $item->getName(),
+                        UnableMessage::TYPE_CANNOT_DEACTIVATE
+                    );
+                    $response->addMessage($message->toString());
                 }
             }
         }
@@ -246,21 +255,25 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         $response = new Response();
 
         if (count($items) > 1) {
-            $response->addMessage('Which item do you want to deactivate?');
-            foreach ($items as $item) {
-                $response->addItemSummaryWithTag($this->listItem($item));
-            }
-            return $response;
+            $listOfItems = new ListOfItems($items, ListOfItems::ACTION_DEACTIVATE);
+            return $listOfItems->getResponse();
         }
 
         foreach ($items as $item) {
             if ($item instanceof ItemInterface) {
                 if ($item->getDeactivatable()) {
                     if ($item->getDeactivated() === true) {
-                        $message = "It's already deactivated.";
+                        $message = new UnableMessage(
+                            $item->getName(),
+                            UnableMessage::TYPE_ALREADY_DEACTIVATED
+                        );
+                        $response->addMessage($message->toString());
                     } else {
                         $item->setDeactivated(true);
-                        $message = "Deactivated {$item->getName()}.";
+                        $message = new ItemMessage(
+                            $item,
+                            ItemMessage::TYPE_DEACTIVATE
+                        );
 
                         $eventResponse = $gameController->eventController->processDeactivateItemEvents(
                             $gameController,
@@ -272,9 +285,13 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
                         }
                     }
 
-                    $response->addMessage($message);
+                    $response->addMessage($message->toString());
                 } else {
-                    $response->addMessage("You can't deactivate {$item->getName()}.");
+                    $message = new UnableMessage(
+                        $item->getName(),
+                        UnableMessage::TYPE_CANNOT_DEACTIVATE
+                    );
+                    $response->addMessage($message->toString());
                 }
             }
         }
@@ -317,11 +334,8 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         }
 
         if (count($items) > 1) {
-            $response->addMessage('Which item do you want to take?');
-            foreach ($items as $item) {
-                $response->addItemSummaryWithTag($this->listItem($item));
-            }
-            return $response;
+            $listOfItems = new ListOfItems($items, ListOfItems::ACTION_TAKE);
+            return $listOfItems->getResponse();
         }
 
         foreach ($items as $item) {
@@ -332,7 +346,8 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
                     $addItemResponse = $this->addItemToPlayerInventory($gameController, $item);
                     $response->addMessages($addItemResponse->getMessages());
                 } else {
-                    $response->addMessage("You can't take {$item->getName()}.");
+                    $message = new UnableMessage($item->getName(), UnableMessage::TYPE_CANNOT_TAKE);
+                    $response->addMessage($message->toString());
                 }
             }
         }
@@ -384,17 +399,20 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
      * Read items matching tag at player location.
      * @param GameController $gameController
      * @param string $tag
-     * @return Response|null
+     * @return Response
      * @throws PlayerLocationNotSetException
      */
     private function readItemsByTagAtPlayerLocation(
         GameController $gameController,
         string $tag
-    ): ?Response {
+    ): Response {
         $items = $gameController->mapController->getItemsByTag($tag);
 
         if (empty($items)) {
-            return null;
+            $response = new Response();
+            $message = new UnableMessage($tag, UnableMessage::TYPE_ITEM_NOT_FOUND);
+            $response->addMessage($message->toString());
+            return $response;
         }
 
         return $this->readItems($gameController, $items);
@@ -413,7 +431,10 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         $items = $gameController->getPlayerController()->getPlayerInventory()->getItemsByTag($tag);
 
         if (empty($items)) {
-            return null;
+            $response = new Response();
+            $message = new UnableMessage($tag, UnableMessage::TYPE_ITEM_NOT_FOUND);
+            $response->addMessage($message->toString());
+            return $response;
         }
 
         return $this->readItems($gameController, $items);
@@ -478,7 +499,11 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
                 $message = $this->unlockPortalWithAnyAvailableKey($gameController, $portal);
                 $response->addMessage($message);
             } else {
-                $response->addMessage("You can't unlock {$portal->getName()}");
+                $unableMessage = new UnableMessage(
+                    $portal->getName(),
+                    UnableMessage::TYPE_CANNOT_UNLOCK
+                );
+                $response->addMessage($unableMessage->toString());
             }
 
             return $response;
@@ -489,7 +514,8 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
             ->getItemsByTypeAndTag(ContainerItem::class, $noun);
 
         if (empty($containers)) {
-            $response->addMessage("There is nothing to unlock.");
+            $notFoundMessage = new UnableMessage($noun, UnableMessage::TYPE_NOTHING_TO_UNLOCK);
+            $response->addMessage($notFoundMessage->toString());
             return $response;
         }
 
@@ -501,7 +527,12 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
                 );
                 $response->addMessage($message);
             } else {
-                $response->addMessage("You can't unlock {$container->getName()}");
+                $unableMessage = new UnableMessage(
+                    $container->getName(),
+                    UnableMessage::TYPE_CANNOT_UNLOCK
+                );
+                $response->addMessage($unableMessage->toString());
+                return $response;
             }
         }
     }
@@ -510,6 +541,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
      * Unlock a portal if the player has the key in inventory.
      * @param GameController $gameController
      * @param Portal $portal
+     * @return string
      */
     protected function unlockPortalWithAnyAvailableKey(
         GameController $gameController,
@@ -522,7 +554,11 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
             return $this->unlockEntityWithKey($portal, $key);
         }
 
-        return "You don't have the required key.";
+        $message = new UnableMessage(
+            $portal->getName(), UnableMessage::TYPE_MISSING_KEY
+        );
+
+        return $message->toString();
     }
 
     /**
@@ -542,7 +578,11 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
             return $this->unlockEntityWithKey($containerItem, $key);
         }
 
-        return "You don't have the required key.";
+        $message = new UnableMessage(
+            $containerItem->getName(), UnableMessage::TYPE_MISSING_KEY
+        );
+
+        return $message->toString();
     }
 
     /**
@@ -567,7 +607,11 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
                 $message = $this->lockPortalWithAnyAvailableKey($gameController, $portal);
                 $response->addMessage($message);
             } else {
-                $response->addMessage("You can't lock {$portal->getName()}");
+                $unableMessage = new UnableMessage(
+                    $portal->getName(),
+                    UnableMessage::TYPE_CANNOT_LOCK
+                );
+                $response->addMessage($unableMessage->toString());
             }
 
             return $response;
@@ -577,7 +621,8 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         $containers = $location->getContainer()->getItemsByTypeAndTag(ContainerItem::class, $noun);
 
         if (empty($containers)) {
-            $response->addMessage("There is nothing to lock.");
+            $notFoundMessage = new UnableMessage($noun, UnableMessage::TYPE_NOTHING_TO_LOCK);
+            $response->addMessage($notFoundMessage->toString());
             return $response;
         }
 
@@ -590,7 +635,11 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
                     );
                     $response->addMessage($message);
                 } else {
-                    $response->addMessage("You can't lock {$container->getName()}");
+                    $unableMessage = new UnableMessage(
+                        $container->getName(),
+                        UnableMessage::TYPE_CANNOT_LOCK
+                    );
+                    $response->addMessage($unableMessage->toString());
                 }
             }
         }
@@ -615,7 +664,11 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
             return $this->lockEntityWithKey($portal, $key);
         }
 
-        return "You don't have the required key.";
+        $message = new UnableMessage(
+            $portal->getName(), UnableMessage::TYPE_MISSING_KEY
+        );
+
+        return $message->toString();
     }
 
     /**
@@ -635,7 +688,11 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
             return $this->lockEntityWithKey($containerItem, $key);
         }
 
-        return "You don't have the required key.";
+        $message = new UnableMessage(
+            $containerItem->getName(), UnableMessage::TYPE_MISSING_KEY
+        );
+
+        return $message->toString();
     }
 
     /**
@@ -648,16 +705,9 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     {
         $response = new Response();
 
-        if (empty($items)) {
-            $response->addMessage("You don't have anything like that to read.");
-        }
-
         if (count($items) > 1) {
-            $response->addMessage('Which item do you want to read?');
-            foreach ($items as $item) {
-                $response->addItemSummaryWithTag($this->listItem($item));
-            }
-            return $response;
+            $listOfItems = new ListOfItems($items, ListOfItems::ACTION_READ);
+            return $listOfItems->getResponse();
         }
 
         foreach ($items as $item) {
@@ -666,7 +716,11 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
                     $response->addMessages($item->getLines());
                 } else {
                     if ($item instanceof ItemDescription) {
-                        $response->addMessage("You can't read {$item->getName()}.");
+                        $message = new UnableMessage(
+                            $item->getName(),
+                            UnableMessage::TYPE_CANNOT_READ
+                        );
+                        $response->addMessage($message->toString());
                     }
                 }
             }

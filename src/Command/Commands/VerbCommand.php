@@ -3,11 +3,13 @@
 namespace AdventureGame\Command\Commands;
 
 use AdventureGame\Command\CommandInterface;
-use AdventureGame\Command\Exception\StartNewGameException;
 use AdventureGame\Game\Exception\InvalidSaveDirectoryException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
 use AdventureGame\Response\Choice;
+use AdventureGame\Response\Choice\NewGameChoice;
+use AdventureGame\Response\Choice\QuitGameChoice;
+use AdventureGame\Response\Message\GameManagementMessage;
 use AdventureGame\Response\Response;
 
 /**
@@ -109,7 +111,8 @@ class VerbCommand extends AbstractCommand implements CommandInterface
         $file .= '/save.txt';
         file_put_contents($file, $serialized);
 
-        $response->addMessage('Game saved');
+        $message = new GameManagementMessage(GameManagementMessage::TYPE_GAME_SAVED);
+        $response->addMessage($message->toString());
 
         return $response;
     }
@@ -128,22 +131,27 @@ class VerbCommand extends AbstractCommand implements CommandInterface
         $file = $gameController->getSaveDirectory();
         $file .= '/save.txt';
         if (!file_exists($file)) {
-            $response->addMessage('Could not find save file.');
+            $message = new GameManagementMessage(GameManagementMessage::TYPE_CANNOT_FIND_SAVE_FILE);
+            $response->addMessage($message->toString());
             return $response;
         }
 
         $serialized = file_get_contents($file);
         $object = @unserialize($serialized);
         if ($object === false) {
-            $response->addMessage('Save file could not be recovered, it may be corrupted.');
+            $message = new GameManagementMessage(GameManagementMessage::TYPE_UNSERIALIZE_ERROR);
+            $response->addMessage($message->toString());
             return $response;
         }
 
         if ($object instanceof GameController) {
             $gameController->hydrateFromSave($object);
-            $response->addMessage('Game loaded.');
+            $message = new GameManagementMessage(GameManagementMessage::TYPE_GAME_LOADED);
+            $response->addMessage($message->toString());
         } else {
-            $response->addMessage('Could not load saved game.');
+            $gameController->hydrateFromSave($object);
+            $message = new GameManagementMessage(GameManagementMessage::TYPE_GAME_NOT_LOADED);
+            $response->addMessage($message->toString());
         }
 
         return $response;
@@ -157,26 +165,11 @@ class VerbCommand extends AbstractCommand implements CommandInterface
     private function newGame(GameController $gameController): Response
     {
         $response = new Response();
-        $response->addMessage('New game started');
+        $message = new GameManagementMessage(GameManagementMessage::TYPE_NEW_GAME_STARTED);
+        $response->addMessage($message->toString());
 
-        $response->setChoice(
-            new Choice(
-                'Starting a new game will erase all progress. Are you sure?',
-                ['yes', 'no'],
-                function (array $p) {
-                    echo "\n";
-                    if ($p['answer'] === 'yes') {
-                        echo 'starting new game...';
-                        echo "\n\n";
-                        sleep(1);
-                        throw new StartNewGameException();
-                    } else {
-                        echo 'The adventure continues...';
-                        echo "\n\n";
-                    }
-                },
-            )
-        );
+        $newGameChoice = new NewGameChoice();
+        $response->setChoice($newGameChoice->getChoice());
 
         return $response;
     }
@@ -190,23 +183,8 @@ class VerbCommand extends AbstractCommand implements CommandInterface
     {
         $response = new Response();
 
-        $response->setChoice(
-            new Choice(
-                'Are you sure you want to quit?',
-                ['yes', 'no'],
-                function (array $p) {
-                    echo "\n";
-                    if ($p['answer'] === 'yes') {
-                        echo 'exiting...';
-                        echo "\n\n";
-                        exit;
-                    } else {
-                        echo 'The adventure continues...';
-                        echo "\n\n";
-                    }
-                },
-            )
-        );
+        $newGameChoice = new QuitGameChoice();
+        $response->setChoice($newGameChoice->getChoice());
 
         return $response;
     }

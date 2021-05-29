@@ -44,12 +44,20 @@ class ContainerItemTest extends TestCase
     {
         $item = new ContainerItem('', '', '', ['']);
 
-        $this->assertFalse($item->getAccessible());
-        $item->setAccessible(true);
         $this->assertTrue($item->getAccessible());
 
         $item->setAccessible(false);
         $this->assertFalse($item->getAccessible());
+    }
+
+    public function testContainerItemDiscovered()
+    {
+        $item = new ContainerItem('', '', '', ['']);
+
+        $this->assertFalse($item->getDiscovered());
+
+        $item->setDiscovered(true);
+        $this->assertTrue($item->getDiscovered());
     }
 
     public function testContainerItemLockable()
