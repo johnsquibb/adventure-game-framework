@@ -60,7 +60,6 @@ class VerbCommand extends AbstractCommand implements CommandInterface
      * Inventory.
      * @param GameController $gameController
      * @return Response|null
-     * @throws PlayerLocationNotSetException
      */
     private function tryInventoryAction(GameController $gameController): ?Response
     {

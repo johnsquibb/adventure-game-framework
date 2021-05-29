@@ -8,6 +8,7 @@ use AdventureGame\Command\Exception\InvalidTokenException;
 use AdventureGame\Command\Exception\InvalidTokensLengthException;
 use AdventureGame\Command\Exception\StartNewGameException;
 use AdventureGame\Game\Exception\InvalidExitException;
+use AdventureGame\Game\Exception\InvalidSaveDirectoryException;
 use AdventureGame\Response\Response;
 
 /**
@@ -28,7 +29,7 @@ class PlatformController
     /**
      * Run the game.
      * @param ClientControllerInterface $clientController
-     * @throws InvalidTokensLengthException
+     * @throws InvalidTokensLengthException|InvalidSaveDirectoryException
      */
     public function run(ClientControllerInterface $clientController): void
     {
@@ -45,7 +46,6 @@ class PlatformController
     /**
      * Enter the main game loop. This will run until an exit condition is reached.
      * @param ClientControllerInterface $clientController
-     * @throws InvalidTokensLengthException
      */
     private function runGameLoop(ClientControllerInterface $clientController): void
     {
