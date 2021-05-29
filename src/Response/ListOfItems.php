@@ -7,14 +7,24 @@ use AdventureGame\Item\ItemInterface;
 
 class ListOfItems
 {
-    public const ACTION_TAKE = 'take';
-    public const ACTION_DROP = 'drop';
-    public const ACTION_READ = 'read';
     public const ACTION_ACTIVATE = 'activate';
     public const ACTION_DEACTIVATE = 'deactivate';
+    public const ACTION_DROP = 'drop';
+    public const ACTION_READ = 'read';
+    public const ACTION_TAKE = 'take';
 
     public function __construct(private array $items, private string $messageType = '')
     {
+    }
+
+    public function getResponse(): Response
+    {
+        $response = new Response();
+        $response->addMessage($this->getMessage());
+        foreach ($this->items as $item) {
+            $response->addItemSummaryWithTag($this->listItem($item));
+        }
+        return $response;
     }
 
     private function getMessage(): string
@@ -27,16 +37,6 @@ class ListOfItems
             self::ACTION_DEACTIVATE => 'Which item do you want to deactivate?',
             default => 'Which item?',
         };
-    }
-
-    public function getResponse(): Response
-    {
-        $response = new Response();
-        $response->addMessage($this->getMessage());
-        foreach ($this->items as $item) {
-            $response->addItemSummaryWithTag($this->listItem($item));
-        }
-        return $response;
     }
 
     /**

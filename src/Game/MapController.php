@@ -34,6 +34,20 @@ class MapController
     }
 
     /**
+     * The current location of the player, if set.
+     * @return Location
+     * @throws PlayerLocationNotSetException
+     */
+    public function getPlayerLocation(): Location
+    {
+        if (!isset($this->playerLocation)) {
+            throw new PlayerLocationNotSetException('Player location not set');
+        }
+
+        return $this->playerLocation;
+    }
+
+    /**
      * Add a location.
      * @param Location $location
      */
@@ -54,20 +68,6 @@ class MapController
         $location->getContainer()->addItem($item);
 
         return "Dropped {$item->getName()}";
-    }
-
-    /**
-     * The current location of the player, if set.
-     * @return Location
-     * @throws PlayerLocationNotSetException
-     */
-    public function getPlayerLocation(): Location
-    {
-        if (!isset($this->playerLocation)) {
-            throw new PlayerLocationNotSetException('Player location not set');
-        }
-
-        return $this->playerLocation;
     }
 
     /**

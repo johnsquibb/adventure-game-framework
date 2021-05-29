@@ -6,7 +6,6 @@ use AdventureGame\Command\CommandInterface;
 use AdventureGame\Game\Exception\InvalidSaveDirectoryException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
-use AdventureGame\Response\Choice;
 use AdventureGame\Response\Choice\NewGameChoice;
 use AdventureGame\Response\Choice\QuitGameChoice;
 use AdventureGame\Response\Message\GameManagementMessage;

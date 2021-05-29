@@ -7,10 +7,10 @@ use AdventureGame\Response\MessageInterface;
 
 class ItemMessage implements MessageInterface
 {
-    public const TYPE_ADD = 'add';
-    public const TYPE_REMOVE = 'remove';
     public const TYPE_ACTIVATE = 'activate';
+    public const TYPE_ADD = 'add';
     public const TYPE_DEACTIVATE = 'deactivate';
+    public const TYPE_REMOVE = 'remove';
 
     public function __construct(private ItemInterface $item, private string $messageType)
     {

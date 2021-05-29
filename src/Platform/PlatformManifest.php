@@ -26,64 +26,14 @@ class PlatformManifest
     // Events
     private array $events = [];
 
-    public function getEvents(): array
+    public function getAliases(): array
     {
-        return $this->events;
+        return $this->aliases;
     }
 
-    public function getLocations(): array
+    public function setAliases(array $aliases): void
     {
-        return $this->locations;
-    }
-
-    public function getPlayerName(): string
-    {
-        return $this->playerName;
-    }
-
-    public function getPlayerSpawnLocationId(): string
-    {
-        return $this->playerSpawnLocationId;
-    }
-
-    public function getSaveGameDirectory(): string
-    {
-        return $this->saveGameDirectory;
-    }
-
-    public function setSaveGameDirectory(string $saveGameDirectory): void
-    {
-        $this->saveGameDirectory = $saveGameDirectory;
-    }
-
-    public function getVerbs(): array
-    {
-        return $this->verbs;
-    }
-
-    public function setVerbs(array $verbs): void
-    {
-        $this->verbs = $verbs;
-    }
-
-    public function getNouns(): array
-    {
-        return $this->nouns;
-    }
-
-    public function setNouns(array $nouns): void
-    {
-        $this->nouns = $nouns;
-    }
-
-    public function getPrepositions(): array
-    {
-        return $this->prepositions;
-    }
-
-    public function setPrepositions(array $prepositions): void
-    {
-        $this->prepositions = $prepositions;
+        $this->aliases = $aliases;
     }
 
     public function getArticles(): array
@@ -96,14 +46,34 @@ class PlatformManifest
         $this->articles = $articles;
     }
 
-    public function getAliases(): array
+    public function getEvents(): array
     {
-        return $this->aliases;
+        return $this->events;
     }
 
-    public function setAliases(array $aliases): void
+    public function setEvents(array $events): void
     {
-        $this->aliases = $aliases;
+        $this->events = $events;
+    }
+
+    public function getLocations(): array
+    {
+        return $this->locations;
+    }
+
+    public function setLocations(array $locations): void
+    {
+        $this->locations = $locations;
+    }
+
+    public function getNouns(): array
+    {
+        return $this->nouns;
+    }
+
+    public function setNouns(array $nouns): void
+    {
+        $this->nouns = $nouns;
     }
 
     public function getPhrases(): array
@@ -116,6 +86,46 @@ class PlatformManifest
         $this->phrases = $phrases;
     }
 
+    public function getPlayerName(): string
+    {
+        return $this->playerName;
+    }
+
+    public function setPlayerName(string $playerName): void
+    {
+        $this->playerName = $playerName;
+    }
+
+    public function getPlayerSpawnLocationId(): string
+    {
+        return $this->playerSpawnLocationId;
+    }
+
+    public function setPlayerSpawnLocationId(string $playerSpawnLocationId): void
+    {
+        $this->playerSpawnLocationId = $playerSpawnLocationId;
+    }
+
+    public function getPrepositions(): array
+    {
+        return $this->prepositions;
+    }
+
+    public function setPrepositions(array $prepositions): void
+    {
+        $this->prepositions = $prepositions;
+    }
+
+    public function getSaveGameDirectory(): string
+    {
+        return $this->saveGameDirectory;
+    }
+
+    public function setSaveGameDirectory(string $saveGameDirectory): void
+    {
+        $this->saveGameDirectory = $saveGameDirectory;
+    }
+
     public function getShortcuts(): array
     {
         return $this->shortcuts;
@@ -126,23 +136,13 @@ class PlatformManifest
         $this->shortcuts = $shortcuts;
     }
 
-    public function setPlayerName(string $playerName): void
+    public function getVerbs(): array
     {
-        $this->playerName = $playerName;
+        return $this->verbs;
     }
 
-    public function setPlayerSpawnLocationId(string $playerSpawnLocationId): void
+    public function setVerbs(array $verbs): void
     {
-        $this->playerSpawnLocationId = $playerSpawnLocationId;
-    }
-
-    public function setEvents(array $events): void
-    {
-        $this->events = $events;
-    }
-
-    public function setLocations(array $locations): void
-    {
-        $this->locations = $locations;
+        $this->verbs = $verbs;
     }
 }

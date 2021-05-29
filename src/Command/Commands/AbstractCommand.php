@@ -29,35 +29,6 @@ use AdventureGame\Response\Response;
 abstract class AbstractCommand
 {
     /**
-     * Add an item to player inventory.
-     * @param GameController $gameController
-     * @param ItemInterface $item
-     * @return Response
-     * @throws PlayerLocationNotSetException
-     */
-    protected function addItemToPlayerInventory(
-        GameController $gameController,
-        ItemInterface $item
-    ): Response {
-        $response = new Response();
-
-        $gameController->getPlayerController()->addItemToPlayerInventory($item);
-        $itemMessage = new ItemMessage($item, ItemMessage::TYPE_ADD);
-        $response->addMessage($itemMessage->toString());
-
-        $eventResponse = $gameController->getEventController()->processTakeItemEvents(
-            $gameController,
-            $item->getId()
-        );
-
-        if ($eventResponse) {
-            $response->addMessages($eventResponse->getMessages());
-        }
-
-        return $response;
-    }
-
-    /**
      * Describe the items in the player inventory.
      * @param GameController $gameController
      * @return Response
@@ -99,6 +70,29 @@ abstract class AbstractCommand
         }
 
         return $descriptions;
+    }
+
+    /**
+     * List an item's name.
+     * @param ItemInterface $item
+     * @return ItemDescription
+     */
+    protected function listItem(ItemInterface $item): ItemDescription
+    {
+        $description = new ItemDescription(
+            $item->getName(),
+            $item->getSummary(),
+            $item->getDescription(),
+            $item->getTags()
+        );
+
+        if ($item instanceof ActivatableEntityInterface) {
+            if ($item->getActivated()) {
+                $description->setStatus(ActivatableEntityInterface::STATUS_ACTIVATED);
+            }
+        }
+
+        return $description;
     }
 
     /**
@@ -271,29 +265,6 @@ abstract class AbstractCommand
     }
 
     /**
-     * List an item's name.
-     * @param ItemInterface $item
-     * @return ItemDescription
-     */
-    protected function listItem(ItemInterface $item): ItemDescription
-    {
-        $description = new ItemDescription(
-            $item->getName(),
-            $item->getSummary(),
-            $item->getDescription(),
-            $item->getTags()
-        );
-
-        if ($item instanceof ActivatableEntityInterface) {
-            if ($item->getActivated()) {
-                $description->setStatus(ActivatableEntityInterface::STATUS_ACTIVATED);
-            }
-        }
-
-        return $description;
-    }
-
-    /**
      * Remove an item from player inventory.
      * @param GameController $gameController
      * @param ItemInterface $item
@@ -320,86 +291,6 @@ abstract class AbstractCommand
         }
 
         return $response;
-    }
-
-    /**
-     * Try to look at items in the current player location.
-     * @param GameController $gameController
-     * @param string $tag
-     * @return Response
-     * @throws PlayerLocationNotSetException
-     */
-    protected function tryLookAtItemsByTagAtPlayerLocationAction(
-        GameController $gameController,
-        string $tag
-    ): Response {
-        $response = new Response();
-
-        $items = $gameController->getMapController()
-            ->getPlayerLocation()->getContainer()->getItemsByTag($tag);
-
-        if (empty($items)) {
-            $itemMessage = new UnableMessage($tag, UnableMessage::TYPE_ITEM_NOT_FOUND);
-            $response->addMessage($itemMessage->toString());
-            return $response;
-        }
-
-        foreach ($this->describeItems($items) as $description) {
-            $response->addItemDescription($description);
-        }
-
-        return $response;
-    }
-
-    /**
-     * Describe a list of items.
-     * @param array $items
-     * @return array
-     */
-    protected function describeItems(array $items): array
-    {
-        $descriptions = [];
-
-        foreach ($items as $item) {
-            $descriptions[] = $this->describeItem($item);
-        }
-
-        return $descriptions;
-    }
-
-    /**
-     * Describe an item.
-     * @param ItemInterface $item
-     * @return Description
-     */
-    protected function describeItem(ItemInterface $item): Description
-    {
-        return new ItemDescription(
-            $item->getName(),
-            $item->getSummary(),
-            $item->getDescription(),
-            $item->getTags()
-        );
-    }
-
-    /**
-     * @param EntityInterface $entity
-     * @param ItemInterface $key
-     * @return string response message
-     */
-    protected function unlockEntityWithKey(EntityInterface $entity, ItemInterface $key): string
-    {
-        if (is_a($entity, LockableInterface::class)) {
-            $entity->setLocked(false);
-            $message = new LockableEntityMessage($entity, $key, LockableEntityMessage::TYPE_UNLOCK);
-            return $message->toString();
-        }
-
-        $message = new UnableMessage(
-            $entity->getName(),
-            UnableMessage::TYPE_CANNOT_UNLOCK
-        );
-        return $message->toString();
     }
 
     /**
@@ -499,5 +390,114 @@ abstract class AbstractCommand
         }
 
         return null;
+    }
+
+    /**
+     * Add an item to player inventory.
+     * @param GameController $gameController
+     * @param ItemInterface $item
+     * @return Response
+     * @throws PlayerLocationNotSetException
+     */
+    protected function addItemToPlayerInventory(
+        GameController $gameController,
+        ItemInterface $item
+    ): Response {
+        $response = new Response();
+
+        $gameController->getPlayerController()->addItemToPlayerInventory($item);
+        $itemMessage = new ItemMessage($item, ItemMessage::TYPE_ADD);
+        $response->addMessage($itemMessage->toString());
+
+        $eventResponse = $gameController->getEventController()->processTakeItemEvents(
+            $gameController,
+            $item->getId()
+        );
+
+        if ($eventResponse) {
+            $response->addMessages($eventResponse->getMessages());
+        }
+
+        return $response;
+    }
+
+    /**
+     * Try to look at items in the current player location.
+     * @param GameController $gameController
+     * @param string $tag
+     * @return Response
+     * @throws PlayerLocationNotSetException
+     */
+    protected function tryLookAtItemsByTagAtPlayerLocationAction(
+        GameController $gameController,
+        string $tag
+    ): Response {
+        $response = new Response();
+
+        $items = $gameController->getMapController()
+            ->getPlayerLocation()->getContainer()->getItemsByTag($tag);
+
+        if (empty($items)) {
+            $itemMessage = new UnableMessage($tag, UnableMessage::TYPE_ITEM_NOT_FOUND);
+            $response->addMessage($itemMessage->toString());
+            return $response;
+        }
+
+        foreach ($this->describeItems($items) as $description) {
+            $response->addItemDescription($description);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Describe a list of items.
+     * @param array $items
+     * @return array
+     */
+    protected function describeItems(array $items): array
+    {
+        $descriptions = [];
+
+        foreach ($items as $item) {
+            $descriptions[] = $this->describeItem($item);
+        }
+
+        return $descriptions;
+    }
+
+    /**
+     * Describe an item.
+     * @param ItemInterface $item
+     * @return Description
+     */
+    protected function describeItem(ItemInterface $item): Description
+    {
+        return new ItemDescription(
+            $item->getName(),
+            $item->getSummary(),
+            $item->getDescription(),
+            $item->getTags()
+        );
+    }
+
+    /**
+     * @param EntityInterface $entity
+     * @param ItemInterface $key
+     * @return string response message
+     */
+    protected function unlockEntityWithKey(EntityInterface $entity, ItemInterface $key): string
+    {
+        if (is_a($entity, LockableInterface::class)) {
+            $entity->setLocked(false);
+            $message = new LockableEntityMessage($entity, $key, LockableEntityMessage::TYPE_UNLOCK);
+            return $message->toString();
+        }
+
+        $message = new UnableMessage(
+            $entity->getName(),
+            UnableMessage::TYPE_CANNOT_UNLOCK
+        );
+        return $message->toString();
     }
 }

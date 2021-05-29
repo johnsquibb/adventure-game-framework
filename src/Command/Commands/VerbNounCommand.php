@@ -97,28 +97,6 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     }
 
     /**
-     * Try an action on items at player location.
-     * @param GameController $gameController
-     * @return Response|null
-     * @throws PlayerLocationNotSetException
-     */
-    private function tryLocationItemAction(GameController $gameController): ?Response
-    {
-        switch ($this->verb) {
-            case 'take':
-                return $this->takeItemsByTagAtPlayerLocation($gameController, $this->noun);
-            case 'activate':
-                return $this->activateItemsByTagAtPlayerLocation($gameController, $this->noun);
-            case 'deactivate':
-                return $this->deactivateItemsByTagAtPlayerLocation($gameController, $this->noun);
-            case 'read':
-                return $this->readItemsByTagAtPlayerLocation($gameController, $this->noun);
-        }
-
-        return null;
-    }
-
-    /**
      * Drop all items in player inventory matching tag to player location.
      * @param GameController $gameController
      * @param string $tag
@@ -300,6 +278,84 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     }
 
     /**
+     * Read items matching tag in player inventory.
+     * @param GameController $gameController
+     * @param string $tag
+     * @return Response|null
+     */
+    private function readItemsByTagInPlayerInventory(
+        GameController $gameController,
+        string $tag
+    ): ?Response {
+        $items = $gameController->getPlayerController()->getPlayerInventory()->getItemsByTag($tag);
+
+        if (empty($items)) {
+            $response = new Response();
+            $message = new UnableMessage($tag, UnableMessage::TYPE_ITEM_NOT_FOUND);
+            $response->addMessage($message->toString());
+            return $response;
+        }
+
+        return $this->readItems($gameController, $items);
+    }
+
+    /**
+     * Read items.
+     * @param GameController $gameController
+     * @param array $items
+     * @return Response
+     */
+    private function readItems(GameController $gameController, array $items): Response
+    {
+        $response = new Response();
+
+        if (count($items) > 1) {
+            $listOfItems = new ListOfItems($items, ListOfItems::ACTION_READ);
+            return $listOfItems->getResponse();
+        }
+
+        foreach ($items as $item) {
+            if ($item instanceof ReadableEntityInterface) {
+                if ($item->getReadable()) {
+                    $response->addMessages($item->getLines());
+                } else {
+                    if ($item instanceof ItemDescription) {
+                        $message = new UnableMessage(
+                            $item->getName(),
+                            UnableMessage::TYPE_CANNOT_READ
+                        );
+                        $response->addMessage($message->toString());
+                    }
+                }
+            }
+        }
+
+        return $response;
+    }
+
+    /**
+     * Try an action on items at player location.
+     * @param GameController $gameController
+     * @return Response|null
+     * @throws PlayerLocationNotSetException
+     */
+    private function tryLocationItemAction(GameController $gameController): ?Response
+    {
+        switch ($this->verb) {
+            case 'take':
+                return $this->takeItemsByTagAtPlayerLocation($gameController, $this->noun);
+            case 'activate':
+                return $this->activateItemsByTagAtPlayerLocation($gameController, $this->noun);
+            case 'deactivate':
+                return $this->deactivateItemsByTagAtPlayerLocation($gameController, $this->noun);
+            case 'read':
+                return $this->readItemsByTagAtPlayerLocation($gameController, $this->noun);
+        }
+
+        return null;
+    }
+
+    /**
      * Take all acquirable items matching tag at player location into player inventory.
      * @param GameController $gameController
      * @param string $tag
@@ -407,28 +463,6 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         string $tag
     ): Response {
         $items = $gameController->mapController->getItemsByTag($tag);
-
-        if (empty($items)) {
-            $response = new Response();
-            $message = new UnableMessage($tag, UnableMessage::TYPE_ITEM_NOT_FOUND);
-            $response->addMessage($message->toString());
-            return $response;
-        }
-
-        return $this->readItems($gameController, $items);
-    }
-
-    /**
-     * Read items matching tag in player inventory.
-     * @param GameController $gameController
-     * @param string $tag
-     * @return Response|null
-     */
-    private function readItemsByTagInPlayerInventory(
-        GameController $gameController,
-        string $tag
-    ): ?Response {
-        $items = $gameController->getPlayerController()->getPlayerInventory()->getItemsByTag($tag);
 
         if (empty($items)) {
             $response = new Response();
@@ -693,39 +727,5 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         );
 
         return $message->toString();
-    }
-
-    /**
-     * Read items.
-     * @param GameController $gameController
-     * @param array $items
-     * @return Response
-     */
-    private function readItems(GameController $gameController, array $items): Response
-    {
-        $response = new Response();
-
-        if (count($items) > 1) {
-            $listOfItems = new ListOfItems($items, ListOfItems::ACTION_READ);
-            return $listOfItems->getResponse();
-        }
-
-        foreach ($items as $item) {
-            if ($item instanceof ReadableEntityInterface) {
-                if ($item->getReadable()) {
-                    $response->addMessages($item->getLines());
-                } else {
-                    if ($item instanceof ItemDescription) {
-                        $message = new UnableMessage(
-                            $item->getName(),
-                            UnableMessage::TYPE_CANNOT_READ
-                        );
-                        $response->addMessage($message->toString());
-                    }
-                }
-            }
-        }
-
-        return $response;
     }
 }

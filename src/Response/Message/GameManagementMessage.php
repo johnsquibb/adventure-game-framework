@@ -6,11 +6,11 @@ use AdventureGame\Response\MessageInterface;
 
 class GameManagementMessage implements MessageInterface
 {
-    public const TYPE_NEW_GAME_STARTED = 'new-game-started';
-    public const TYPE_GAME_SAVED = 'game-saved';
+    public const TYPE_CANNOT_FIND_SAVE_FILE = 'cannot-find-save-file';
     public const TYPE_GAME_LOADED = 'game-loaded';
     public const TYPE_GAME_NOT_LOADED = 'game-not-loaded';
-    public const TYPE_CANNOT_FIND_SAVE_FILE = 'cannot-find-save-file';
+    public const TYPE_GAME_SAVED = 'game-saved';
+    public const TYPE_NEW_GAME_STARTED = 'new-game-started';
     public const TYPE_UNSERIALIZE_ERROR = 'unserialize-error';
 
     public function __construct(private string $messageType)

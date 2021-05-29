@@ -7,7 +7,6 @@ use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
 use AdventureGame\Item\ContainerInterface;
 use AdventureGame\Response\Message\ContainerMessage;
-use AdventureGame\Response\Message\ItemMessage;
 use AdventureGame\Response\Message\UnableMessage;
 use AdventureGame\Response\Response;
 
