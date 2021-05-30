@@ -1,0 +1,17 @@
+{
+  "exit reward": "reward.exit",
+  "enter reward": "reward.enter",
+  "key to wooden door": "key.keyToWoodenDoor",
+  "copy of key": "key.copyOfKeyToWoodenDoor",
+  "turn on flashlight": "activate flashlight",
+  "turn flashlight on": "activate flashlight",
+  "turn off flashlight": "deactivate flashlight",
+  "turn flashlight off": "deactivate flashlight",
+  "read map": "activate map",
+  "read secret letter": "read letter",
+  "first switch": "switch.one",
+  "second switch": "switch.two",
+  "third switch": "switch.three",
+  "look at": "examine",
+  "open": "look inside"
+}

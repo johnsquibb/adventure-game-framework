@@ -1,0 +1,10 @@
+{
+  "spawn": {
+    "go through door": "move west",
+    "enter door": "move west"
+  },
+  "roomWestOfSpawn": {
+    "go through door": "move east",
+    "enter door": "move east"
+  }
+}

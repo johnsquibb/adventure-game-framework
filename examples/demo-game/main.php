@@ -19,128 +19,52 @@ use AdventureGame\Platform\PlatformController;
 use AdventureGame\Platform\PlatformFactory;
 use AdventureGame\Platform\PlatformManifest;
 
-require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
+$directory = __DIR__;
+$projectDirectory = dirname(dirname($directory));
+$configurationDirectory = $directory . '/config';
+$vocabularyDirectory = $configurationDirectory . '/vocabulary';
+$saveGameDirectory = $directory . '/data/saves';
 
-// TODO load from configuration file.
+require_once $projectDirectory . '/vendor/autoload.php';
 
 // Action words like 'take' or 'drop'.
-$verbs = [
-    'save',
-    'load',
-    'quit',
-    'new',
-    'move',
-    'take',
-    'drop',
-    'examine',
-    'open',
-    'put',
-    'read',
-    'lock',
-    'unlock',
-    'inventory',
-    'activate',
-    'deactivate',
-];
+$verbs = json_decode(file_get_contents($vocabularyDirectory . '/verbs.json'), true);
 
 // Things that can be acted upon like 'door', 'key'.
-$nouns = [
-    'everything',
-    'chest',
-    'door',
-    'flashlight',
-    'key',
-    'north',
-    'east',
-    'south',
-    'west',
-    'up',
-    'down',
-    'reward',
-    'reward.exit',
-    'reward.enter',
-    'key.keyToWoodenDoor',
-    'key.copyOfKeyToWoodenDoor',
-    'map',
-    'letter',
-    'switch.one',
-    'switch.two',
-    'switch.three',
-];
+$nouns = json_decode(file_get_contents($vocabularyDirectory . '/nouns.json'), true);
 
 // Mostly arbitrary filler words that identify things and make sentences more natural.
-$articles = ['a', 'an', 'the'];
+$articles = json_decode(file_get_contents($vocabularyDirectory . '/articles.json'), true);
 
 // Prepositions can add specificity to a command.
 // e.g. 'look at chest' will describe it, whereas 'look in chest' will open it.
-$prepositions = ['at', 'in', 'into', 'from', 'with'];
+$prepositions = json_decode(file_get_contents($vocabularyDirectory . '/prepositions.json'), true);
 
 // Aliases are single-word synonyms.
 // Key: original word
 // Value: substitution.
-$aliases = [
-    'go' => 'move',
-    'all' => 'everything',
-    'ex' => 'examine',
-    'look' => 'examine',
-    'i' => 'inventory',
-    'inside' => 'in',
-];
+$aliases = json_decode(file_get_contents($vocabularyDirectory . '/aliases.json'), true);
 
 // Phrases are multiple-word substitutions.
 // Key: original phrase
 // Value: substitution
-$phrases = [
-    'exit reward' => 'reward.exit',
-    'enter reward' => 'reward.enter',
-    'key to wooden door' => 'key.keyToWoodenDoor',
-    'copy of key' => 'key.copyOfKeyToWoodenDoor',
-    'turn on flashlight' => 'activate flashlight',
-    'turn flashlight on' => 'activate flashlight',
-    'turn off flashlight' => 'deactivate flashlight',
-    'turn flashlight off' => 'deactivate flashlight',
-    'read map' => 'activate map',
-    'read secret letter' => 'read letter',
-    'first switch' => 'switch.one',
-    'second switch' => 'switch.two',
-    'third switch' => 'switch.three',
-    'look at' => 'examine',
-    'open' => 'look inside',
-];
+$phrases = json_decode(file_get_contents($vocabularyDirectory . '/phrases.json'), true);
 
 // Location phrases are sets of phrases that apply to specific locations.
 // This allows for situational phrases, e.g. 'go through door' in 'spawn' means 'move west', but in
 // the 'roomWestOfSpawn' location, 'go through door' could be 'move east' instead.
 // Key: location id
 // Value: phrase array (key: original, value: substitution)
-$locationPhrases = [
-    'spawn' => [
-        'go through door' => 'move west',
-        'enter door' => 'move west',
-    ],
-    'roomWestOfSpawn' => [
-        'go through door' => 'move east',
-        'enter door' => 'move east',
-    ]
-];
+$locationPhrases = json_decode(
+    file_get_contents($vocabularyDirectory . '/location_phrases.json'),
+    true
+);
 
 // Shortcuts provide quick access to full commands.
 // Key: shortcut
 // Value: command
-$shortcuts = [
-    'n' => 'move north',
-    'e' => 'move east',
-    's' => 'move south',
-    'w' => 'move west',
-    'north' => 'move north',
-    'east' => 'move east',
-    'south' => 'move south',
-    'west' => 'move west',
-    'down' => 'move down',
-    'up' => 'move up',
-];
+$shortcuts = json_decode(file_get_contents($vocabularyDirectory . '/shortcuts.json'), true);
 
-$saveGameDirectory = __DIR__ . '/data/saves';
 $playerName = 'test-player';
 $playerSpawnLocationId = 'spawn';
 

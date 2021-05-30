@@ -1,0 +1,12 @@
+{
+  "n": "move north",
+  "e": "move east",
+  "s": "move south",
+  "w": "move west",
+  "north": "move north",
+  "east": "move east",
+  "south": "move south",
+  "west": "move west",
+  "down": "move down",
+  "up": "move up"
+}

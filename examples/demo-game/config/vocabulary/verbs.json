@@ -1,0 +1,18 @@
+[
+  "save",
+  "load",
+  "quit",
+  "new",
+  "move",
+  "take",
+  "drop",
+  "examine",
+  "open",
+  "put",
+  "read",
+  "lock",
+  "unlock",
+  "inventory",
+  "activate",
+  "deactivate"
+]

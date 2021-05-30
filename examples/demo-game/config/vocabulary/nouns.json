@@ -1,0 +1,23 @@
+[
+  "everything",
+  "chest",
+  "door",
+  "flashlight",
+  "key",
+  "north",
+  "east",
+  "south",
+  "west",
+  "up",
+  "down",
+  "reward",
+  "reward.exit",
+  "reward.enter",
+  "key.keyToWoodenDoor",
+  "key.copyOfKeyToWoodenDoor",
+  "map",
+  "letter",
+  "switch.one",
+  "switch.two",
+  "switch.three"
+]
