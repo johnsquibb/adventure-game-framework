@@ -98,7 +98,11 @@ class PlatformFactory
     {
         $object = $this->getRegisteredObject(InputController::class);
         if ($object === null) {
-            $object = new InputController($this->getCommandParser(), $this->getCommandController());
+            $object = new InputController(
+                $this->getCommandParser(),
+                $this->getCommandController(),
+                $this->getGameController()
+            );
             $this->registerObject($object);
         }
 
@@ -120,7 +124,8 @@ class PlatformFactory
                 $this->platformManifest->getPrepositions(),
                 $this->platformManifest->getAliases(),
                 $this->platformManifest->getShortcuts(),
-                $this->platformManifest->getPhrases()
+                $this->platformManifest->getPhrases(),
+                $this->platformManifest->getLocationPhrases()
             );
             $this->registerObject($object);
         }

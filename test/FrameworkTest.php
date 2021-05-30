@@ -30,8 +30,9 @@ abstract class FrameworkTest extends TestCase
     {
         $commandParser = $this->createCommandParser();
         $commandController = $this->createCommandController();
+        $gameController = $this->createGameController();
 
-        return new InputController($commandParser, $commandController);
+        return new InputController($commandParser, $commandController, $gameController);
     }
 
     protected function createCommandParser(): CommandParser
@@ -50,7 +51,7 @@ abstract class FrameworkTest extends TestCase
         $prepositions = ['at', 'into', 'from'];
         $aliases = [];
 
-        return new CommandParser($verbs, $nouns, $articles, $prepositions, $aliases, [], []);
+        return new CommandParser($verbs, $nouns, $articles, $prepositions, $aliases, [], [], []);
     }
 
     protected function createCommandController(): CommandController

@@ -2,6 +2,10 @@
 
 namespace AdventureGame\Command;
 
+/**
+ * Class CommandParser parses, sanitizes, and validates command strings into processable token sets.
+ * @package AdventureGame\Command
+ */
 class CommandParser
 {
     private array $verbs;
@@ -11,6 +15,7 @@ class CommandParser
     private array $aliases;
     private array $shortcuts;
     private array $phrases;
+    private array $locationPhrases;
 
     public function __construct(
         array $verbs,
@@ -20,6 +25,7 @@ class CommandParser
         array $aliases,
         array $shortcuts,
         array $phrases,
+        array $locationPhrases,
     ) {
         $this->verbs = $this->normalizeTokens($verbs);
         $this->nouns = $this->normalizeTokens($nouns);
@@ -28,6 +34,27 @@ class CommandParser
         $this->aliases = $this->normalizeTokens($aliases);
         $this->shortcuts = $this->normalizeTokens($shortcuts);
         $this->phrases = $this->normalizeTokens($phrases);
+        $this->locationPhrases = $this->normalizeTokenSets($locationPhrases);
+    }
+
+    /**
+     * Normalize sets of tokens.
+     * @param array $tokens
+     * @return array
+     */
+    public function normalizeTokenSets(array $tokens): array
+    {
+        $normalized = [];
+
+        foreach ($tokens as $key => $set) {
+            if (is_array($set)) {
+                $normalized[$key] = $this->normalizeTokens($set);
+            } else {
+                $normalized[$key] = $set;
+            }
+        }
+
+        return $normalized;
     }
 
     /**
@@ -54,6 +81,23 @@ class CommandParser
     public function normalizeString(string $string): string
     {
         return strtolower($string);
+    }
+
+    /**
+     * Apply location-specific phrases to input.
+     * @param string $input
+     * @param string $locationId
+     * @return string
+     */
+    public function applyLocationPhrases(string $input, string $locationId): string
+    {
+        if (isset($this->locationPhrases[$locationId])) {
+            foreach ($this->locationPhrases[$locationId] as $match => $phrase) {
+                $input = str_ireplace($match, $phrase, $input);
+            }
+        }
+
+        return $this->normalizeString($input);
     }
 
     /**
@@ -87,16 +131,6 @@ class CommandParser
     }
 
     /**
-     * Assemble command from tokens.
-     * @param array $tokens
-     * @return string
-     */
-    public function assembleCommandFromTokens(array $tokens): string
-    {
-        return trim(implode(' ', $tokens));
-    }
-
-    /**
      * Filter tokens by removing irrelevant words.
      * @param array $tokens
      * @return array
@@ -112,6 +146,15 @@ class CommandParser
         }
 
         return $keep;
+    }
+
+    /**
+     * Get normalized location phrases.
+     * @return array
+     */
+    public function getLocationPhrases(): array
+    {
+        return $this->locationPhrases;
     }
 
     /**

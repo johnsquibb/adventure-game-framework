@@ -22,6 +22,8 @@ use AdventureGame\Platform\PlatformManifest;
 require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
 // TODO load from configuration file.
+
+// Action words like 'take' or 'drop'.
 $verbs = [
     'save',
     'load',
@@ -41,6 +43,7 @@ $verbs = [
     'deactivate',
 ];
 
+// Things that can be acted upon like 'door', 'key'.
 $nouns = [
     'everything',
     'chest',
@@ -65,10 +68,16 @@ $nouns = [
     'switch.three',
 ];
 
+// Mostly arbitrary filler words that identify things and make sentences more natural.
 $articles = ['a', 'an', 'the'];
 
+// Prepositions can add specificity to a command.
+// e.g. 'look at chest' will describe it, whereas 'look in chest' will open it.
 $prepositions = ['at', 'in', 'into', 'from', 'with'];
 
+// Aliases are single-word synonyms.
+// Key: original word
+// Value: substitution.
 $aliases = [
     'go' => 'move',
     'all' => 'everything',
@@ -78,6 +87,9 @@ $aliases = [
     'inside' => 'in',
 ];
 
+// Phrases are multiple-word substitutions.
+// Key: original phrase
+// Value: substitution
 $phrases = [
     'exit reward' => 'reward.exit',
     'enter reward' => 'reward.enter',
@@ -96,17 +108,36 @@ $phrases = [
     'open' => 'look inside',
 ];
 
+// Location phrases are sets of phrases that apply to specific locations.
+// This allows for situational phrases, e.g. 'go through door' in 'spawn' means 'move west', but in
+// the 'roomWestOfSpawn' location, 'go through door' could be 'move east' instead.
+// Key: location id
+// Value: phrase array (key: original, value: substitution)
+$locationPhrases = [
+    'spawn' => [
+        'go through door' => 'move west',
+        'enter door' => 'move west',
+    ],
+    'roomWestOfSpawn' => [
+        'go through door' => 'move east',
+        'enter door' => 'move east',
+    ]
+];
+
+// Shortcuts provide quick access to full commands.
+// Key: shortcut
+// Value: command
 $shortcuts = [
-    'n' => 'go north',
-    'e' => 'go east',
-    's' => 'go south',
-    'w' => 'go west',
-    'north' => 'go north',
-    'east' => 'go east',
-    'south' => 'go south',
-    'west' => 'go west',
-    'down' => 'go down',
-    'up' => 'go up',
+    'n' => 'move north',
+    'e' => 'move east',
+    's' => 'move south',
+    'w' => 'move west',
+    'north' => 'move north',
+    'east' => 'move east',
+    'south' => 'move south',
+    'west' => 'move west',
+    'down' => 'move down',
+    'up' => 'move up',
 ];
 
 $saveGameDirectory = __DIR__ . '/data/saves';
@@ -469,6 +500,7 @@ $platformManifest->setArticles($articles);
 $platformManifest->setPrepositions($prepositions);
 $platformManifest->setAliases($aliases);
 $platformManifest->setPhrases($phrases);
+$platformManifest->setLocationPhrases($locationPhrases);
 $platformManifest->setShortcuts($shortcuts);
 $platformManifest->setSaveGameDirectory($saveGameDirectory);
 $platformManifest->setPlayerName($playerName);

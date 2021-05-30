@@ -15,6 +15,7 @@ class PlatformManifest
     private array $aliases = [];
     private array $phrases = [];
     private array $shortcuts = [];
+    private array $locationPhrases = [];
 
     // Player
     private string $playerName = '';
@@ -54,6 +55,11 @@ class PlatformManifest
     public function setEvents(array $events): void
     {
         $this->events = $events;
+    }
+
+    public function getLocationPhrases(): array
+    {
+        return $this->locationPhrases;
     }
 
     public function getLocations(): array
@@ -144,5 +150,10 @@ class PlatformManifest
     public function setVerbs(array $verbs): void
     {
         $this->verbs = $verbs;
+    }
+
+    public function setLocationPhrases(array $locationPhrases): void
+    {
+        $this->locationPhrases = $locationPhrases;
     }
 }

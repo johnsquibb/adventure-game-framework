@@ -9,17 +9,21 @@ use AdventureGame\Command\Exception\InvalidNounException;
 use AdventureGame\Command\Exception\InvalidPrepositionException;
 use AdventureGame\Command\Exception\InvalidTokensLengthException;
 use AdventureGame\Command\Exception\InvalidVerbException;
+use AdventureGame\Game\Exception\PlayerLocationNotSetException;
+use AdventureGame\Game\GameController;
 use AdventureGame\Response\Response;
 
 /**
- * Class InputController handles input text.
+ * Class InputController interacts with parser, controller to build and execute commands from player
+ * input.
  * @package AdventureGame\IO
  */
 class InputController extends InputOutputController implements InputOutputControllerInterface
 {
     public function __construct(
         private CommandParser $commandParser,
-        public CommandController $commandController
+        private CommandController $commandController,
+        private GameController $gameController,
     ) {
     }
 
@@ -33,7 +37,7 @@ class InputController extends InputOutputController implements InputOutputContro
      * @throws InvalidNounException
      * @throws InvalidPrepositionException
      * @throws InvalidTokensLengthException
-     * @throws InvalidVerbException
+     * @throws InvalidVerbException|PlayerLocationNotSetException
      */
     public function processInput(string $input): ?Response
     {
@@ -45,14 +49,14 @@ class InputController extends InputOutputController implements InputOutputContro
      * Convert string input to tokens usable in commands.
      * @param string $input
      * @return array
-     * @throws InvalidCommandException
+     * @throws InvalidCommandException|PlayerLocationNotSetException
      */
     private function convertInputToTokens(string $input): array
     {
         $input = strtolower($input);
 
         $command = $this->commandParser->applyShortcuts($input);
-        $command = $this->commandParser->applyPhrases($command);
+        $command = $this->applyPhrases($command);
         $tokens = $this->commandParser->parseCommand($command);
         $tokens = $this->commandParser->normalizeTokens($tokens);
         $tokens = $this->commandParser->filterTokens($tokens);
@@ -63,5 +67,34 @@ class InputController extends InputOutputController implements InputOutputContro
         }
 
         return $tokens;
+    }
+
+    /**
+     * Apply phrases.
+     * @param string $command
+     * @return string
+     * @throws PlayerLocationNotSetException
+     */
+    private function applyPhrases(string $command): string
+    {
+        $command = $this->applyLocationPhrases($command);
+        return $this->commandParser->applyPhrases($command);
+    }
+
+    /**
+     * Apply location-specific phrases.
+     * @param string $command
+     * @return string
+     * @throws PlayerLocationNotSetException
+     */
+    private function applyLocationPhrases(string $command): string
+    {
+        $locationId = $this->gameController->getMapController()->getPlayerLocation()->getId();
+        $locationPhrases = $this->commandParser->getLocationPhrases();
+        if (isset($locationPhrases[$locationId])) {
+            $command = $this->commandParser->applyLocationPhrases($command, $locationId);
+        }
+
+        return $command;
     }
 }
