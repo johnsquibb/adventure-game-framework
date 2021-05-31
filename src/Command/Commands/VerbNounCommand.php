@@ -11,7 +11,6 @@ use AdventureGame\Item\ContainerItem;
 use AdventureGame\Item\ContainerItemInterface;
 use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Portal;
-use AdventureGame\Response\ItemDescription;
 use AdventureGame\Response\ListOfItems;
 use AdventureGame\Response\Message\InventoryMessage;
 use AdventureGame\Response\Message\ItemMessage;
@@ -378,13 +377,11 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
                 if ($item->getReadable()) {
                     $response->addMessages($item->getLines());
                 } else {
-                    if ($item instanceof ItemDescription) {
-                        $message = new UnableMessage(
-                            $item->getName(),
-                            UnableMessage::TYPE_CANNOT_READ
-                        );
-                        $response->addMessage($message->toString());
-                    }
+                    $message = new UnableMessage(
+                        $item->getName(),
+                        UnableMessage::TYPE_CANNOT_READ
+                    );
+                    $response->addMessage($message->toString());
                 }
             }
         }
