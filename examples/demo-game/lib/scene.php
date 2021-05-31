@@ -30,6 +30,17 @@ $flashlight = new Item(
 $flashlight->setSize(2);
 $flashlight->setActivatable(true);
 $flashlight->setDeactivatable(true);
+$flashlight->setReadable(true);
+$flashlight->setLines(
+    [
+        'Information written on the side:',
+        '',
+        'Model: Illuminated Devices Inc',
+        'Year: 1983',
+        'Serial Number: 8301IDI001256703',
+        'Batt. Type: (4) AA',
+    ]
+);
 
 $secretLetter = new Item(
     'secretLetter',

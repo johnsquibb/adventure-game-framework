@@ -82,6 +82,8 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     private function tryInventoryAction(GameController $gameController): ?Response
     {
         switch ($this->verb) {
+            case self::COMMAND_EXAMINE:
+                return $this->tryLookAtItemsByTagInPlayerInventory($gameController, $this->noun);
             case self::COMMAND_DROP:
                 return $this->dropItemsAtPlayerLocation($gameController, $this->noun);
             case self::COMMAND_ACTIVATE:
@@ -394,6 +396,11 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     private function tryLocationItemAction(GameController $gameController): ?Response
     {
         switch ($this->verb) {
+            case self::COMMAND_EXAMINE:
+                return $this->tryLookAtItemsByTagAtPlayerLocationAction(
+                    $gameController,
+                    $this->noun
+                );
             case self::COMMAND_TAKE:
                 return $this->takeItemsAtPlayerLocation($gameController, $this->noun);
             case self::COMMAND_ACTIVATE:

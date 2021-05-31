@@ -521,6 +521,31 @@ abstract class AbstractCommand
     }
 
     /**
+     * Try to look at items by tag in player inventory.
+     * @param GameController $gameController
+     * @param string $tag
+     * @return Response|null
+     */
+    protected function tryLookAtItemsByTagInPlayerInventory(
+        GameController $gameController,
+        string $tag
+    ): ?Response {
+        $response = new Response();
+
+        $items = $gameController->getPlayerController()->getPlayerInventory()->getItemsByTag($tag);
+
+        if (empty($items)) {
+            return null;
+        }
+
+        foreach ($this->describeItems($items) as $description) {
+            $response->addItemDescription($description);
+        }
+
+        return $response;
+    }
+
+    /**
      * Try to look at items in the current player location.
      * @param GameController $gameController
      * @param string $tag

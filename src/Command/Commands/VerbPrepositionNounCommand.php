@@ -34,16 +34,41 @@ class VerbPrepositionNounCommand extends AbstractCommand implements CommandInter
      */
     public function process(GameController $gameController): ?Response
     {
-        return $this->tryLookAction($gameController);
+        if ($response = $this->tryLookInInventoryAction($gameController)) {
+            return $response;
+        }
+
+        return $this->tryLookInLocationAction($gameController);
     }
 
     /**
-     * Attempt to look at objects.
+     * Attempt to look at objects in player inventory.
+     * @param GameController $gameController
+     * @return Response|null
+     */
+    private function tryLookInInventoryAction(GameController $gameController): ?Response
+    {
+        switch ($this->verb) {
+            case self::COMMAND_EXAMINE:
+                switch ($this->preposition) {
+                    case self::PREPOSITION_AT:
+                        return $this->tryLookAtItemsByTagInPlayerInventory(
+                            $gameController,
+                            $this->noun
+                        );
+                }
+        }
+
+        return null;
+    }
+
+    /**
+     * Attempt to look at objects in current player location.
      * @param GameController $gameController
      * @return Response|null
      * @throws PlayerLocationNotSetException
      */
-    private function tryLookAction(GameController $gameController): ?Response
+    private function tryLookInLocationAction(GameController $gameController): ?Response
     {
         switch ($this->verb) {
             case self::COMMAND_EXAMINE:
@@ -88,7 +113,6 @@ class VerbPrepositionNounCommand extends AbstractCommand implements CommandInter
 
         foreach ($items as $container) {
             if ($container instanceof ContainerEntityInterface) {
-
                 if (empty($container->revealItems())) {
                     $message = new ContainerMessage($tag, ContainerMessage::TYPE_CONTAINER_EMPTY);
                     $response->addMessage($message->toString());
