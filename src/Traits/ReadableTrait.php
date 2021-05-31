@@ -2,6 +2,10 @@
 
 namespace AdventureGame\Traits;
 
+/**
+ * Trait ReadableTrait provides methods for objects implementing ReadableInterface.
+ * @package AdventureGame\Traits
+ */
 trait ReadableTrait
 {
     private array $lines = [];

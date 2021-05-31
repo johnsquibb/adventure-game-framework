@@ -23,6 +23,7 @@ require $libDirectory . '/vocabulary.php';
 require $libDirectory . '/scene.php';
 
 $platformManifest->setPlayerName('test-player');
+$platformManifest->setPlayerInventoryCapacity(4);
 $platformManifest->setPlayerSpawnLocationId('spawn');
 
 // Run game.

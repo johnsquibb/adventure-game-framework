@@ -5,6 +5,10 @@ namespace AdventureGame\Response\Message;
 use AdventureGame\Item\ItemInterface;
 use AdventureGame\Response\MessageInterface;
 
+/**
+ * Class ItemMessage builds messages pertaining to items.
+ * @package AdventureGame\Response\Message
+ */
 class ItemMessage implements MessageInterface
 {
     public const TYPE_ACTIVATE = 'activate';

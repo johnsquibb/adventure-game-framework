@@ -3,6 +3,7 @@
 namespace AdventureGame\Game;
 
 use AdventureGame\Character\Character;
+use AdventureGame\Entity\SizeInterface;
 use AdventureGame\Item\ContainerInterface;
 use AdventureGame\Item\ItemInterface;
 
@@ -61,5 +62,22 @@ class PlayerController
     public function removeItemFromPlayerInventory(ItemInterface $item): void
     {
         $this->player->inventory->removeItemById($item->getId());
+    }
+
+    /**
+     * Determine whether the player inventory can accommodate additional size.
+     * @param int $size
+     * @return bool
+     */
+    public function getInventoryCapacityCanAccommodate(int $size): bool
+    {
+        $currentSize = 0;
+        foreach ($this->player->inventory->getItems() as $item) {
+            if ($item instanceof SizeInterface) {
+                $currentSize += $item->getSize();
+            }
+        }
+
+        return $this->player->inventory->getCapacity() >= $currentSize + $size;
     }
 }

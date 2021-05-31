@@ -6,6 +6,10 @@ use AdventureGame\Entity\EntityInterface;
 use AdventureGame\Item\ItemInterface;
 use AdventureGame\Response\MessageInterface;
 
+/**
+ * Class LockableEntityMessage builds messages pertaining to lock/unlock actions.
+ * @package AdventureGame\Response\Message
+ */
 class LockableEntityMessage implements MessageInterface
 {
     public const TYPE_LOCK = 'lock';

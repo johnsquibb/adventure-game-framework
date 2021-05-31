@@ -146,4 +146,20 @@ class ContainerTest extends TestCase
         $container->removeItemById($item->getId());
         $this->assertNull($container->getItemById($item->getId()));
     }
+
+    public function testCapacity()
+    {
+        $container = new Container();
+
+        $this->assertEquals(0, $container->getCapacity());
+
+        $container->setCapacity(999);
+        $this->assertEquals(999, $container->getCapacity());
+
+        $container->setCapacity(-999);
+        $this->assertEquals(-999, $container->getCapacity());
+
+        $container->setCapacity(0);
+        $this->assertEquals(0, $container->getCapacity());
+    }
 }

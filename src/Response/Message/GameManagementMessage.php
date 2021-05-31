@@ -4,6 +4,10 @@ namespace AdventureGame\Response\Message;
 
 use AdventureGame\Response\MessageInterface;
 
+/**
+ * Class GameManagementMessage builds messages pertaining to game management.
+ * @package AdventureGame\Response\Message
+ */
 class GameManagementMessage implements MessageInterface
 {
     public const TYPE_CANNOT_FIND_SAVE_FILE = 'cannot-find-save-file';

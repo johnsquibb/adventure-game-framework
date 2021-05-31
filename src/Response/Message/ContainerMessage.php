@@ -4,6 +4,10 @@ namespace AdventureGame\Response\Message;
 
 use AdventureGame\Response\MessageInterface;
 
+/**
+ * Class ContainerMessage builds messages pertaining to containers.
+ * @package AdventureGame\Response\Message
+ */
 class ContainerMessage implements MessageInterface
 {
     public const TYPE_CONTAINER_EMPTY = 'empty';

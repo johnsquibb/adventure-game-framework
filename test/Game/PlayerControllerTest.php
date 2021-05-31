@@ -4,6 +4,7 @@ namespace AdventureGame\Test\Game;
 
 use AdventureGame\Character\Character;
 use AdventureGame\Game\PlayerController;
+use AdventureGame\Item\AbstractItem;
 use AdventureGame\Item\Container;
 use AdventureGame\Item\Item;
 use PHPUnit\Framework\TestCase;
@@ -81,5 +82,61 @@ class PlayerControllerTest extends TestCase
             [$item],
             $playerController->getItemsByTagFromPlayerInventory('test')
         );
+    }
+
+    public function testGetInventoryCapacityCanAccommodate()
+    {
+        $inventory = new Container();
+        $player = new Character('test-player', $inventory);
+        $playerController = new PlayerController($player);
+
+        $item = new Item(
+            'test-item',
+            'Test Item',
+            'Test Item Description',
+            ['test']
+        );
+        $item->setSize(1);
+
+        $inventory->setCapacity(0);
+        $this->assertFalse($playerController->getInventoryCapacityCanAccommodate($item->getSize()));
+
+        $inventory->setCapacity($item->getSize());
+        $this->assertTrue($playerController->getInventoryCapacityCanAccommodate($item->getSize()));
+
+        $inventory->setCapacity($item->getSize() * 2);
+        $this->assertTrue($playerController->getInventoryCapacityCanAccommodate($item->getSize() * 2));
+
+        $item->setSize(-1);
+        $inventory->setCapacity(0);
+        $this->assertTrue($playerController->getInventoryCapacityCanAccommodate($item->getSize()));
+    }
+
+    public function testGetInventoryCanAccommodateInventoryContainsItems()
+    {
+        $inventory = new Container();
+        $player = new Character('test-player', $inventory);
+        $playerController = new PlayerController($player);
+
+        $item = new Item(
+            'test-item',
+            'Test Item',
+            'Test Item Description',
+            ['test']
+        );
+
+        $item->setSize(1);
+        $inventory->setCapacity(2);
+
+        $this->assertTrue($playerController->getInventoryCapacityCanAccommodate($item->getSize()));
+        $inventory->addItem($item);
+
+        $this->assertTrue($playerController->getInventoryCapacityCanAccommodate($item->getSize()));
+
+        $inventory->addItem($item);
+        $this->assertFalse($playerController->getInventoryCapacityCanAccommodate($item->getSize()));
+
+        $inventory->removeItemById($item->getId());
+        $this->assertTrue($playerController->getInventoryCapacityCanAccommodate($item->getSize()));
     }
 }

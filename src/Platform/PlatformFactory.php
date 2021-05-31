@@ -220,6 +220,9 @@ class PlatformFactory
         $playerName = $this->platformManifest->getPlayerName();
         $inventory = new Container();
 
+        $playerInventoryCapacity = $this->platformManifest->getPlayerInventoryCapacity();
+        $inventory->setCapacity($playerInventoryCapacity);
+
         $object = $this->getRegisteredObject(PlayerController::class);
         if ($object === null) {
             $player = new Character($playerName, $inventory);

@@ -2,6 +2,7 @@
 
 namespace AdventureGame\Test\Item;
 
+use AdventureGame\Item\AbstractItem;
 use AdventureGame\Item\Item;
 use PHPUnit\Framework\TestCase;
 
@@ -51,5 +52,21 @@ class ItemTest extends TestCase
 
         $item->setAcquirable(true);
         $this->assertTrue($item->getAcquirable());
+    }
+
+    public function testItemSize()
+    {
+        $item = new Item('', '', '', ['']);
+
+        $this->assertEquals(0, $item->getSize());
+
+        $item->setSize(999);
+        $this->assertEquals(999, $item->getSize());
+
+        $item->setSize(-999);
+        $this->assertEquals(-999, $item->getSize());
+
+        $item->setSize(0);
+        $this->assertEquals(0, $item->getSize());
     }
 }

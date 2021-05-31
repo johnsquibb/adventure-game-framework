@@ -4,6 +4,10 @@ namespace AdventureGame\Response\Message;
 
 use AdventureGame\Response\MessageInterface;
 
+/**
+ * Class UnableMessage builds messages pertaining to errors, invalid commands.
+ * @package AdventureGame\Response\Message
+ */
 class UnableMessage implements MessageInterface
 {
     public const TYPE_ALREADY_ACTIVATED = 'already-activated';

@@ -2,11 +2,14 @@
 
 namespace AdventureGame\Item;
 
+use AdventureGame\Entity\CapacityInterface;
+use AdventureGame\Entity\RevealInterface;
+
 /**
  * Interface ContainerInterface defines methods for objects that behave like containers.
  * @package AdventureGame\Item
  */
-interface ContainerInterface
+interface ContainerInterface extends CapacityInterface, RevealInterface
 {
     public function addItem(ItemInterface $item): void;
 
@@ -23,6 +26,4 @@ interface ContainerInterface
     public function removeItemById(string $itemId): void;
 
     public function revealItems(): array;
-
-    public function getRevealed(): bool;
 }

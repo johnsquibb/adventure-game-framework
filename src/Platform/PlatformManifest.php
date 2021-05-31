@@ -19,6 +19,7 @@ class PlatformManifest
 
     // Player
     private string $playerName = '';
+    private int $playerInventoryCapacity = 0;
 
     // Locations
     private array $locations = [];
@@ -92,6 +93,11 @@ class PlatformManifest
         $this->phrases = $phrases;
     }
 
+    public function getPlayerInventoryCapacity(): int
+    {
+        return $this->playerInventoryCapacity;
+    }
+
     public function getPlayerName(): string
     {
         return $this->playerName;
@@ -155,5 +161,10 @@ class PlatformManifest
     public function setLocationPhrases(array $locationPhrases): void
     {
         $this->locationPhrases = $locationPhrases;
+    }
+
+    public function setPlayerInventoryCapacity(int $playerInventoryCapacity): void
+    {
+        $this->playerInventoryCapacity = $playerInventoryCapacity;
     }
 }

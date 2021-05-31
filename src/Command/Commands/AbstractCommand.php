@@ -330,7 +330,10 @@ abstract class AbstractCommand
         if ($container instanceof ContainerItem) {
             if (!$container->getRevealed()) {
                 $response = new Response();
-                $message = new UnableMessage($containerTag, UnableMessage::TYPE_CONTAINER_NOT_REVEALED);
+                $message = new UnableMessage(
+                    $containerTag,
+                    UnableMessage::TYPE_CONTAINER_NOT_REVEALED
+                );
                 $response->addMessage($message->toString());
                 return $response;
             }
@@ -440,14 +443,24 @@ abstract class AbstractCommand
                 if ($item->getDiscovered()) {
                     if ($item->getAccessible()) {
                         if ($item->getAcquirable()) {
-                            $container->removeItemById($item->getId());
+                            if ($gameController->getPlayerController()
+                                ->getInventoryCapacityCanAccommodate($item->getSize())
+                            ) {
+                                $container->removeItemById($item->getId());
 
-                            $addItemResponse = $this->addItemToPlayerInventory(
-                                $gameController,
-                                $item
-                            );
+                                $addItemResponse = $this->addItemToPlayerInventory(
+                                    $gameController,
+                                    $item
+                                );
 
-                            $response->addMessages($addItemResponse->getMessages());
+                                $response->addMessages($addItemResponse->getMessages());
+                            } else {
+                                $message = new InventoryMessage(
+                                    InventoryMessage::TYPE_INVENTORY_FULL
+                                );
+                                $response->addMessage($message->toString());
+                                return $response;
+                            }
                         } else {
                             $message = new UnableMessage(
                                 $item->getName(),

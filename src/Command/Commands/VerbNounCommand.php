@@ -459,12 +459,22 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         foreach ($items as $item) {
             if ($item instanceof ItemInterface) {
                 if ($item->getAcquirable()) {
-                    // Remove the item from map, add to player inventory.
-                    $item = $gameController->mapController->takeItemById($item->getId());
-                    $addItemResponse = $this->addItemToPlayerInventory($gameController, $item);
-                    $response->addMessages($addItemResponse->getMessages());
+                    if ($gameController->getPlayerController()->getInventoryCapacityCanAccommodate(
+                        $item->getSize()
+                    )) {
+                        // Remove the item from map, add to player inventory.
+                        $item = $gameController->mapController->takeItemById($item->getId());
+                        $addItemResponse = $this->addItemToPlayerInventory($gameController, $item);
+                        $response->addMessages($addItemResponse->getMessages());
+                    } else {
+                        $message = new InventoryMessage(InventoryMessage::TYPE_INVENTORY_FULL);
+                        $response->addMessage($message->toString());
+                    }
                 } else {
-                    $message = new UnableMessage($item->getName(), UnableMessage::TYPE_CANNOT_TAKE);
+                    $message = new UnableMessage(
+                        $item->getName(),
+                        UnableMessage::TYPE_CANNOT_TAKE
+                    );
                     $response->addMessage($message->toString());
                 }
             }
@@ -477,7 +487,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
      * Take all acquirable items matching tag at player location into player inventory.
      * @param GameController $gameController
      * @param string $tag
-     * @return Response
+     * @return Response|null
      * @throws PlayerLocationNotSetException
      */
     private function takeItemsByTagAtPlayerLocation(

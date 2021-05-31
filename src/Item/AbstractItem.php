@@ -11,8 +11,14 @@ use AdventureGame\Traits\DiscoverableTrait;
 use AdventureGame\Traits\IdentityTrait;
 use AdventureGame\Traits\NameTrait;
 use AdventureGame\Traits\ReadableTrait;
+use AdventureGame\Traits\SizeTrait;
 use AdventureGame\Traits\TagTrait;
 
+/**
+ * Class AbstractItem provides methods for items that can be collected and used throughout the
+ * game. It can be further extended to provide container or other specialized roles.
+ * @package AdventureGame\Item
+ */
 class AbstractItem implements ItemInterface
 {
     use IdentityTrait;
@@ -25,6 +31,7 @@ class AbstractItem implements ItemInterface
     use ActivatableTrait;
     use DeactivatableTrait;
     use ReadableTrait;
+    use SizeTrait;
 
     public function __construct(
         string $id,

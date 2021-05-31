@@ -12,7 +12,8 @@ use AdventureGame\Response\Message\GameManagementMessage;
 use AdventureGame\Response\Response;
 
 /**
- * Class VerbCommand processes single-word verb commands, e.g. "take" or "eat".
+ * Class VerbCommand processes single-word verb commands, e.g. "examine" or "inventory".
+ * It also handles game management commands such as 'save' or 'quit'.
  * @package AdventureGame\Command\Commands
  */
 class VerbCommand extends AbstractCommand implements CommandInterface
