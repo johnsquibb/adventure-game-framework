@@ -11,4 +11,6 @@ interface CapacityEntityInterface
     public function getCapacity(): int;
 
     public function setCapacity(int $capacity);
+
+    public function hasCapacity(int $size): bool;
 }

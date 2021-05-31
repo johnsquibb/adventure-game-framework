@@ -63,21 +63,4 @@ class PlayerController
     {
         $this->player->inventory->removeItemById($item->getId());
     }
-
-    /**
-     * Determine whether the player inventory can accommodate additional size.
-     * @param int $size
-     * @return bool
-     */
-    public function getInventoryCapacityCanAccommodate(int $size): bool
-    {
-        $currentSize = 0;
-        foreach ($this->player->inventory->getItems() as $item) {
-            if ($item instanceof SizableEntityInterface) {
-                $currentSize += $item->getSize();
-            }
-        }
-
-        return $this->player->inventory->getCapacity() >= $currentSize + $size;
-    }
 }

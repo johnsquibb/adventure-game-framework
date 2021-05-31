@@ -10,7 +10,8 @@ use AdventureGame\Response\MessageInterface;
  */
 class ContainerMessage implements MessageInterface
 {
-    public const TYPE_CONTAINER_EMPTY = 'empty';
+    public const TYPE_CONTAINER_EMPTY = 'container-empty';
+    public const TYPE_CONTAINER_FULL = 'container-full';
 
     public function __construct(private string $name, private string $messageType)
     {
@@ -20,6 +21,7 @@ class ContainerMessage implements MessageInterface
     {
         return match ($this->messageType) {
             self::TYPE_CONTAINER_EMPTY => sprintf("There's nothing inside %s", $this->name),
+            self::TYPE_CONTAINER_FULL => sprintf("%s is full", $this->name),
             default => '',
         };
     }

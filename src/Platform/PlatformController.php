@@ -6,9 +6,12 @@ use AdventureGame\Client\ClientControllerInterface;
 use AdventureGame\Command\Exception\InvalidCommandException;
 use AdventureGame\Command\Exception\InvalidTokenException;
 use AdventureGame\Command\Exception\InvalidTokensLengthException;
+use AdventureGame\Command\Exception\LoadGameException;
 use AdventureGame\Command\Exception\StartNewGameException;
 use AdventureGame\Game\Exception\InvalidExitException;
 use AdventureGame\Game\Exception\InvalidSaveDirectoryException;
+use AdventureGame\Game\GameController;
+use AdventureGame\Response\Message\GameManagementMessage;
 use AdventureGame\Response\Response;
 
 /**
@@ -35,10 +38,15 @@ class PlatformController
     {
         try {
             $this->runGameLoop($clientController);
-        } catch (StartNewGameException $e) {
+        } catch (StartNewGameException) {
             // Rebuild initial game state and re-run.
             $this->platformFactory->clearRegistry();
             $this->platformRegistry = $this->platformFactory->createPlatformRegistry();
+            $this->run($clientController);
+        } catch (LoadGameException) {
+            $gameController = $this->platformRegistry->gameController;
+            $response = $this->loadGame($gameController);
+            $clientController->processResponse($response);
             $this->run($clientController);
         }
     }
@@ -92,7 +100,7 @@ class PlatformController
     {
         $response = new Response();
 
-        $response->addMessage("You can't do that.");
+        $response->addMessage("Be more specific.");
         return $response;
     }
 
@@ -116,7 +124,40 @@ class PlatformController
     {
         $response = new Response();
 
-        $response->addMessage("Unable to go that way.");
+        $response->addMessage("There is nothing in that direction.");
+        return $response;
+    }
+
+    private function loadGame(GameController $gameController): Response
+    {
+        $response = new Response();
+
+        $file = $gameController->getSaveDirectory();
+        $file .= '/save.txt';
+        if (!file_exists($file)) {
+            $message = new GameManagementMessage(GameManagementMessage::TYPE_CANNOT_FIND_SAVE_FILE);
+            $response->addMessage($message->toString());
+            return $response;
+        }
+
+        $serialized = file_get_contents($file);
+        $object = @unserialize($serialized);
+        if ($object === false) {
+            $message = new GameManagementMessage(GameManagementMessage::TYPE_UNSERIALIZE_ERROR);
+            $response->addMessage($message->toString());
+            return $response;
+        }
+
+        if ($object instanceof GameController) {
+            $gameController->hydrateFromSave($object);
+            $message = new GameManagementMessage(GameManagementMessage::TYPE_GAME_LOADED);
+            $response->addMessage($message->toString());
+        } else {
+            $gameController->hydrateFromSave($object);
+            $message = new GameManagementMessage(GameManagementMessage::TYPE_GAME_NOT_LOADED);
+            $response->addMessage($message->toString());
+        }
+
         return $response;
     }
 }

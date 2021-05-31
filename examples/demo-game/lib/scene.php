@@ -101,6 +101,7 @@ $chest = new ContainerItem(
     'A chest containing valuable treasure.',
     ['chest'],
 );
+$chest->setCapacity(5);
 $chest->setAcquirable(false);
 $chest->addItem($flashlight);
 $chest->addItem($keyToWoodenDoor);
@@ -126,7 +127,8 @@ $doorFromWestRoomToSpawn = new Portal(
     'Wooden Door',
     'A heavy wooden door leading back to spawn.',
     ['door'],
-    'east', 'spawn'
+    'east',
+    'spawn'
 );
 
 $doorFromWestRoomToSpawn->setKeyEntityId($keyToWoodenDoor->getId());
@@ -136,7 +138,8 @@ $doorFromWestRoomToSecretRoom = new Portal(
     'Secret Door',
     'A secret door has been revealed to the west.',
     ['door'],
-    'west', 'secretRoom'
+    'west',
+    'secretRoom'
 );
 
 $entryFromSpawnToHallway = new Portal(
@@ -144,7 +147,8 @@ $entryFromSpawnToHallway = new Portal(
     'Hallway Entrance',
     'An entrance to a hallway leading south.',
     ['hallway'],
-    'south', 'hallwayLeadingSouthFromSpawn'
+    'south',
+    'hallwayLeadingSouthFromSpawn'
 );
 
 $entryFromHallwayToSpawn = new Portal(
@@ -152,7 +156,8 @@ $entryFromHallwayToSpawn = new Portal(
     'Hallway Entrance',
     'An entrance to a hallway leading north.',
     ['hallway'],
-    'north', 'spawn'
+    'north',
+    'spawn'
 );
 
 $doorFromHallwayToCourtyard = new Portal(
@@ -249,6 +254,7 @@ $roomWestOfSpawn = new Location(
     new Container(),
     [$doorFromWestRoomToSpawn],
 );
+$roomWestOfSpawn->getContainer()->setCapacity(20);
 
 $hallwayLeadingSouth = new Location(
     'hallwayLeadingSouthFromSpawn',
@@ -257,6 +263,7 @@ $hallwayLeadingSouth = new Location(
     new Container(),
     [$doorFromHallwayToCourtyard, $entryFromHallwayToSpawn]
 );
+$hallwayLeadingSouth->getContainer()->setCapacity(5);
 
 $courtyard = new Location(
     'courtyard',
@@ -266,6 +273,7 @@ $courtyard = new Location(
     new Container(),
     [$doorFromCourtyardToHallway, $pathFromCourtyardToTown, $stepsFromCourtyardToShed]
 );
+$courtyard->getContainer()->setCapacity(40);
 
 $houseInTown = new Location(
     "houseInTown",
@@ -274,6 +282,7 @@ $houseInTown = new Location(
     new Container(),
     [$pathFromTownToCourtyard, $cellarDoorLeadingIn]
 );
+$houseInTown->getContainer()->setCapacity(20);
 
 $smallShed = new Location(
     "smallShed",
@@ -282,6 +291,7 @@ $smallShed = new Location(
     new Container(),
     [$stepsFromShedToCourtyard]
 );
+$smallShed->getContainer()->setCapacity(10);
 
 $cellar = new Location(
     "cellar",
@@ -290,6 +300,7 @@ $cellar = new Location(
     new Container(),
     [$cellarDoorLeadingOut]
 );
+$cellar->getContainer()->setCapacity(20);
 
 $spawnRoom = new Location(
     'spawn',
@@ -298,6 +309,7 @@ $spawnRoom = new Location(
     new Container(),
     [$doorFromSpawnToWestRoom, $entryFromSpawnToHallway],
 );
+$spawnRoom->getContainer()->setCapacity(20);
 $spawnRoom->getContainer()->addItem($chest);
 
 $secretRoom = new Location(
@@ -307,6 +319,7 @@ $secretRoom = new Location(
     new Container(),
     [$doorFromSecretRoomToWestRoom],
 );
+$secretRoom->getContainer()->setCapacity(20);
 $secretRoom->getContainer()->addItem($secretLetter);
 
 // ---------------------
@@ -323,6 +336,7 @@ $switch1->setActivatable(true);
 $switch1->setDeactivatable(true);
 $switch1->setAcquirable(false);
 $houseInTown->getContainer()->addItem($switch1);
+$houseInTown->getContainer()->setCapacity(20);
 
 $switch2 = new Item(
     'switch2',

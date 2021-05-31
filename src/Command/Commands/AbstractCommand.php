@@ -444,7 +444,8 @@ abstract class AbstractCommand
                     if ($item->getAccessible()) {
                         if ($item->getAcquirable()) {
                             if ($gameController->getPlayerController()
-                                ->getInventoryCapacityCanAccommodate($item->getSize())
+                                ->getPlayerInventory()
+                                ->hasCapacity($item->getSize())
                             ) {
                                 $container->removeItemById($item->getId());
 

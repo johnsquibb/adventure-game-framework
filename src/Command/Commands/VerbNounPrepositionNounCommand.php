@@ -6,7 +6,10 @@ use AdventureGame\Command\CommandInterface;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
 use AdventureGame\Item\ContainerItem;
+use AdventureGame\Item\ContainerItemInterface;
+use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Portal;
+use AdventureGame\Response\Message\ContainerMessage;
 use AdventureGame\Response\Message\UnableMessage;
 use AdventureGame\Response\Response;
 
@@ -185,11 +188,25 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
 
         $container = $this->getFirstContainerByTagAtPlayerLocation($gameController, $containerTag);
 
-        if ($container) {
+        if ($container instanceof ContainerItemInterface) {
             foreach ($items as $item) {
-                $container->addItem($item);
-                $removeItemResponse = $this->removeItemFromPlayerInventory($gameController, $item);
-                $response->addMessages($removeItemResponse->getMessages());
+                if ($item instanceof ItemInterface) {
+                    if ($container->hasCapacity($item->getSize())) {
+                        $container->addItem($item);
+                        $removeItemResponse = $this->removeItemFromPlayerInventory(
+                            $gameController,
+                            $item
+                        );
+                        $response->addMessages($removeItemResponse->getMessages());
+                    } else {
+                        $message = new ContainerMessage(
+                            $container->getName(),
+                            ContainerMessage::TYPE_CONTAINER_FULL
+                        );
+                        $response->addMessage($message->toString());
+                        return $response;
+                    }
+                }
             }
         } else {
             $message = new UnableMessage($containerTag, UnableMessage::TYPE_CONTAINER_NOT_FOUND);

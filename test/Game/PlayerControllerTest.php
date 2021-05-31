@@ -99,17 +99,17 @@ class PlayerControllerTest extends TestCase
         $item->setSize(1);
 
         $inventory->setCapacity(0);
-        $this->assertFalse($playerController->getInventoryCapacityCanAccommodate($item->getSize()));
+        $this->assertFalse($playerController->getPlayerInventory()->hasCapacity($item->getSize()));
 
         $inventory->setCapacity($item->getSize());
-        $this->assertTrue($playerController->getInventoryCapacityCanAccommodate($item->getSize()));
+        $this->assertTrue($playerController->getPlayerInventory()->hasCapacity($item->getSize()));
 
         $inventory->setCapacity($item->getSize() * 2);
-        $this->assertTrue($playerController->getInventoryCapacityCanAccommodate($item->getSize() * 2));
+        $this->assertTrue($playerController->getPlayerInventory()->hasCapacity($item->getSize() * 2));
 
         $item->setSize(-1);
         $inventory->setCapacity(0);
-        $this->assertTrue($playerController->getInventoryCapacityCanAccommodate($item->getSize()));
+        $this->assertTrue($playerController->getPlayerInventory()->hasCapacity($item->getSize()));
     }
 
     public function testGetInventoryCanAccommodateInventoryContainsItems()
@@ -128,15 +128,15 @@ class PlayerControllerTest extends TestCase
         $item->setSize(1);
         $inventory->setCapacity(2);
 
-        $this->assertTrue($playerController->getInventoryCapacityCanAccommodate($item->getSize()));
+        $this->assertTrue($playerController->getPlayerInventory()->hasCapacity($item->getSize()));
         $inventory->addItem($item);
 
-        $this->assertTrue($playerController->getInventoryCapacityCanAccommodate($item->getSize()));
+        $this->assertTrue($playerController->getPlayerInventory()->hasCapacity($item->getSize()));
 
         $inventory->addItem($item);
-        $this->assertFalse($playerController->getInventoryCapacityCanAccommodate($item->getSize()));
+        $this->assertFalse($playerController->getPlayerInventory()->hasCapacity($item->getSize()));
 
         $inventory->removeItemById($item->getId());
-        $this->assertTrue($playerController->getInventoryCapacityCanAccommodate($item->getSize()));
+        $this->assertTrue($playerController->getPlayerInventory()->hasCapacity($item->getSize()));
     }
 }

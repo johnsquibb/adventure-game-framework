@@ -11,6 +11,7 @@ use AdventureGame\Item\ContainerItemInterface;
 use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Portal;
 use AdventureGame\Response\ListOfItems;
+use AdventureGame\Response\Message\ContainerMessage;
 use AdventureGame\Response\Message\InventoryMessage;
 use AdventureGame\Response\Message\ItemMessage;
 use AdventureGame\Response\Message\UnableMessage;
@@ -148,9 +149,22 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
 
         foreach ($items as $item) {
             if ($item instanceof ItemInterface) {
-                $dropItemResponse = $this->removeItemFromPlayerInventory($gameController, $item);
-                $gameController->mapController->dropItem($item);
-                $response->addMessages($dropItemResponse->getMessages());
+                $location = $gameController->getMapController()->getPlayerLocation();
+                if ($location->getContainer()->hasCapacity($item->getSize())) {
+                    $dropItemResponse = $this->removeItemFromPlayerInventory(
+                        $gameController,
+                        $item
+                    );
+                    $gameController->mapController->dropItem($item);
+                    $response->addMessages($dropItemResponse->getMessages());
+                } else {
+                    $message = new ContainerMessage(
+                        $location->getName(),
+                        ContainerMessage::TYPE_CONTAINER_FULL
+                    );
+                    $response->addMessage($message->toString());
+                    return $response;
+                }
             }
         }
 
@@ -459,7 +473,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         foreach ($items as $item) {
             if ($item instanceof ItemInterface) {
                 if ($item->getAcquirable()) {
-                    if ($gameController->getPlayerController()->getInventoryCapacityCanAccommodate(
+                    if ($gameController->getPlayerController()->getPlayerInventory()->hasCapacity(
                         $item->getSize()
                     )) {
                         // Remove the item from map, add to player inventory.

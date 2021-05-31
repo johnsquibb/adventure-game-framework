@@ -6,6 +6,7 @@ use AdventureGame\Command\CommandInterface;
 use AdventureGame\Game\Exception\InvalidSaveDirectoryException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
+use AdventureGame\Response\Choice\LoadGameChoice;
 use AdventureGame\Response\Choice\NewGameChoice;
 use AdventureGame\Response\Choice\QuitGameChoice;
 use AdventureGame\Response\Message\GameManagementMessage;
@@ -121,38 +122,14 @@ class VerbCommand extends AbstractCommand implements CommandInterface
      * Load a game.
      * @param GameController $gameController
      * @return Response
-     * @throws InvalidSaveDirectoryException
      * @todo Implement choices for selecting which game to load using named 'slots'
      */
     private function loadGame(GameController $gameController): Response
     {
         $response = new Response();
 
-        $file = $gameController->getSaveDirectory();
-        $file .= '/save.txt';
-        if (!file_exists($file)) {
-            $message = new GameManagementMessage(GameManagementMessage::TYPE_CANNOT_FIND_SAVE_FILE);
-            $response->addMessage($message->toString());
-            return $response;
-        }
-
-        $serialized = file_get_contents($file);
-        $object = @unserialize($serialized);
-        if ($object === false) {
-            $message = new GameManagementMessage(GameManagementMessage::TYPE_UNSERIALIZE_ERROR);
-            $response->addMessage($message->toString());
-            return $response;
-        }
-
-        if ($object instanceof GameController) {
-            $gameController->hydrateFromSave($object);
-            $message = new GameManagementMessage(GameManagementMessage::TYPE_GAME_LOADED);
-            $response->addMessage($message->toString());
-        } else {
-            $gameController->hydrateFromSave($object);
-            $message = new GameManagementMessage(GameManagementMessage::TYPE_GAME_NOT_LOADED);
-            $response->addMessage($message->toString());
-        }
+        $loadGameChoice = new LoadGameChoice();
+        $response->setChoice($loadGameChoice->getChoice());
 
         return $response;
     }
@@ -165,8 +142,6 @@ class VerbCommand extends AbstractCommand implements CommandInterface
     private function newGame(GameController $gameController): Response
     {
         $response = new Response();
-        $message = new GameManagementMessage(GameManagementMessage::TYPE_NEW_GAME_STARTED);
-        $response->addMessage($message->toString());
 
         $newGameChoice = new NewGameChoice();
         $response->setChoice($newGameChoice->getChoice());
