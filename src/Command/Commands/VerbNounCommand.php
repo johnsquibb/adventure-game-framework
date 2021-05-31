@@ -3,7 +3,6 @@
 namespace AdventureGame\Command\Commands;
 
 use AdventureGame\Command\CommandInterface;
-use AdventureGame\Entity\ReadableEntityInterface;
 use AdventureGame\Game\Exception\InvalidExitException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
@@ -348,42 +347,39 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         $items = $gameController->getPlayerController()->getPlayerInventory()->getItemsByTag($tag);
 
         if (empty($items)) {
-            $response = new Response();
-            $message = new UnableMessage($tag, UnableMessage::TYPE_ITEM_NOT_FOUND);
-            $response->addMessage($message->toString());
-            return $response;
+            return null;
         }
-
-        return $this->readItems($gameController, $items);
-    }
-
-    /**
-     * Read items.
-     * @param GameController $gameController
-     * @param array $items
-     * @return Response
-     */
-    private function readItems(GameController $gameController, array $items): Response
-    {
-        $response = new Response();
 
         if (count($items) > 1) {
             $listOfItems = new ListOfItems($items, ListOfItems::ACTION_READ);
             return $listOfItems->getResponse();
         }
 
-        foreach ($items as $item) {
-            if ($item instanceof ReadableEntityInterface) {
-                if ($item->getReadable()) {
-                    $response->addMessages($item->getLines());
-                } else {
-                    $message = new UnableMessage(
-                        $item->getName(),
-                        UnableMessage::TYPE_CANNOT_READ
-                    );
-                    $response->addMessage($message->toString());
-                }
-            }
+        $item = $items[0];
+        if ($item instanceof ItemInterface) {
+            return $this->readItem($item);
+        }
+
+        return null;
+    }
+
+    /**
+     * Read item.
+     * @param ItemInterface $item
+     * @return Response
+     */
+    private function readItem(ItemInterface $item): Response
+    {
+        $response = new Response();
+
+        if ($item->getReadable()) {
+            $response->addMessages($item->getLines());
+        } else {
+            $message = new UnableMessage(
+                $item->getName(),
+                UnableMessage::TYPE_CANNOT_READ
+            );
+            $response->addMessage($message->toString());
         }
 
         return $response;
@@ -567,7 +563,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
     private function readItemsByTagAtPlayerLocation(
         GameController $gameController,
         string $tag
-    ): Response {
+    ): ?Response {
         $items = $gameController->mapController->getItemsByTag($tag);
 
         if (empty($items)) {
@@ -577,7 +573,17 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
             return $response;
         }
 
-        return $this->readItems($gameController, $items);
+        if (count($items) > 1) {
+            $listOfItems = new ListOfItems($items, ListOfItems::ACTION_READ);
+            return $listOfItems->getResponse();
+        }
+
+        $item = $items[0];
+        if ($item instanceof ItemInterface) {
+            return $this->readItem($item);
+        }
+
+        return null;
     }
 
     /**
