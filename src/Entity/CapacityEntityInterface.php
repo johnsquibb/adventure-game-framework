@@ -3,10 +3,10 @@
 namespace AdventureGame\Entity;
 
 /**
- * Interface CapacityInterface defines methods for entities that have a capacity.
+ * Interface CapacityEntityInterface defines methods for entities that have a capacity.
  * @package AdventureGame\Entity
  */
-interface CapacityInterface
+interface CapacityEntityInterface
 {
     public function getCapacity(): int;
 

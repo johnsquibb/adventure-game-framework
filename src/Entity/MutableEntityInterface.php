@@ -3,10 +3,10 @@
 namespace AdventureGame\Entity;
 
 /**
- * Interface MutableInterface defines methods for entities that are mutable.
+ * Interface MutableEntityInterface defines methods for entities that are mutable.
  * @package AdventureGame\Entity
  */
-interface MutableInterface
+interface MutableEntityInterface
 {
     public function getMutable(): bool;
 

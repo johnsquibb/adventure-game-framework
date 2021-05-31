@@ -3,7 +3,7 @@
 namespace AdventureGame\Test\Command\Commands;
 
 use AdventureGame\Command\Commands\VerbNounPrepositionNounCommand;
-use AdventureGame\Item\ContainerInterface;
+use AdventureGame\Item\ContainerEntityInterface;
 use AdventureGame\Test\FrameworkTest;
 
 class VerbNounPrepositionNounCommandTest extends FrameworkTest
@@ -50,7 +50,7 @@ class VerbNounPrepositionNounCommandTest extends FrameworkTest
     {
         $gameController = $this->createGameController();
 
-        /** @var ContainerInterface $container */
+        /** @var ContainerEntityInterface $container */
         $container = $gameController->mapController->getPlayerLocation()->getContainer()
             ->getItemById('test-container-item');
         $itemCount = $container->countItems();

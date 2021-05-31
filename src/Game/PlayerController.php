@@ -3,8 +3,8 @@
 namespace AdventureGame\Game;
 
 use AdventureGame\Character\Character;
-use AdventureGame\Entity\SizeInterface;
-use AdventureGame\Item\ContainerInterface;
+use AdventureGame\Entity\SizableEntityInterface;
+use AdventureGame\Item\ContainerEntityInterface;
 use AdventureGame\Item\ItemInterface;
 
 /**
@@ -48,9 +48,9 @@ class PlayerController
 
     /**
      * Get player inventory.
-     * @return ContainerInterface
+     * @return ContainerEntityInterface
      */
-    public function getPlayerInventory(): ContainerInterface
+    public function getPlayerInventory(): ContainerEntityInterface
     {
         return $this->player->inventory;
     }
@@ -73,7 +73,7 @@ class PlayerController
     {
         $currentSize = 0;
         foreach ($this->player->inventory->getItems() as $item) {
-            if ($item instanceof SizeInterface) {
+            if ($item instanceof SizableEntityInterface) {
                 $currentSize += $item->getSize();
             }
         }

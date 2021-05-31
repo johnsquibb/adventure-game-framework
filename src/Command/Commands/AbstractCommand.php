@@ -4,12 +4,12 @@ namespace AdventureGame\Command\Commands;
 
 use AdventureGame\Entity\ActivatableEntityInterface;
 use AdventureGame\Entity\EntityInterface;
-use AdventureGame\Entity\LockableInterface;
+use AdventureGame\Entity\LockableEntityInterface;
 use AdventureGame\Game\Exception\ExitIsLockedException;
 use AdventureGame\Game\Exception\InvalidExitException;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
-use AdventureGame\Item\ContainerInterface;
+use AdventureGame\Item\ContainerEntityInterface;
 use AdventureGame\Item\ContainerItem;
 use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Location;
@@ -76,7 +76,7 @@ abstract class AbstractCommand
      * @param ContainerItem $container
      * @return array
      */
-    protected function listContainerItems(ContainerInterface $container): array
+    protected function listContainerItems(ContainerEntityInterface $container): array
     {
         $descriptions = [];
 
@@ -122,7 +122,7 @@ abstract class AbstractCommand
      */
     protected function lockEntityWithKey(EntityInterface $entity, ItemInterface $key): string
     {
-        if (is_a($entity, LockableInterface::class)) {
+        if (is_a($entity, LockableEntityInterface::class)) {
             $entity->setLocked(true);
 
             $message = new LockableEntityMessage($entity, $key, LockableEntityMessage::TYPE_LOCK);
@@ -400,21 +400,21 @@ abstract class AbstractCommand
      * Get the first container by tag at current player location.
      * @param GameController $gameController
      * @param string $tag
-     * @return ContainerInterface|null
+     * @return ContainerEntityInterface|null
      * @throws PlayerLocationNotSetException
      */
     protected function getFirstContainerByTagAtPlayerLocation(
         GameController $gameController,
         string $tag
-    ): ?ContainerInterface {
+    ): ?ContainerEntityInterface {
         $location = $gameController->mapController->getPlayerLocation();
 
         $containers = $location->getContainer()->getItemsByTypeAndTag(
-            ContainerInterface::class,
+            ContainerEntityInterface::class,
             $tag
         );
 
-        if (count($containers) && $containers[0] instanceof ContainerInterface) {
+        if (count($containers) && $containers[0] instanceof ContainerEntityInterface) {
             return $containers[0];
         }
 
@@ -425,7 +425,7 @@ abstract class AbstractCommand
      * Take items from container.
      * @param GameController $gameController
      * @param string $itemTag For display of anonymous item messages only, e.g. when item not discovered.
-     * @param ContainerInterface $container
+     * @param ContainerEntityInterface $container
      * @param array $items
      * @return Response
      * @throws PlayerLocationNotSetException
@@ -433,7 +433,7 @@ abstract class AbstractCommand
     private function takeItemsFromContainer(
         GameController $gameController,
         string $itemTag,
-        ContainerInterface $container,
+        ContainerEntityInterface $container,
         array $items
     ): Response {
         $response = new Response();
@@ -587,7 +587,7 @@ abstract class AbstractCommand
      */
     protected function unlockEntityWithKey(EntityInterface $entity, ItemInterface $key): string
     {
-        if (is_a($entity, LockableInterface::class)) {
+        if (is_a($entity, LockableEntityInterface::class)) {
             $entity->setLocked(false);
             $message = new LockableEntityMessage($entity, $key, LockableEntityMessage::TYPE_UNLOCK);
             return $message->toString();

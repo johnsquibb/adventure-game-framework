@@ -6,7 +6,7 @@ namespace AdventureGame\Entity;
  * Interface LockableInterface defines methods for entities that are lockable.
  * @package AdventureGame\Entity
  */
-interface LockableInterface extends MutableInterface
+interface LockableEntityInterface extends MutableEntityInterface
 {
     public function getKeyEntityId(): string;
 

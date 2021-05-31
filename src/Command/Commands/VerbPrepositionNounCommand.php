@@ -5,7 +5,7 @@ namespace AdventureGame\Command\Commands;
 use AdventureGame\Command\CommandInterface;
 use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
-use AdventureGame\Item\ContainerInterface;
+use AdventureGame\Item\ContainerEntityInterface;
 use AdventureGame\Response\Message\ContainerMessage;
 use AdventureGame\Response\Message\UnableMessage;
 use AdventureGame\Response\Response;
@@ -87,7 +87,7 @@ class VerbPrepositionNounCommand extends AbstractCommand implements CommandInter
         }
 
         foreach ($items as $container) {
-            if ($container instanceof ContainerInterface) {
+            if ($container instanceof ContainerEntityInterface) {
 
                 if (empty($container->revealItems())) {
                     $message = new ContainerMessage($tag, ContainerMessage::TYPE_CONTAINER_EMPTY);

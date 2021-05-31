@@ -3,10 +3,10 @@
 namespace AdventureGame\Entity;
 
 /**
- * Interface RevealInterface defines methods for entities that can be revealed.
+ * Interface RevealableEntityInterface defines methods for entities that can be revealed.
  * @package AdventureGame\Entity
  */
-interface RevealInterface
+interface RevealableEntityInterface
 {
     public function getRevealed(): bool;
 

@@ -3,7 +3,7 @@
 namespace AdventureGame\Test\Item;
 
 use AdventureGame\Item\Container;
-use AdventureGame\Item\ContainerInterface;
+use AdventureGame\Item\ContainerEntityInterface;
 use AdventureGame\Item\ContainerItem;
 use AdventureGame\Item\Item;
 use AdventureGame\Item\ItemInterface;
@@ -124,7 +124,7 @@ class ContainerTest extends TestCase
         $this->assertEquals(
             [$item2],
             $container->getItemsByTypeAndTag(
-                ContainerInterface::class,
+                ContainerEntityInterface::class,
                 'test'
             )
         );

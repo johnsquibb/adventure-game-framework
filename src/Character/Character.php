@@ -2,7 +2,7 @@
 
 namespace AdventureGame\Character;
 
-use AdventureGame\Item\ContainerInterface;
+use AdventureGame\Item\ContainerEntityInterface;
 use AdventureGame\Traits\NameTrait;
 
 /**
@@ -13,7 +13,7 @@ class Character
 {
     use NameTrait;
 
-    public function __construct(string $name, public ContainerInterface $inventory)
+    public function __construct(string $name, public ContainerEntityInterface $inventory)
     {
         $this->name = $name;
     }

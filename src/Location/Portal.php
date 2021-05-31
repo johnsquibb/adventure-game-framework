@@ -2,7 +2,7 @@
 
 namespace AdventureGame\Location;
 
-use AdventureGame\Entity\LockableInterface;
+use AdventureGame\Entity\LockableEntityInterface;
 use AdventureGame\Entity\TaggableEntityInterface;
 use AdventureGame\Traits\DescriptionTrait;
 use AdventureGame\Traits\IdentityTrait;
@@ -14,7 +14,7 @@ use AdventureGame\Traits\TagTrait;
  * Class Portal provides a directional exit from one Location to another destination.
  * @package AdventureGame\Location
  */
-class Portal implements TaggableEntityInterface, LockableInterface
+class Portal implements TaggableEntityInterface, LockableEntityInterface
 {
     use IdentityTrait;
     use NameTrait;

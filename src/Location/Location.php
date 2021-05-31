@@ -4,7 +4,7 @@ namespace AdventureGame\Location;
 
 use AdventureGame\Entity\EntityInterface;
 use AdventureGame\Entity\TaggableEntityInterface;
-use AdventureGame\Item\ContainerInterface;
+use AdventureGame\Item\ContainerEntityInterface;
 use AdventureGame\Traits\DescriptionTrait;
 use AdventureGame\Traits\IdentityTrait;
 use AdventureGame\Traits\NameTrait;
@@ -24,7 +24,7 @@ class Location implements EntityInterface
         string $id,
         string $name,
         string $description,
-        private ContainerInterface $container,
+        private ContainerEntityInterface $container,
         private array $exits,
     ) {
         $this->id = $id;
@@ -43,9 +43,9 @@ class Location implements EntityInterface
 
     /**
      * Get container for location.
-     * @return ContainerInterface
+     * @return ContainerEntityInterface
      */
-    public function getContainer(): ContainerInterface
+    public function getContainer(): ContainerEntityInterface
     {
         return $this->container;
     }
