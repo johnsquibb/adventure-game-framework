@@ -20,14 +20,7 @@
     "test": "vendor/bin/phpunit test",
     "example": "php examples/demo-game/main.php"
   },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/johnsquibb/adventure-game-markup-language"
-    }
-  ],
   "require": {
-    "ext-readline": "*",
-    "adventure-game-markup-language/adventure-game-markup-language": "*"
+    "ext-readline": "*"
   }
 }
