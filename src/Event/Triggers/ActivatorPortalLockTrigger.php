@@ -4,18 +4,18 @@ namespace AdventureGame\Event\Triggers;
 
 use AdventureGame\Entity\ActivatableEntityInterface;
 use AdventureGame\Event\InfiniteUseTrigger;
-use AdventureGame\Event\Triggers\Comparisons\ItemComparison;
+use AdventureGame\Event\Triggers\Comparisons\ActivatedComparison;
 use AdventureGame\Game\GameController;
 use AdventureGame\Location\Portal;
 use AdventureGame\Response\Response;
 use Exception;
 
 /**
- * Class MultipleActivatorPortalLockTrigger locks or unlocks a portal based on the state on the
+ * Class ActivatorPortalLockTrigger locks or unlocks a portal based on the state on the
  * state of activators vs. an equal number of comparisons.
  * @package AdventureGame\Event\Triggers
  */
-class MultipleActivatorPortalLockTrigger extends InfiniteUseTrigger
+class ActivatorPortalLockTrigger extends InfiniteUseTrigger
 {
     /**
      * @throws Exception
@@ -42,7 +42,7 @@ class MultipleActivatorPortalLockTrigger extends InfiniteUseTrigger
         foreach ($this->activators as $index => $activator) {
             if ($activator instanceof ActivatableEntityInterface) {
                 $comparison = $this->comparisons[$index];
-                if ($comparison instanceof ItemComparison) {
+                if ($comparison instanceof ActivatedComparison) {
                     if ($activator->getActivated() !== $comparison->getActivated()) {
                         if (!$this->portal->getLocked()) {
                             $response->addMessage($this->portal->getName() . ' locked');

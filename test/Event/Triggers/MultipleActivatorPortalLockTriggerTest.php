@@ -2,8 +2,8 @@
 
 namespace AdventureGame\Test\Event\Triggers;
 
-use AdventureGame\Event\Triggers\Comparisons\ItemComparison;
-use AdventureGame\Event\Triggers\MultipleActivatorPortalLockTrigger;
+use AdventureGame\Event\Triggers\Comparisons\ActivatedComparison;
+use AdventureGame\Event\Triggers\ActivatorPortalLockTrigger;
 use AdventureGame\Item\Item;
 use AdventureGame\Location\Portal;
 use AdventureGame\Test\FrameworkTest;
@@ -57,13 +57,13 @@ class MultipleActivatorPortalLockTriggerTest extends FrameworkTest
 
         $activators = [$switch1, $switch2, $switch3];
 
-        $comp1 = new ItemComparison(true);
-        $comp2 = new ItemComparison(false);
-        $comp3 = new ItemComparison(true);
+        $comp1 = new ActivatedComparison(true);
+        $comp2 = new ActivatedComparison(false);
+        $comp3 = new ActivatedComparison(true);
 
         $comparisons = [$comp1, $comp2, $comp3];
 
-        $trigger = new MultipleActivatorPortalLockTrigger($activators, $comparisons, $portal);
+        $trigger = new ActivatorPortalLockTrigger($activators, $comparisons, $portal);
 
         // Invalid state.
         $switch1->setActivated(false);

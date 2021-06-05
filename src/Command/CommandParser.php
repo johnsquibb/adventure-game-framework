@@ -164,7 +164,7 @@ class CommandParser
      */
     public function parseCommand(string $command): array
     {
-        return preg_split("/[\s,]+/", trim($command));
+        return preg_split("/\s+/", trim($command));
     }
 
     /**

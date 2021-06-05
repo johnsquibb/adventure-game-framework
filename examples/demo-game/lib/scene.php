@@ -7,8 +7,8 @@ use AdventureGame\Event\Events\HasActivatedItemEvent;
 use AdventureGame\Event\Triggers\AddItemToInventoryUseTrigger;
 use AdventureGame\Event\Triggers\AddItemToLocationUseTrigger;
 use AdventureGame\Event\Triggers\AddLocationToMapUseTrigger;
-use AdventureGame\Event\Triggers\Comparisons\ItemComparison;
-use AdventureGame\Event\Triggers\MultipleActivatorPortalLockTrigger;
+use AdventureGame\Event\Triggers\Comparisons\ActivatedComparison;
+use AdventureGame\Event\Triggers\ActivatorPortalLockTrigger;
 use AdventureGame\Item\Container;
 use AdventureGame\Item\ContainerItem;
 use AdventureGame\Item\Item;
@@ -204,21 +204,21 @@ $pathFromTownToCourtyard = new Portal(
     'courtyard'
 );
 
-$cellarDoorLeadingIn = new Portal(
-    'cellarDoor',
+$cellarDoorIn = new Portal(
+    'cellarDoorIn',
     'Door to Cellar',
     "A door leading down into a cellar.",
     ['door'],
     'down',
     'cellar'
 );
-$cellarDoorLeadingIn->setMutable(true);
+$cellarDoorIn->setMutable(true);
 
 // The cellar door will be unlocked by activating a switch in the House location.
-$cellarDoorLeadingIn->setLocked(true);
+$cellarDoorIn->setLocked(true);
 
-$cellarDoorLeadingOut = new Portal(
-    'cellarDoor',
+$cellarDoorOut = new Portal(
+    'cellarDoorOut',
     'Cellar Door',
     "The way out of the cellar.",
     ['door'],
@@ -280,7 +280,7 @@ $houseInTown = new Location(
     "The House",
     "A house belonging to someone. They don't appear to be home.",
     new Container(),
-    [$pathFromTownToCourtyard, $cellarDoorLeadingIn]
+    [$pathFromTownToCourtyard, $cellarDoorIn]
 );
 $houseInTown->getContainer()->setCapacity(20);
 
@@ -298,7 +298,7 @@ $cellar = new Location(
     "Cellar",
     "A dark cellar with a low ceiling. It is difficult to see anything without some kind of light.",
     new Container(),
-    [$cellarDoorLeadingOut]
+    [$cellarDoorOut]
 );
 $cellar->getContainer()->setCapacity(20);
 
@@ -362,9 +362,9 @@ $houseInTown->getContainer()->addItem($switch3);
 
 $activators = [$switch1, $switch2, $switch3];
 
-$comp1 = new ItemComparison(true);
-$comp2 = new ItemComparison(false);
-$comp3 = new ItemComparison(true);
+$comp1 = new ActivatedComparison(true);
+$comp2 = new ActivatedComparison(false);
+$comp3 = new ActivatedComparison(true);
 
 $comparisons = [$comp1, $comp2, $comp3];
 
@@ -374,11 +374,12 @@ $comparisons = [$comp1, $comp2, $comp3];
 $events = [];
 
 // When the player activates the correct sequence of switches in house, unlock the cellar door.
-$trigger = new MultipleActivatorPortalLockTrigger(
+$trigger = new ActivatorPortalLockTrigger(
     $activators,
     $comparisons,
-    $cellarDoorLeadingIn
+    $cellarDoorIn
 );
+
 $events[] = new ActivateItemEvent($trigger, $switch1->getId(), $houseInTown->getId());
 $events[] = new DeactivateItemEvent($trigger, $switch1->getId(), $houseInTown->getId());
 $events[] = new ActivateItemEvent($trigger, $switch2->getId(), $houseInTown->getId());

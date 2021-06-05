@@ -97,10 +97,6 @@ class CommandParserTest extends TestCase
         $tokens = $commandParser->parseCommand($command);
         $this->assertEquals($expected, $tokens);
 
-        $command = 'put,the,carrot,into,a,pot';
-        $tokens = $commandParser->parseCommand($command);
-        $this->assertEquals($expected, $tokens);
-
         $command = "put\nthe\ncarrot\ninto\na\npot";
         $tokens = $commandParser->parseCommand($command);
         $this->assertEquals($expected, $tokens);

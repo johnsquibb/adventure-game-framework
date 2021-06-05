@@ -4,6 +4,7 @@ namespace AdventureGame\Event;
 
 use AdventureGame\Game\GameController;
 use AdventureGame\Response\Response;
+use AdventureGame\Traits\IdentityTrait;
 
 abstract class AbstractEvent implements EventInterface
 {
