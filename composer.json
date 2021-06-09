@@ -21,6 +21,13 @@
     "example": "php examples/demo-game/main.php"
   },
   "require": {
-    "ext-readline": "*"
-  }
+    "ext-readline": "*",
+    "johnsquibb/adventure-game-markup-language": "dev-main"
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url":  "git@github.com:johnsquibb/adventure-game-markup-language.git"
+    }
+  ]
 }
