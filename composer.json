@@ -3,9 +3,6 @@
   "type": "project",
   "description": "A lightweight framework for building text adventures",
   "license": "MIT",
-  "require-dev": {
-    "phpunit/phpunit": "^8"
-  },
   "autoload": {
     "psr-4": {
       "AdventureGame\\": "src/"
@@ -21,13 +18,6 @@
     "example": "php examples/demo-game/main.php"
   },
   "require": {
-    "ext-readline": "*",
-    "johnsquibb/adventure-game-markup-language": "dev-main"
-  },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url":  "git@github.com:johnsquibb/adventure-game-markup-language.git"
-    }
-  ]
+    "ext-readline": "*"
+  }
 }
