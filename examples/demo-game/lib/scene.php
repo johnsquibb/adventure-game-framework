@@ -4,43 +4,77 @@ use AdventureGame\Event\Events\ActivateItemEvent;
 use AdventureGame\Event\Events\DeactivateItemEvent;
 use AdventureGame\Event\Events\EnterLocationEvent;
 use AdventureGame\Event\Events\HasActivatedItemEvent;
+use AdventureGame\Event\Triggers\ActivatorPortalLockTrigger;
 use AdventureGame\Event\Triggers\AddItemToInventoryUseTrigger;
 use AdventureGame\Event\Triggers\AddItemToLocationUseTrigger;
 use AdventureGame\Event\Triggers\AddLocationToMapUseTrigger;
 use AdventureGame\Event\Triggers\Comparisons\ActivatedComparison;
-use AdventureGame\Event\Triggers\ActivatorPortalLockTrigger;
+use AdventureGame\Item\AbstractItem;
 use AdventureGame\Item\Container;
 use AdventureGame\Item\ContainerItem;
 use AdventureGame\Item\Item;
 use AdventureGame\Location\Location;
 use AdventureGame\Location\Portal;
+use AdventureGameMarkupLanguage\Hydrator\ItemEntityHydrator;
+use AdventureGameMarkupLanguage\Lexer;
+use AdventureGameMarkupLanguage\Parser;
+use AdventureGameMarkupLanguage\Transpiler;
 
 global $platformManifest;
+
+$lexer = new Lexer();
+$parser = new Parser();
+$transpiler = new Transpiler($lexer, $parser);
+
+$fixture = <<<END
+        [ITEM]
+        # Attributes
+        id=flashlight
+        size=2
+        readable=yes
+        name=Small Flashlight
+        
+        # Interactions
+        acquirable=yes
+        activatable=yes
+        deactivatable=yes
+        readable=yes
+        
+        # Tags 
+        tags=flashlight,light,magic torch stick
+        
+        [description]
+        A black metal flashlight that runs on rechargeable batteries.
+        There is a round gray button for activating it.
+        There is some small text printed on a label on the side of the flashlight.
+        
+        [text]
+        Information written on the side:
+        Model: Illuminated Devices Inc
+        Year: 1983
+        Serial Number: #8301IDI001256703
+        Batt. Type: (4) AA
+        END;
+
+$hydrators = $transpiler->transpile($fixture);
+$hydrator = $hydrators[0];
+if ($hydrator instanceof ItemEntityHydrator) {
+    $id = $hydrator->getId();
+    $name = $hydrator->getName();
+    $description = implode("\n    ", $hydrator->getDescription());
+    $tags = $hydrator->getTags();
+
+    $flashlight = new Item($id, $name, $description, $tags);
+    $flashlight->setSize($hydrator->getSize());
+    $flashlight->setActivatable($hydrator->getActivatable());
+    $flashlight->setDeactivatable($hydrator->getDeactivatable());
+    $flashlight->setReadable($hydrator->getReadable());
+    $flashlight->setLines($hydrator->getText());
+}
 
 //-------------------------------
 // Items
 //-------------------------------
-
-$flashlight = new Item(
-    'flashlight',
-    'Flashlight',
-    'A battery powered flashlight.',
-    ['flashlight'],
-);
-$flashlight->setSize(2);
-$flashlight->setActivatable(true);
-$flashlight->setDeactivatable(true);
-$flashlight->setReadable(true);
-$flashlight->setLines(
-    [
-        'Information written on the side:',
-        '',
-        'Model: Illuminated Devices Inc',
-        'Year: 1983',
-        'Serial Number: 8301IDI001256703',
-        'Batt. Type: (4) AA',
-    ]
-);
 
 $secretLetter = new Item(
     'secretLetter',
