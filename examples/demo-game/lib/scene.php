@@ -9,7 +9,6 @@ use AdventureGame\Event\Triggers\AddItemToInventoryUseTrigger;
 use AdventureGame\Event\Triggers\AddItemToLocationUseTrigger;
 use AdventureGame\Event\Triggers\AddLocationToMapUseTrigger;
 use AdventureGame\Event\Triggers\Comparisons\ActivatedComparison;
-use AdventureGame\Item\AbstractItem;
 use AdventureGame\Item\Container;
 use AdventureGame\Item\ContainerItem;
 use AdventureGame\Item\Item;
@@ -26,6 +25,7 @@ $lexer = new Lexer();
 $parser = new Parser();
 $transpiler = new Transpiler($lexer, $parser);
 
+// Example of using Adventure Game Markup Language (AGML) to create an item.
 $fixture = <<<END
         [ITEM]
         # Attributes
