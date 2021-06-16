@@ -1,0 +1,27 @@
+[ITEM]
+# Attributes
+id=flashlight
+size=2
+readable=yes
+name=Small Flashlight
+
+# Interactions
+acquirable=yes
+activatable=yes
+deactivatable=yes
+readable=yes
+
+# Tags
+tags=flashlight,light,magic torch stick
+
+[description]
+A black metal flashlight that runs on rechargeable batteries.
+There is a round gray button for activating it.
+There is some small text printed on a label on the side of the flashlight.
+
+[text]
+Information written on the side:
+Model: Illuminated Devices Inc
+Year: 1983
+Serial Number: #8301IDI001256703
+Batt. Type: (4) AA

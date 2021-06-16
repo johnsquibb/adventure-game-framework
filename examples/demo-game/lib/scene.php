@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 
+use AdventureGame\Builder\SceneBuilder;
 use AdventureGame\Event\Events\ActivateItemEvent;
 use AdventureGame\Event\Events\DeactivateItemEvent;
 use AdventureGame\Event\Events\EnterLocationEvent;
@@ -14,63 +15,23 @@ use AdventureGame\Item\ContainerItem;
 use AdventureGame\Item\Item;
 use AdventureGame\Location\Location;
 use AdventureGame\Location\Portal;
-use AdventureGameMarkupLanguage\Hydrator\ItemEntityHydrator;
 use AdventureGameMarkupLanguage\Lexer;
 use AdventureGameMarkupLanguage\Parser;
 use AdventureGameMarkupLanguage\Transpiler;
 
 global $platformManifest;
 
+// Example of using Adventure Game Markup Language (AGML) to create an item.
+global $libDirectory;
+$markup = file_get_contents($libDirectory . '/markup/scene.agml');
+
 $lexer = new Lexer();
 $parser = new Parser();
 $transpiler = new Transpiler($lexer, $parser);
+$builder = new SceneBuilder($transpiler);
 
-// Example of using Adventure Game Markup Language (AGML) to create an item.
-$fixture = <<<END
-        [ITEM]
-        # Attributes
-        id=flashlight
-        size=2
-        readable=yes
-        name=Small Flashlight
-        
-        # Interactions
-        acquirable=yes
-        activatable=yes
-        deactivatable=yes
-        readable=yes
-        
-        # Tags 
-        tags=flashlight,light,magic torch stick
-        
-        [description]
-        A black metal flashlight that runs on rechargeable batteries.
-        There is a round gray button for activating it.
-        There is some small text printed on a label on the side of the flashlight.
-        
-        [text]
-        Information written on the side:
-        Model: Illuminated Devices Inc
-        Year: 1983
-        Serial Number: #8301IDI001256703
-        Batt. Type: (4) AA
-        END;
-
-$hydrators = $transpiler->transpile($fixture);
-$hydrator = $hydrators[0];
-if ($hydrator instanceof ItemEntityHydrator) {
-    $id = $hydrator->getId();
-    $name = $hydrator->getName();
-    $description = $hydrator->getDescription();
-    $tags = $hydrator->getTags();
-
-    $flashlight = new Item($id, $name, $description, $tags);
-    $flashlight->setSize($hydrator->getSize());
-    $flashlight->setActivatable($hydrator->getActivatable());
-    $flashlight->setDeactivatable($hydrator->getDeactivatable());
-    $flashlight->setReadable($hydrator->getReadable());
-    $flashlight->setLines($hydrator->getText());
-}
+$builder->transpileMarkup($markup);
+$flashlight = $builder->getItems()['flashlight'];
 
 //-------------------------------
 // Items
