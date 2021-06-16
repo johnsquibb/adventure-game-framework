@@ -210,10 +210,81 @@ destination=courtyard
 Stone steps leading up to a courtyard.
 
 [PORTAL]
-id=doorFromWestRoomToSecretRoom
+id=doorFromSecretRoomToRoomWestOfSpawn
 name=Secret Door
 tags=door
 direction=east
 destination=roomWestOfSpawn
 [description]
 Exit to the east
+
+### Locations
+
+[LOCATION]
+id=spawn
+name=Player Spawn
+capacity=20
+items=treasureChest
+exits=doorFromSpawnToWestRoom,entryFromSpawnToHallway
+[description]
+This is the starting room.
+
+[LOCATION]
+id=secretRoom
+name=The Secret Room
+capacity=20
+items=secretLetter
+exits=doorFromSecretRoomToRoomWestOfSpawn
+[description]
+You have discovered a secret room.
+
+[LOCATION]
+id=cellar
+name=Cellar
+capacity=20
+exits=cellarDoorOut
+[description]
+A dark cellar with a low ceiling.
+It is difficult to see anything without some kind of light.
+
+[LOCATION]
+id=smallShed
+name=A small shed
+capacity=10
+exits=stepsFromShedToCourtyard
+[description]
+A small shed with weathered siding and a small window.
+
+[LOCATION]
+id=houseInTown
+name=The House
+capacity=20
+exits=pathFromTownToCourtyard,cellarDoorIn
+[description]
+A house belonging to someone. They don't appear to be home.
+
+[LOCATION]
+id=courtyard
+name=Courtyard
+capacity=40
+exits=doorFromCourtyardToHallway,pathFromCourtyardToTown,stepsFromCourtyardToShed
+[description]
+A courtyard surrounds the entrance of the house.
+Hedges form a wall in three directions\, with a path leading away from the house toward town.
+
+[LOCATION]
+id=roomWestOfSpawn
+name=Room West of Spawn
+capacity=20
+items=
+exits=doorFromWestRoomToSpawn
+[description]
+There is nothing special about this room. It is just an ordinary room with walls.
+
+[LOCATION]
+id=hallwayLeadingSouthFromSpawn
+name=Hallway Leading South
+capacity=5
+exits=doorFromHallwayToCourtyard,entryFromHallwayToSpawn
+[description]
+A hallway that leads south from spawn with a single exit to exterior courtyard.

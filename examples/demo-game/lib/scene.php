@@ -32,6 +32,7 @@ $builder->transpileMarkup($markup);
 $items = $builder->getItems();
 $containers = $builder->getContainers();
 $portals = $builder->getPortals();
+$locations = $builder->getLocations();
 
 // Items
 $flashlight = $items['flashlight'];
@@ -44,6 +45,16 @@ $keyToWoodenDoor = $items['keyToWoodenDoor'];
 
 // Containers
 $chest = $containers['treasureChest'];
+
+// Locations
+$roomWestOfSpawn = $locations['roomWestOfSpawn'];
+$hallwayLeadingSouth = $locations['hallwayLeadingSouthFromSpawn'];
+$courtyard = $locations['courtyard'];
+$houseInTown = $locations['houseInTown'];
+$smallShed = $locations['smallShed'];
+$cellar = $locations['cellar'];
+$spawn = $locations['spawn'];
+$secretRoom = $locations['secretRoom'];
 
 // Location Exits
 $doorFromSpawnToWestRoom = $portals['doorFromSpawnToWestRoom'];
@@ -59,88 +70,7 @@ $pathFromTownToCourtyard = $portals['pathFromTownToCourtyard'];
 $cellarDoorIn = $portals['cellarDoorIn'];
 $cellarDoorOut = $portals['cellarDoorOut'];
 $stepsFromShedToCourtyard = $portals['stepsFromShedToCourtyard'];
-$doorFromSecretRoomToWestRoom = $portals['doorFromWestRoomToSecretRoom'];
-
-//-------------------------------
-// Locations
-//-------------------------------
-
-$roomWestOfSpawn = new Location(
-    'roomWestOfSpawn',
-    'Room West of Spawn',
-    ['There is nothing special about this room. It is just an ordinary room with walls.'],
-    new Container(),
-    [$doorFromWestRoomToSpawn],
-);
-$roomWestOfSpawn->getContainer()->setCapacity(20);
-
-$hallwayLeadingSouth = new Location(
-    'hallwayLeadingSouthFromSpawn',
-    'Hallway Leading South',
-    ['A hallway that leads south from spawn with a single exit to exterior courtyard'],
-    new Container(),
-    [$doorFromHallwayToCourtyard, $entryFromHallwayToSpawn]
-);
-$hallwayLeadingSouth->getContainer()->setCapacity(5);
-
-$courtyard = new Location(
-    'courtyard',
-    'Courtyard',
-    [
-        'A courtyard surrounds the entrance of the house.',
-        'Hedges form a wall in three directions, with a path leading away from the house toward town.'
-    ],
-    new Container(),
-    [$doorFromCourtyardToHallway, $pathFromCourtyardToTown, $stepsFromCourtyardToShed]
-);
-$courtyard->getContainer()->setCapacity(40);
-
-$houseInTown = new Location(
-    "houseInTown",
-    "The House",
-    ["A house belonging to someone. They don't appear to be home."],
-    new Container(),
-    [$pathFromTownToCourtyard, $cellarDoorIn]
-);
-$houseInTown->getContainer()->setCapacity(20);
-
-$smallShed = new Location(
-    "smallShed",
-    "A small shed",
-    ["A small shed with weathered siding and a small window."],
-    new Container(),
-    [$stepsFromShedToCourtyard]
-);
-$smallShed->getContainer()->setCapacity(10);
-
-$cellar = new Location(
-    "cellar",
-    "Cellar",
-    ["A dark cellar with a low ceiling. It is difficult to see anything without some kind of light."],
-    new Container(),
-    [$cellarDoorOut]
-);
-$cellar->getContainer()->setCapacity(20);
-
-$spawnRoom = new Location(
-    'spawn',
-    'Player Spawn',
-    ['This is the starting room.'],
-    new Container(),
-    [$doorFromSpawnToWestRoom, $entryFromSpawnToHallway],
-);
-$spawnRoom->getContainer()->setCapacity(20);
-$spawnRoom->getContainer()->addItem($chest);
-
-$secretRoom = new Location(
-    'secretRoom',
-    'The Secret Room',
-    ['You have discovered a secret room.'],
-    new Container(),
-    [$doorFromSecretRoomToWestRoom],
-);
-$secretRoom->getContainer()->setCapacity(20);
-$secretRoom->getContainer()->addItem($secretLetter);
+$doorFromSecretRoomToRoomWestOfSpawn = $portals['doorFromSecretRoomToRoomWestOfSpawn'];
 
 // ---------------------
 // Switches & Activators
@@ -224,7 +154,7 @@ $events[] = new EnterLocationEvent($trigger, 'secretRoom');
 
 // Apply configuration.
 $locations = [
-    $spawnRoom,
+    $spawn,
     $roomWestOfSpawn,
     $hallwayLeadingSouth,
     $courtyard,
