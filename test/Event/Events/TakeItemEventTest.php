@@ -17,7 +17,7 @@ class TakeItemEventTest extends AbstractEventTest
         $location = new Location(
             'test-location-id',
             'Test Location',
-            'A test location',
+            ['A test location'],
             new Container(),
             []
         );
@@ -50,14 +50,14 @@ class TakeItemEventTest extends AbstractEventTest
         $item = new Item(
             'test-item-id',
             'Test Give Item',
-            'A test item given to player on event trigger',
+            ['A test item given to player on event trigger'],
             ['given']
         );
 
         $location = new Location(
             'test-location-id',
             'Test Location',
-            'A test location',
+            ['A test location'],
             new Container(),
             []
         );
@@ -116,14 +116,14 @@ class TakeItemEventTest extends AbstractEventTest
         $item = new Item(
             'test-item-id',
             'Test Give Item',
-            'A test item given to player on event trigger',
+            ['A test item given to player on event trigger'],
             ['given']
         );
 
         $location = new Location(
             'test-location-id',
             'Test Location',
-            'A test location',
+            ['A test location'],
             new Container(),
             []
         );

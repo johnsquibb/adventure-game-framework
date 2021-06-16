@@ -15,7 +15,7 @@ class HasActivatedItemEventTest extends AbstractEventTest
         $location = new Location(
             'test-location-id',
             'Test Location',
-            'A test location',
+            ['A test location'],
             new Container(),
             []
         );

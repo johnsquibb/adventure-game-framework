@@ -17,10 +17,10 @@ class LocationTest extends TestCase
         $description = 'This is a test room';
         $items = new Container();
 
-        $room = new Location($id, $name, $description, $items, []);
+        $room = new Location($id, $name, [$description], $items, []);
         $this->assertEquals($id, $room->getId());
         $this->assertEquals($name, $room->getName());
-        $this->assertEquals($description, $room->getDescription());
+        $this->assertEquals([$description], $room->getDescription());
         $this->assertEquals($items, $room->getContainer());
     }
 
@@ -34,13 +34,13 @@ class LocationTest extends TestCase
         $portal = new Portal(
             'test-door',
             '',
-            '',
+            [],
             ['north'],
             'north', 'test-room'
         );
         $exits = [$portal];
 
-        $room = new Location($id, $name, $description, $items, $exits);
+        $room = new Location($id, $name, [$description], $items, $exits);
         $this->assertEquals($id, $room->getId());
         $this->assertEquals($name, $room->getName());
 
@@ -57,12 +57,12 @@ class LocationTest extends TestCase
         $item = new Item(
             'test-item',
             'Test Item',
-            'Test Item Description',
+            ['Test Item Description'],
             ['test']
         );
         $items->addItem($item);
 
-        $room = new Location($id, $name, $description, $items, []);
+        $room = new Location($id, $name, [$description], $items, []);
         $this->assertEquals($item, $room->getContainer()->getItemById($item->getId()));
     }
 }

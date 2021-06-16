@@ -16,12 +16,12 @@ class PortalTest extends TestCase
         $direction = 'north';
         $destinationLocationId = 'test-room';
 
-        $door = new Portal($id, $name, $description, $tags, $direction, $destinationLocationId);
+        $door = new Portal($id, $name, [$description], $tags, $direction, $destinationLocationId);
         $this->assertEquals($id, $door->getId());
         $this->assertEquals($direction, $door->direction);
         $this->assertEquals($destinationLocationId, $door->destinationLocationId);
         $this->assertEquals($name, $door->getName());
-        $this->assertEquals($description, $door->getDescription());
+        $this->assertEquals([$description], $door->getDescription());
         $this->assertEquals($tags, $door->getTags());
     }
 
@@ -34,7 +34,7 @@ class PortalTest extends TestCase
         $destinationLocationId = 'test-room';
 
         $door = new Portal(
-            $id, $name, $description, [$direction], $direction, $destinationLocationId
+            $id, $name, [$description], [$direction], $direction, $destinationLocationId
         );
 
         $this->assertFalse($door->getMutable());

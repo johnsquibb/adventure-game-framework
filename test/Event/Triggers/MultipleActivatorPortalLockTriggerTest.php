@@ -17,7 +17,7 @@ class MultipleActivatorPortalLockTriggerTest extends FrameworkTest
         $portal = new Portal(
             'test-portal',
             'Test Portal',
-            'A Test Portal',
+            ['A Test Portal'],
             ['portal'],
             'in',
             'nowhere'
@@ -28,7 +28,7 @@ class MultipleActivatorPortalLockTriggerTest extends FrameworkTest
         $switch1 = new Item(
             'switch1',
             'Switch 1',
-            "There's no telling what this switch does.",
+            ["There's no telling what this switch does."],
             ['one']
         );
         $switch1->setActivatable(true);
@@ -38,7 +38,7 @@ class MultipleActivatorPortalLockTriggerTest extends FrameworkTest
         $switch2 = new Item(
             'switch2',
             'Switch 2',
-            "There's no telling what this switch does.",
+            ["There's no telling what this switch does."],
             ['two']
         );
         $switch2->setActivatable(true);
@@ -48,7 +48,7 @@ class MultipleActivatorPortalLockTriggerTest extends FrameworkTest
         $switch3 = new Item(
             'switch3',
             'Switch 3',
-            "There's no telling what this switch does.",
+            ["There's no telling what this switch does."],
             ['three']
         );
         $switch3->setActivatable(true);

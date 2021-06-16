@@ -17,7 +17,7 @@ class ContainerTest extends TestCase
         $item = new Item(
             'test-item',
             'Test Item',
-            'Test Item Description',
+            ['Test Item Description'],
             ['test']
         );
         $container->addItem($item);
@@ -30,7 +30,7 @@ class ContainerTest extends TestCase
         $item = new Item(
             'test-item',
             'Test Item',
-            'Test Item Description',
+            ['Test Item Description'],
             ['test']
         );
         $container->addItem($item);
@@ -45,7 +45,7 @@ class ContainerTest extends TestCase
         $item = new Item(
             'test-item',
             'Test Item',
-            'Test Item Description',
+            ['Test Item Description'],
             ['test']
         );
         $container->addItem($item);
@@ -58,7 +58,7 @@ class ContainerTest extends TestCase
         $item = new Item(
             'test-item',
             'Test Item',
-            'Test Item Description',
+            ['Test Item Description'],
             ['test']
         );
 
@@ -74,7 +74,7 @@ class ContainerTest extends TestCase
         $item = new Item(
             'test-item',
             'Test Item',
-            'Test Item Description',
+            ['Test Item Description'],
             ['test']
         );
         $container->addItem($item);
@@ -84,7 +84,7 @@ class ContainerTest extends TestCase
         $item2 = new Item(
             'test-item-2',
             'Test Item 2',
-            'Test Item 2 Description',
+            ['Test Item 2 Description'],
             ['test']
         );
         $container->addItem($item2);
@@ -100,7 +100,7 @@ class ContainerTest extends TestCase
         $item = new Item(
             'test-item',
             'Test Item',
-            'Test Item Description',
+            ['Test Item Description'],
             ['test']
         );
         $container->addItem($item);
@@ -108,7 +108,7 @@ class ContainerTest extends TestCase
         $item2 = new ContainerItem(
             'test-item-2',
             'Test Item 2',
-            'Test Item 2 Description',
+            ['Test Item 2 Description'],
             ['test']
         );
         $container->addItem($item2);
@@ -136,7 +136,7 @@ class ContainerTest extends TestCase
         $item = new Item(
             'test-item',
             'Test Item',
-            'Test Item Description',
+            ['Test Item Description'],
             ['test']
         );
 

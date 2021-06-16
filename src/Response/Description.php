@@ -7,11 +7,11 @@ class Description
     public function __construct(
         public string $name = '',
         public string $summary = '',
-        public string $description = '',
+        public array $description = [],
     ) {
     }
 
-    public function getDescription(): string
+    public function getDescription(): array
     {
         return $this->description;
     }
@@ -21,8 +21,8 @@ class Description
         return $this->name;
     }
 
-    public function setName(string $name): void
+    public function getSummary(): string
     {
-        $this->name = $name;
+        return $this->summary;
     }
 }

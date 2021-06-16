@@ -25,7 +25,7 @@ class Portal implements TaggableEntityInterface, LockableEntityInterface
     public function __construct(
         string $id,
         string $name,
-        string $description,
+        array $description,
         array $tags,
         public string $direction,
         public string $destinationLocationId,

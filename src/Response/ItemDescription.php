@@ -9,13 +9,13 @@ class ItemDescription extends Description
     public function __construct(
         string $name = '',
         string $summary = '',
-        string $description = '',
+        array $description = [],
         public array $tags = [],
     ) {
         parent::__construct($name, $summary, $description);
     }
 
-    public function getDescription(): string
+    public function getDescription(): array
     {
         return $this->description;
     }

@@ -20,7 +20,7 @@ class PlayerControllerTest extends TestCase
         $item = new Item(
             'test-item',
             'Test Item',
-            'Test Item Description',
+            ['Test Item Description'],
             ['test']
         );
         $playerController->addItemToPlayerInventory($item);
@@ -48,7 +48,7 @@ class PlayerControllerTest extends TestCase
         $item = new Item(
             'test-item',
             'Test Item',
-            'Test Item Description',
+            ['Test Item Description'],
             ['test']
         );
         $this->assertNull($playerController->getItemByIdFromPlayerInventory($item->getId()));
@@ -71,7 +71,7 @@ class PlayerControllerTest extends TestCase
         $item = new Item(
             'test-item',
             'Test Item',
-            'Test Item Description',
+            ['Test Item Description'],
             ['test']
         );
 
@@ -93,7 +93,7 @@ class PlayerControllerTest extends TestCase
         $item = new Item(
             'test-item',
             'Test Item',
-            'Test Item Description',
+            ['Test Item Description'],
             ['test']
         );
         $item->setSize(1);
@@ -121,7 +121,7 @@ class PlayerControllerTest extends TestCase
         $item = new Item(
             'test-item',
             'Test Item',
-            'Test Item Description',
+            ['Test Item Description'],
             ['test']
         );
 

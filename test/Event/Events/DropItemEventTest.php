@@ -17,7 +17,7 @@ class DropItemEventTest extends AbstractEventTest
         $location = new Location(
             'test-location-id',
             'Test Location',
-            'A test location',
+            ['A test location'],
             new Container(),
             []
         );
@@ -50,14 +50,14 @@ class DropItemEventTest extends AbstractEventTest
         $item = new Item(
             'has-item-id',
             'Test Drop Item',
-            'A test item to be dropped',
+            ['A test item to be dropped'],
             ['dropped']
         );
 
         $location = new Location(
             'test-location-id',
             'Test Location',
-            'A test location',
+            ['A test location'],
             new Container(),
             []
         );
@@ -116,14 +116,14 @@ class DropItemEventTest extends AbstractEventTest
         $item = new Item(
             'has-item-id',
             'Test Drop Item',
-            'A test item to be dropped',
+            ['A test item to be dropped'],
             ['dropped']
         );
 
         $location = new Location(
             'test-location-id',
             'Test Location',
-            'A test location',
+            ['A test location'],
             new Container(),
             []
         );

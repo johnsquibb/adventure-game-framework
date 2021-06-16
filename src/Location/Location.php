@@ -23,7 +23,7 @@ class Location implements EntityInterface
     public function __construct(
         string $id,
         string $name,
-        string $description,
+        array $description,
         private ContainerEntityInterface $container,
         private array $exits,
     ) {

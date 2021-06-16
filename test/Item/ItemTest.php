@@ -14,17 +14,17 @@ class ItemTest extends TestCase
         $name = 'Test Item';
         $description = 'Test Item Description';
         $tags = ['test'];
-        $item = new Item($id, $name, $description, $tags);
+        $item = new Item($id, $name, [$description], $tags);
 
         $this->assertEquals($id, $item->getId());
         $this->assertEquals($name, $item->getName());
-        $this->assertEquals($description, $item->getDescription());
+        $this->assertEquals([$description], $item->getDescription());
         $this->assertEquals($tags, $item->getTags());
     }
 
     public function testItemDiscovered()
     {
-        $item = new Item('', '', '', ['']);
+        $item = new Item('', '', [], ['']);
 
         $this->assertFalse($item->getDiscovered());
 
@@ -34,7 +34,7 @@ class ItemTest extends TestCase
 
     public function testItemAccessible()
     {
-        $item = new Item('', '', '', ['']);
+        $item = new Item('', '', [], ['']);
 
         $this->assertTrue($item->getAccessible());
 
@@ -44,7 +44,7 @@ class ItemTest extends TestCase
 
     public function testItemAcquirable()
     {
-        $item = new Item('', '', '', ['']);
+        $item = new Item('', '', [], ['']);
 
         $this->assertTrue($item->getAcquirable());
         $item->setAcquirable(false);
@@ -56,7 +56,7 @@ class ItemTest extends TestCase
 
     public function testItemSize()
     {
-        $item = new Item('', '', '', ['']);
+        $item = new Item('', '', [], ['']);
 
         $this->assertEquals(0, $item->getSize());
 

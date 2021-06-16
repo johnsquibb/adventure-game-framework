@@ -20,7 +20,7 @@ class VerbPrepositionNounCommandTest extends FrameworkTest
 
         // Add another item.
         $gameController->mapController->dropItem(
-            new Item('test2', 'test-item-2', 'another item', ['test'])
+            new Item('test2', 'test-item-2', ['another item'], ['test'])
         );
 
         $command = new VerbPrepositionNounCommand('examine', 'at', 'test');

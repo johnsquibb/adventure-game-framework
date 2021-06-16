@@ -79,7 +79,7 @@ abstract class FrameworkTest extends TestCase
         $item = new Item(
             'test-item-1',
             'Test Item 1',
-            'Test Item 1 description',
+            ['Test Item 1 description'],
             ['test']
         );
         $item->setDiscovered(true);
@@ -88,7 +88,7 @@ abstract class FrameworkTest extends TestCase
         $containerItem = new ContainerItem(
             'test-container-item',
             'Test Container Item',
-            'Test container item description',
+            ['Test container item description'],
             ['container', 'test-container-item'],
         );
         $container->addItem($containerItem);
@@ -96,7 +96,7 @@ abstract class FrameworkTest extends TestCase
         $item = new Item(
             'test-item-2',
             'Test Item 2',
-            'Test Item 2 description',
+            ['Test Item 2 description'],
             ['item','test-item-in-container']
         );
         $item->setDiscovered(true);
@@ -105,7 +105,7 @@ abstract class FrameworkTest extends TestCase
         $item = new Item(
             'test-item-3',
             'Test Item 3',
-            'Test Item 3 description',
+            ['Test Item 3 description'],
             ['test-item-2-in-container']
         );
         $item->setDiscovered(true);
@@ -114,14 +114,14 @@ abstract class FrameworkTest extends TestCase
         $door1 = new Portal(
             'test-door',
             'Wooden Door',
-            'A door leading to the east',
+            ['A door leading to the east'],
             ['east'],
             'east', 'test-room-2'
         );
         $location1 = new Location(
             'test-room-1',
             'Test Room 1',
-            'This is a test room.',
+            ['This is a test room.'],
             $container,
             [$door1],
         );
@@ -129,14 +129,14 @@ abstract class FrameworkTest extends TestCase
         $door2 = new Portal(
             'test-door',
             '',
-            '',
+            [],
             ['west'],
             'west', 'test-room-1'
         );
         $location2 = new Location(
             'test-room-2',
             'Test Room 2',
-            'This is another test room.',
+            ['This is another test room.'],
             new Container(),
             [$door2],
         );

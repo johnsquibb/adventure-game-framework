@@ -15,6 +15,7 @@ Build and play games that use text commands such as:
 
 > turn flashlight on
 ```
+
 ## Installation
 
 Run `composer install` from the project directory.

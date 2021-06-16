@@ -4,10 +4,10 @@ namespace AdventureGame\Traits;
 
 trait DescriptionTrait
 {
-    private string $description = '';
+    private array $description = [];
     private string $summary = '';
 
-    public function getDescription(): string
+    public function getDescription(): array
     {
         return $this->description;
     }

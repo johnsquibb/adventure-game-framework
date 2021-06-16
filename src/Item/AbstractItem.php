@@ -36,7 +36,7 @@ class AbstractItem implements ItemInterface
     public function __construct(
         string $id,
         string $name,
-        string $description,
+        array $description,
         array $tags
     ) {
         $this->id = $id;

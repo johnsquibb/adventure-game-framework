@@ -8,7 +8,7 @@ namespace AdventureGame\Entity;
  */
 interface EntityInterface
 {
-    public function getDescription(): string;
+    public function getDescription(): array;
 
     public function getId(): string;
 

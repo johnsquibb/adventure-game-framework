@@ -61,7 +61,7 @@ $hydrator = $hydrators[0];
 if ($hydrator instanceof ItemEntityHydrator) {
     $id = $hydrator->getId();
     $name = $hydrator->getName();
-    $description = implode("\n    ", $hydrator->getDescription());
+    $description = $hydrator->getDescription();
     $tags = $hydrator->getTags();
 
     $flashlight = new Item($id, $name, $description, $tags);
@@ -79,7 +79,7 @@ if ($hydrator instanceof ItemEntityHydrator) {
 $secretLetter = new Item(
     'secretLetter',
     'A Secret Letter',
-    'A folded letter written on old paper.',
+    ['A folded letter written on old paper.'],
     ['secret letter', 'letter']
 );
 $secretLetter->setSize(1);
@@ -101,14 +101,14 @@ $secretLetter->setLines(
 $enteredSecretRoomReward = new Item(
     'enteredSecretRoomReward',
     'Reward for Entering Secret Room',
-    'You did it! You made it into the secret room. This reward is proof of your achievement.',
+    ['You did it! You made it into the secret room. This reward is proof of your achievement.'],
     ['enter reward', 'reward.enter', 'reward']
 );
 
 $mapToSecretRoom = new Item(
     'mapToSecretRoom',
     'Map to Secret Room',
-    'A map detailing the location of a secret room. A speakable word is written on the map.',
+    ['A map detailing the location of a secret room. A speakable word is written on the map.'],
     ['map']
 );
 $mapToSecretRoom->setActivatable(true);
@@ -120,7 +120,7 @@ $mapToSecretRoom->setSize(1);
 $keyToWoodenDoor = new Item(
     'keyToWoodenDoor',
     'Key to Wooden Door',
-    'A metal key that unlocks the wooden door at spawn.',
+    ['A metal key that unlocks the wooden door at spawn.'],
     ['key to wooden door', 'key.keyToWoodenDoor', 'key']
 );
 $keyToWoodenDoor->setSize(1);
@@ -132,7 +132,7 @@ $keyToWoodenDoor->setSize(1);
 $chest = new ContainerItem(
     'treasureChest',
     'Treasure Chest',
-    'A chest containing valuable treasure.',
+    ['A chest containing valuable treasure.'],
     ['chest'],
 );
 $chest->setCapacity(5);
@@ -147,7 +147,7 @@ $chest->addItem($keyToWoodenDoor);
 $doorFromSpawnToWestRoom = new Portal(
     'doorFromSpawnToWestRoom',
     'Wooden Door',
-    'A heavy wooden door leading to the west.',
+    ['A heavy wooden door leading to the west.'],
     ['door'],
     'west', 'roomWestOfSpawn'
 );
@@ -159,7 +159,7 @@ $doorFromSpawnToWestRoom->setKeyEntityId($keyToWoodenDoor->getId());
 $doorFromWestRoomToSpawn = new Portal(
     'doorFromWestRoomToSpawn',
     'Wooden Door',
-    'A heavy wooden door leading back to spawn.',
+    ['A heavy wooden door leading back to spawn.'],
     ['door'],
     'east',
     'spawn'
@@ -170,7 +170,7 @@ $doorFromWestRoomToSpawn->setKeyEntityId($keyToWoodenDoor->getId());
 $doorFromWestRoomToSecretRoom = new Portal(
     'doorFromWestRoomToSecretRoom',
     'Secret Door',
-    'A secret door has been revealed to the west.',
+    ['A secret door has been revealed to the west.'],
     ['door'],
     'west',
     'secretRoom'
@@ -179,7 +179,7 @@ $doorFromWestRoomToSecretRoom = new Portal(
 $entryFromSpawnToHallway = new Portal(
     'entryFromSpawnToHallway',
     'Hallway Entrance',
-    'An entrance to a hallway leading south.',
+    ['An entrance to a hallway leading south.'],
     ['hallway'],
     'south',
     'hallwayLeadingSouthFromSpawn'
@@ -188,7 +188,7 @@ $entryFromSpawnToHallway = new Portal(
 $entryFromHallwayToSpawn = new Portal(
     'entryFromSpawnToHallway',
     'Hallway Entrance',
-    'An entrance to a hallway leading north.',
+    ['An entrance to a hallway leading north.'],
     ['hallway'],
     'north',
     'spawn'
@@ -197,7 +197,7 @@ $entryFromHallwayToSpawn = new Portal(
 $doorFromHallwayToCourtyard = new Portal(
     'doorFromHallwayToCourtyard',
     'Front door',
-    'A door with a window, through which you can see an exterior courtyard.',
+    ['A door with a window, through which you can see an exterior courtyard.'],
     ['door'],
     'south', 'courtyard'
 );
@@ -205,7 +205,7 @@ $doorFromHallwayToCourtyard = new Portal(
 $doorFromCourtyardToHallway = new Portal(
     'doorFromCourtyardToHallway',
     'Front door',
-    "A door that leads inside the house. It has a small stained glass window in the center.",
+    ["A door that leads inside the house. It has a small stained glass window in the center."],
     ['door'],
     'north',
     'hallwayLeadingSouthFromSpawn'
@@ -214,7 +214,7 @@ $doorFromCourtyardToHallway = new Portal(
 $pathFromCourtyardToTown = new Portal(
     'pathFromCourtyardToTown',
     'Path to Town',
-    "A light walking path that leads south into the distance toward town.",
+    ["A light walking path that leads south into the distance toward town."],
     ['path'],
     'south',
     'houseInTown'
@@ -223,7 +223,7 @@ $pathFromCourtyardToTown = new Portal(
 $stepsFromCourtyardToShed = new Portal(
     'stepsFromCourtyardToShed',
     'Steps Leading Down',
-    "Stone steps leading down to an open clearing with a small shed.",
+    ["Stone steps leading down to an open clearing with a small shed."],
     ['steps'],
     'down',
     'smallShed'
@@ -232,7 +232,7 @@ $stepsFromCourtyardToShed = new Portal(
 $pathFromTownToCourtyard = new Portal(
     'pathFromTownToCourtyard',
     'Path from Town',
-    "A light walking path that leads north away from town.",
+    ["A light walking path that leads north away from town."],
     ['path'],
     'north',
     'courtyard'
@@ -241,7 +241,7 @@ $pathFromTownToCourtyard = new Portal(
 $cellarDoorIn = new Portal(
     'cellarDoorIn',
     'Door to Cellar',
-    "A door leading down into a cellar.",
+    ["A door leading down into a cellar."],
     ['door'],
     'down',
     'cellar'
@@ -254,7 +254,7 @@ $cellarDoorIn->setLocked(true);
 $cellarDoorOut = new Portal(
     'cellarDoorOut',
     'Cellar Door',
-    "The way out of the cellar.",
+    ["The way out of the cellar."],
     ['door'],
     'up',
     'houseInTown'
@@ -263,7 +263,7 @@ $cellarDoorOut = new Portal(
 $stepsFromShedToCourtyard = new Portal(
     'stepsFromShedToCourtyard',
     'Steps Leading Up',
-    "Stone steps leading up to a courtyard.",
+    ["Stone steps leading up to a courtyard."],
     ['steps'],
     'up',
     'courtyard'
@@ -272,7 +272,7 @@ $stepsFromShedToCourtyard = new Portal(
 $doorFromSecretRoomToWestRoom = new Portal(
     'doorFromWestRoomToSecretRoom',
     'Secret Door',
-    'Exit to the east',
+    ['Exit to the east'],
     ['door'],
     'east', 'roomWestOfSpawn'
 );
@@ -284,7 +284,7 @@ $doorFromSecretRoomToWestRoom = new Portal(
 $roomWestOfSpawn = new Location(
     'roomWestOfSpawn',
     'Room West of Spawn',
-    'There is nothing special about this room. It is just an ordinary room with walls.',
+    ['There is nothing special about this room. It is just an ordinary room with walls.'],
     new Container(),
     [$doorFromWestRoomToSpawn],
 );
@@ -293,7 +293,7 @@ $roomWestOfSpawn->getContainer()->setCapacity(20);
 $hallwayLeadingSouth = new Location(
     'hallwayLeadingSouthFromSpawn',
     'Hallway Leading South',
-    'A hallway that leads south from spawn with a single exit to exterior courtyard',
+    ['A hallway that leads south from spawn with a single exit to exterior courtyard'],
     new Container(),
     [$doorFromHallwayToCourtyard, $entryFromHallwayToSpawn]
 );
@@ -302,8 +302,10 @@ $hallwayLeadingSouth->getContainer()->setCapacity(5);
 $courtyard = new Location(
     'courtyard',
     'Courtyard',
-    'A courtyard surrounds the entrance of the house. ' . "\n" .
-    'Hedges form a wall in three directions, with a path leading away from the house toward town.',
+    [
+        'A courtyard surrounds the entrance of the house.',
+        'Hedges form a wall in three directions, with a path leading away from the house toward town.'
+    ],
     new Container(),
     [$doorFromCourtyardToHallway, $pathFromCourtyardToTown, $stepsFromCourtyardToShed]
 );
@@ -312,7 +314,7 @@ $courtyard->getContainer()->setCapacity(40);
 $houseInTown = new Location(
     "houseInTown",
     "The House",
-    "A house belonging to someone. They don't appear to be home.",
+    ["A house belonging to someone. They don't appear to be home."],
     new Container(),
     [$pathFromTownToCourtyard, $cellarDoorIn]
 );
@@ -321,7 +323,7 @@ $houseInTown->getContainer()->setCapacity(20);
 $smallShed = new Location(
     "smallShed",
     "A small shed",
-    "A small shed with weathered siding and a small window.",
+    ["A small shed with weathered siding and a small window."],
     new Container(),
     [$stepsFromShedToCourtyard]
 );
@@ -330,7 +332,7 @@ $smallShed->getContainer()->setCapacity(10);
 $cellar = new Location(
     "cellar",
     "Cellar",
-    "A dark cellar with a low ceiling. It is difficult to see anything without some kind of light.",
+    ["A dark cellar with a low ceiling. It is difficult to see anything without some kind of light."],
     new Container(),
     [$cellarDoorOut]
 );
@@ -339,7 +341,7 @@ $cellar->getContainer()->setCapacity(20);
 $spawnRoom = new Location(
     'spawn',
     'Player Spawn',
-    'This is the starting room.',
+    ['This is the starting room.'],
     new Container(),
     [$doorFromSpawnToWestRoom, $entryFromSpawnToHallway],
 );
@@ -349,7 +351,7 @@ $spawnRoom->getContainer()->addItem($chest);
 $secretRoom = new Location(
     'secretRoom',
     'The Secret Room',
-    'You have discovered a secret room.',
+    ['You have discovered a secret room.'],
     new Container(),
     [$doorFromSecretRoomToWestRoom],
 );
@@ -363,7 +365,7 @@ $secretRoom->getContainer()->addItem($secretLetter);
 $switch1 = new Item(
     'switch1',
     'Switch 1',
-    "There's no telling what this switch does.",
+    ["There's no telling what this switch does."],
     ['switch.one']
 );
 $switch1->setActivatable(true);
@@ -375,7 +377,7 @@ $houseInTown->getContainer()->setCapacity(20);
 $switch2 = new Item(
     'switch2',
     'Switch 2',
-    "There's no telling what this switch does.",
+    ["There's no telling what this switch does."],
     ['switch.two']
 );
 $switch2->setActivatable(true);
@@ -386,7 +388,7 @@ $houseInTown->getContainer()->addItem($switch2);
 $switch3 = new Item(
     'switch3',
     'Switch 3',
-    "There's no telling what this switch does.",
+    ["There's no telling what this switch does."],
     ['switch.three']
 );
 $switch3->setActivatable(true);

@@ -28,7 +28,7 @@ class MapControllerTest extends TestCase
         $item = new Item(
             'test-item',
             'Test Item',
-            'Test Item Description',
+            ['Test Item Description'],
             ['test']
         );
         $inventory->addItem($item);
@@ -36,7 +36,7 @@ class MapControllerTest extends TestCase
         $location = new Location(
             'test-location',
             'Test Location',
-            'Test Location Description',
+            ['Test Location Description'],
             new Container(),
             []
         );
@@ -55,14 +55,14 @@ class MapControllerTest extends TestCase
         $item = new Item(
             'test-item-1',
             'Test Item',
-            'Test Item Description',
+            ['Test Item Description'],
             ['test']
         );
 
         $location = new Location(
             'test-location',
             'Test Location',
-            'Test Location Description',
+            ['Test Location Description'],
             $items,
             []
         );
@@ -78,7 +78,7 @@ class MapControllerTest extends TestCase
         $item2 = new Item(
             'test-item-2',
             'Test Item',
-            'Test Item Description',
+            ['Test Item Description'],
             ['test']
         );
 
@@ -92,14 +92,14 @@ class MapControllerTest extends TestCase
         $door1 = new Portal(
             'test-door',
             '',
-            '',
+            [''],
             ['east'],
             'east', 'test-room-2'
         );
         $location1 = new Location(
             'test-room-1',
             'Test Room 1',
-            'This is a test room.',
+            ['This is a test room.'],
             new Container(),
             [$door1],
         );
@@ -107,14 +107,14 @@ class MapControllerTest extends TestCase
         $door2 = new Portal(
             'test-door',
             '',
-            '',
+            [''],
             ['west'],
             'west', 'test-room-1'
         );
         $location2 = new Location(
             'test-room-2',
             'Test Room 2',
-            'This is another test room.',
+            ['This is another test room.'],
             new Container(),
             [$door2],
         );
@@ -144,7 +144,7 @@ class MapControllerTest extends TestCase
         $location = new Location(
             'test-location',
             'Test Location',
-            'Test Location Description',
+            ['Test Location Description'],
             new Container(),
             []
         );
@@ -160,7 +160,7 @@ class MapControllerTest extends TestCase
         $location = new Location(
             'test-location',
             'Test Location',
-            'Test Location Description',
+            ['Test Location Description'],
             new Container(),
             []
         );
@@ -177,7 +177,7 @@ class MapControllerTest extends TestCase
         $item = new Item(
             'test-item',
             'Test Item',
-            'Test Item Description',
+            ['Test Item Description'],
             ['test']
         );
         $items->addItem($item);
@@ -185,7 +185,7 @@ class MapControllerTest extends TestCase
         $location = new Location(
             'test-location',
             'Test Location',
-            'Test Location Description',
+            ['Test Location Description'],
             $items,
             []
         );

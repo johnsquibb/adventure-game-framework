@@ -105,20 +105,22 @@ class ConsoleResponseDecorator
 
         $lines = [];
 
-        if (!empty($location->name)) {
+        if (!empty($location->getName())) {
             $lines[] = $this->divider();
-            $lines[] = $location->name;
+            $lines[] = $location->getName();
             $lines[] = $this->divider();
             $lines[] = $this->blank();
         }
 
-        if (!empty($location->summary)) {
-            $lines[] = $location->summary;
+        if (!empty($location->getSummary())) {
+            $lines[] = $location->getSummary();
             $lines[] = $this->blank();
         }
 
-        if (!empty($location->description)) {
-            $lines[] = $location->description;
+        if (!empty($location->getDescription())) {
+            foreach ($location->getDescription() as $description) {
+                $lines[] = $description;
+            }
             $lines[] = $this->blank();
         }
 
@@ -186,12 +188,14 @@ class ConsoleResponseDecorator
             $lines[] = $name;
         }
 
-        if (!empty($item->summary)) {
-            $lines[] = $this->tab() . $item->summary;
+        if (!empty($item->getSummary())) {
+            $lines[] = $this->tab() . $item->getSummary();
         }
 
-        if (!empty($item->description)) {
-            $lines[] = $this->tab() . $item->description;
+        if (!empty($item->getDescription())) {
+            foreach ($item->getDescription() as $description) {
+                $lines[] = $this->tab() . $description;
+            }
         }
 
         return $lines;
@@ -323,27 +327,18 @@ class ConsoleResponseDecorator
     {
         $lines = [];
 
-        if (!empty($entity->name)) {
-            $lines[] = $this->bullet() . $this->space() . $entity->name;
+        if (!empty($entity->getName())) {
+            $lines[] = $this->bullet() . $this->space() . $entity->getName();
         }
 
-        if (!empty($item->name)) {
-            $name = $this->bullet() . $this->space() . $item->name;
+        if (!empty($entity->getSummary())) {
+            $lines[] = $this->tab() . $entity->getSummary();
+        }
 
-            $status = $item->getStatus();
-            if (!empty($status)) {
-                $name .= $this->space() . "($status)";
+        if (!empty($entity->getDescription())) {
+            foreach ($entity->getDescription() as $description) {
+                $lines[] = $this->tab() . $description;
             }
-
-            $lines[] = $name;
-        }
-
-        if (!empty($entity->summary)) {
-            $lines[] = $this->tab() . $entity->summary;
-        }
-
-        if (!empty($entity->description)) {
-            $lines[] = $this->tab() . $entity->description;
         }
 
         return $lines;

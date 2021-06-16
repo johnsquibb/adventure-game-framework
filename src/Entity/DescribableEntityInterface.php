@@ -8,7 +8,7 @@ namespace AdventureGame\Entity;
  */
 interface DescribableEntityInterface
 {
-    public function getDescription(): string;
+    public function getDescription(): array;
 
     public function getSummary(): string;
 }
