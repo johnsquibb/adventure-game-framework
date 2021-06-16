@@ -1,27 +1,219 @@
+### Items
+
 [ITEM]
-# Attributes
 id=flashlight
 size=2
 readable=yes
 name=Small Flashlight
-
-# Interactions
 acquirable=yes
 activatable=yes
 deactivatable=yes
 readable=yes
-
-# Tags
 tags=flashlight,light,magic torch stick
-
 [description]
 A black metal flashlight that runs on rechargeable batteries.
 There is a round gray button for activating it.
 There is some small text printed on a label on the side of the flashlight.
-
 [text]
 Information written on the side:
 Model: Illuminated Devices Inc
 Year: 1983
 Serial Number: #8301IDI001256703
 Batt. Type: (4) AA
+
+[ITEM]
+id=secretLetter
+name=Powerful Mage's Letter
+size=1
+acquirable=yes
+readable=yes
+tags=letter,secret letter
+[description]
+A folded letter written on old paper.
+[text]
+Hello Adventurer\,
+
+You have found my secret room\, and have thus won the game!
+I hope you have enjoyed this sample adventure.
+
+Now\, go forth\, and create your own using the framework provided.
+
+Sincerely\,
+The Powerful Mage
+
+[ITEM]
+id=enteredSecretRoomReward
+name=Reward for Entering Secret Room
+size=1
+acquirable=yes
+tags=enter reward,reward.enter,reward
+[description]
+You did it! You made it into the secret room. This reward is proof of your achievement.
+
+[ITEM]
+id=mapToSecretRoom
+name=Map to Secret Room
+size=1
+acquirable=yes
+readable=yes
+activatable=yes
+tags=map
+[description]
+A map detailing the location of a secret room. Some readable words are written on the map.
+
+### Keys
+
+[ITEM]
+id=keyToWoodenDoor
+name=Key to Wooden Door
+size=1
+acquirable=yes
+tags=key to wooden door,key.keyToWoodenDoor,key
+[description]
+A metal key that unlocks the wooden door at spawn.
+
+[CONTAINER]
+id=treasureChest
+name=Treasure Chest
+capacity=5
+acquirable=no
+tags=chest
+items=flashlight,keyToWoodenDoor
+[description]
+A chest containing valuable treasure.
+
+### Exits
+
+[PORTAL]
+id=doorFromSpawnToWestRoom
+name=Wooden Door
+tags=door
+mutable=yes
+locked=yes
+key=keyToWoodenDoor
+direction=west
+destination=roomWestOfSpawn
+[description]
+A heavy wooden door leading to the west.
+
+[PORTAL]
+id=doorFromWestRoomToSpawn
+name=Wooden Door
+tags=door
+mutable=yes
+key=keyToWoodenDoor
+direction=east
+destination=spawn
+[description]
+A heavy wooden door leading back to spawn.
+
+[PORTAL]
+id=doorFromWestRoomToSecretRoom
+name=Secret Door
+tags=door
+direction=west
+destination=secretRoom
+[description]
+A secret door has been revealed to the west.
+
+[PORTAL]
+id=entryFromSpawnToHallway
+name=Hallway Entrance
+tags=hallway
+direction=south
+destination=hallwayLeadingSouthFromSpawn
+[description]
+An entrance to a hallway leading south.
+
+[PORTAL]
+id=entryFromHallwayToSpawn
+name=Hallway Entrance
+tags=hallway
+direction=north
+destination=spawn
+[description]
+An entrance to a hallway leading north.
+
+[PORTAL]
+id=doorFromHallwayToCourtyard
+name=Front door
+tags=door
+direction=south
+destination=courtyard
+[description]
+A door with a window\, through which you can see an exterior courtyard.
+
+[PORTAL]
+id=doorFromCourtyardToHallway
+name=Front door
+tags=door
+direction=north
+destination=hallwayLeadingSouthFromSpawn
+[description]
+A door that leads inside the house. It has a small stained glass window in the center.
+
+[PORTAL]
+id=pathFromCourtyardToTown
+name=Path to Town
+tags=path
+direction=south
+destination=houseInTown
+[description]
+A light walking path that leads south into the distance toward town.
+
+[PORTAL]
+id=stepsFromCourtyardToShed
+name=Steps Leading Down
+tags=steps
+direction=down
+destination=smallShed
+[description]
+Stone steps leading down to an open clearing with a small shed.
+
+[PORTAL]
+id=pathFromTownToCourtyard
+name=Path from Town
+tags=path
+direction=north
+destination=courtyard
+[description]
+A light walking path that leads north away from town.
+
+[PORTAL]
+id=cellarDoorIn
+name=Door to Cellar
+tags=door
+direction=down
+destination=cellar
+mutable=yes
+# The cellar door will be unlocked by activating a switch in the House location.
+locked=yes
+[description]
+A door leading down into a cellar.
+
+[PORTAL]
+id=cellarDoorOut
+name=Cellar Door
+tags=door
+direction=up
+destination=houseInTown
+[description]
+The way out of the cellar.
+
+[PORTAL]
+id=stepsFromShedToCourtyard
+name=Steps Leading Up
+tags=steps
+direction=up
+destination=courtyard
+[description]
+Stone steps leading up to a courtyard.
+
+[PORTAL]
+id=doorFromWestRoomToSecretRoom
+name=Secret Door
+tags=door
+direction=east
+destination=roomWestOfSpawn
+[description]
+Exit to the east

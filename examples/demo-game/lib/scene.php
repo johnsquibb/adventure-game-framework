@@ -11,10 +11,8 @@ use AdventureGame\Event\Triggers\AddItemToLocationUseTrigger;
 use AdventureGame\Event\Triggers\AddLocationToMapUseTrigger;
 use AdventureGame\Event\Triggers\Comparisons\ActivatedComparison;
 use AdventureGame\Item\Container;
-use AdventureGame\Item\ContainerItem;
 use AdventureGame\Item\Item;
 use AdventureGame\Location\Location;
-use AdventureGame\Location\Portal;
 use AdventureGameMarkupLanguage\Lexer;
 use AdventureGameMarkupLanguage\Parser;
 use AdventureGameMarkupLanguage\Transpiler;
@@ -31,212 +29,37 @@ $transpiler = new Transpiler($lexer, $parser);
 $builder = new SceneBuilder($transpiler);
 
 $builder->transpileMarkup($markup);
-$flashlight = $builder->getItems()['flashlight'];
+$items = $builder->getItems();
+$containers = $builder->getContainers();
+$portals = $builder->getPortals();
 
-//-------------------------------
 // Items
-//-------------------------------
+$flashlight = $items['flashlight'];
+$secretLetter = $items['secretLetter'];
+$enteredSecretRoomReward = $items['enteredSecretRoomReward'];
+$mapToSecretRoom = $items['mapToSecretRoom'];
 
-$secretLetter = new Item(
-    'secretLetter',
-    'A Secret Letter',
-    ['A folded letter written on old paper.'],
-    ['secret letter', 'letter']
-);
-$secretLetter->setSize(1);
-$secretLetter->setReadable(true);
-$secretLetter->setLines(
-    [
-        'Hello Adventurer!',
-        '',
-        'You have found my secret room, and have thus won the game!',
-        'I hope you have enjoyed this sample adventure.',
-        'Now, go forth, and create your own using the framework provided!',
-        '',
-        'Sincerely,',
-        'The Powerful Mage',
-    ]
-);
-
-// Give the player a reward for entering the secret room.
-$enteredSecretRoomReward = new Item(
-    'enteredSecretRoomReward',
-    'Reward for Entering Secret Room',
-    ['You did it! You made it into the secret room. This reward is proof of your achievement.'],
-    ['enter reward', 'reward.enter', 'reward']
-);
-
-$mapToSecretRoom = new Item(
-    'mapToSecretRoom',
-    'Map to Secret Room',
-    ['A map detailing the location of a secret room. A speakable word is written on the map.'],
-    ['map']
-);
-$mapToSecretRoom->setActivatable(true);
-$mapToSecretRoom->setSize(1);
-
-//-------------------------------
 // Keys
-//-------------------------------
-$keyToWoodenDoor = new Item(
-    'keyToWoodenDoor',
-    'Key to Wooden Door',
-    ['A metal key that unlocks the wooden door at spawn.'],
-    ['key to wooden door', 'key.keyToWoodenDoor', 'key']
-);
-$keyToWoodenDoor->setSize(1);
+$keyToWoodenDoor = $items['keyToWoodenDoor'];
 
-//-------------------------------
 // Containers
-//-------------------------------
+$chest = $containers['treasureChest'];
 
-$chest = new ContainerItem(
-    'treasureChest',
-    'Treasure Chest',
-    ['A chest containing valuable treasure.'],
-    ['chest'],
-);
-$chest->setCapacity(5);
-$chest->setAcquirable(false);
-$chest->addItem($flashlight);
-$chest->addItem($keyToWoodenDoor);
-
-//-------------------------------
-// Portals
-//-------------------------------
-
-$doorFromSpawnToWestRoom = new Portal(
-    'doorFromSpawnToWestRoom',
-    'Wooden Door',
-    ['A heavy wooden door leading to the west.'],
-    ['door'],
-    'west', 'roomWestOfSpawn'
-);
-
-$doorFromSpawnToWestRoom->setMutable(true);
-$doorFromSpawnToWestRoom->setLocked(true);
-$doorFromSpawnToWestRoom->setKeyEntityId($keyToWoodenDoor->getId());
-
-$doorFromWestRoomToSpawn = new Portal(
-    'doorFromWestRoomToSpawn',
-    'Wooden Door',
-    ['A heavy wooden door leading back to spawn.'],
-    ['door'],
-    'east',
-    'spawn'
-);
-
-$doorFromWestRoomToSpawn->setKeyEntityId($keyToWoodenDoor->getId());
-
-$doorFromWestRoomToSecretRoom = new Portal(
-    'doorFromWestRoomToSecretRoom',
-    'Secret Door',
-    ['A secret door has been revealed to the west.'],
-    ['door'],
-    'west',
-    'secretRoom'
-);
-
-$entryFromSpawnToHallway = new Portal(
-    'entryFromSpawnToHallway',
-    'Hallway Entrance',
-    ['An entrance to a hallway leading south.'],
-    ['hallway'],
-    'south',
-    'hallwayLeadingSouthFromSpawn'
-);
-
-$entryFromHallwayToSpawn = new Portal(
-    'entryFromSpawnToHallway',
-    'Hallway Entrance',
-    ['An entrance to a hallway leading north.'],
-    ['hallway'],
-    'north',
-    'spawn'
-);
-
-$doorFromHallwayToCourtyard = new Portal(
-    'doorFromHallwayToCourtyard',
-    'Front door',
-    ['A door with a window, through which you can see an exterior courtyard.'],
-    ['door'],
-    'south', 'courtyard'
-);
-
-$doorFromCourtyardToHallway = new Portal(
-    'doorFromCourtyardToHallway',
-    'Front door',
-    ["A door that leads inside the house. It has a small stained glass window in the center."],
-    ['door'],
-    'north',
-    'hallwayLeadingSouthFromSpawn'
-);
-
-$pathFromCourtyardToTown = new Portal(
-    'pathFromCourtyardToTown',
-    'Path to Town',
-    ["A light walking path that leads south into the distance toward town."],
-    ['path'],
-    'south',
-    'houseInTown'
-);
-
-$stepsFromCourtyardToShed = new Portal(
-    'stepsFromCourtyardToShed',
-    'Steps Leading Down',
-    ["Stone steps leading down to an open clearing with a small shed."],
-    ['steps'],
-    'down',
-    'smallShed'
-);
-
-$pathFromTownToCourtyard = new Portal(
-    'pathFromTownToCourtyard',
-    'Path from Town',
-    ["A light walking path that leads north away from town."],
-    ['path'],
-    'north',
-    'courtyard'
-);
-
-$cellarDoorIn = new Portal(
-    'cellarDoorIn',
-    'Door to Cellar',
-    ["A door leading down into a cellar."],
-    ['door'],
-    'down',
-    'cellar'
-);
-$cellarDoorIn->setMutable(true);
-
-// The cellar door will be unlocked by activating a switch in the House location.
-$cellarDoorIn->setLocked(true);
-
-$cellarDoorOut = new Portal(
-    'cellarDoorOut',
-    'Cellar Door',
-    ["The way out of the cellar."],
-    ['door'],
-    'up',
-    'houseInTown'
-);
-
-$stepsFromShedToCourtyard = new Portal(
-    'stepsFromShedToCourtyard',
-    'Steps Leading Up',
-    ["Stone steps leading up to a courtyard."],
-    ['steps'],
-    'up',
-    'courtyard'
-);
-
-$doorFromSecretRoomToWestRoom = new Portal(
-    'doorFromWestRoomToSecretRoom',
-    'Secret Door',
-    ['Exit to the east'],
-    ['door'],
-    'east', 'roomWestOfSpawn'
-);
+// Location Exits
+$doorFromSpawnToWestRoom = $portals['doorFromSpawnToWestRoom'];
+$doorFromWestRoomToSpawn = $portals['doorFromWestRoomToSpawn'];
+$doorFromWestRoomToSecretRoom = $portals['doorFromWestRoomToSecretRoom'];
+$entryFromSpawnToHallway = $portals['entryFromSpawnToHallway'];
+$entryFromHallwayToSpawn = $portals['entryFromHallwayToSpawn'];
+$doorFromHallwayToCourtyard = $portals['doorFromHallwayToCourtyard'];
+$doorFromCourtyardToHallway = $portals['doorFromCourtyardToHallway'];
+$pathFromCourtyardToTown = $portals['pathFromCourtyardToTown'];
+$stepsFromCourtyardToShed = $portals['stepsFromCourtyardToShed'];
+$pathFromTownToCourtyard = $portals['pathFromTownToCourtyard'];
+$cellarDoorIn = $portals['cellarDoorIn'];
+$cellarDoorOut = $portals['cellarDoorOut'];
+$stepsFromShedToCourtyard = $portals['stepsFromShedToCourtyard'];
+$doorFromSecretRoomToWestRoom = $portals['doorFromWestRoomToSecretRoom'];
 
 //-------------------------------
 // Locations
