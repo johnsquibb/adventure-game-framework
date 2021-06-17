@@ -72,6 +72,8 @@ tags=key to wooden door,key.keyToWoodenDoor,key
 [description]
 A metal key that unlocks the wooden door at spawn.
 
+### Containers
+
 [CONTAINER]
 id=treasureChest
 name=Treasure Chest
@@ -260,6 +262,7 @@ id=houseInTown
 name=The House
 capacity=20
 exits=pathFromTownToCourtyard,cellarDoorIn
+items=switch1,switch2,switch3
 [description]
 A house belonging to someone. They don't appear to be home.
 
@@ -288,3 +291,38 @@ capacity=5
 exits=doorFromHallwayToCourtyard,entryFromHallwayToSpawn
 [description]
 A hallway that leads south from spawn with a single exit to exterior courtyard.
+
+### Switches & Activators
+
+[ITEM]
+id=switch1
+name=Switch No. 1
+acquirable=no
+activatable=yes
+deactivatable=yes
+tags=switch.one,switch
+[description]
+The first in a series of three switches.
+There's no telling what activating it might do.
+
+[ITEM]
+id=switch2
+name=Switch No. 2
+acquirable=no
+activatable=yes
+deactivatable=yes
+tags=switch.two,switch
+[description]
+The second in a series of three switches.
+There's no telling what activating it might do.
+
+[ITEM]
+id=switch3
+name=Switch No. 3
+acquirable=no
+activatable=yes
+deactivatable=yes
+tags=switch.three,switch
+[description]
+The last in a series of three switches.
+There's no telling what activating it might do.
