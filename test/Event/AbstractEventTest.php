@@ -12,6 +12,8 @@ abstract class AbstractEventTest extends FrameworkTest
     protected function createMockTrigger(Response $mockResponse): TriggerInterface
     {
         return new class($mockResponse) implements TriggerInterface {
+            private string $id;
+
             public function __construct(private Response $response)
             {
             }
@@ -23,7 +25,12 @@ abstract class AbstractEventTest extends FrameworkTest
 
             public function getId(): string
             {
-                return 'mockId';
+                return $this->id;
+            }
+
+            public function setId(string $id): void
+            {
+                $this->id = $id;
             }
         };
     }

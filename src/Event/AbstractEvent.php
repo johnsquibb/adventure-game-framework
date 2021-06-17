@@ -4,12 +4,12 @@ namespace AdventureGame\Event;
 
 use AdventureGame\Game\GameController;
 use AdventureGame\Response\Response;
-use AdventureGame\Traits\IdentityTrait;
 
 abstract class AbstractEvent implements EventInterface
 {
     public const MATCH_ALL = '*';
 
+    private string $id;
     protected TriggerInterface $trigger;
     protected string $matchItemId = '';
     protected string $matchLocationId = '';
@@ -42,5 +42,15 @@ abstract class AbstractEvent implements EventInterface
     public function trigger(GameController $gameController): ?Response
     {
         return $this->trigger->execute($gameController);
+    }
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function setId(string $id): void
+    {
+        $this->id = $id;
     }
 }

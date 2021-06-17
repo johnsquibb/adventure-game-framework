@@ -2,6 +2,13 @@
 
 namespace AdventureGame\Builder;
 
+use AdventureGame\Event\AbstractInventoryEvent;
+use AdventureGame\Event\AbstractLocationEvent;
+use AdventureGame\Event\EventInterface;
+use AdventureGame\Event\Events\ActivateItemEvent;
+use AdventureGame\Event\Events\DeactivateItemEvent;
+use AdventureGame\Event\Events\EnterLocationEvent;
+use AdventureGame\Event\Events\HasActivatedItemEvent;
 use AdventureGame\Event\TriggerInterface;
 use AdventureGame\Event\Triggers\ActivatorPortalLockTrigger;
 use AdventureGame\Event\Triggers\AddItemToInventoryUseTrigger;
@@ -15,6 +22,7 @@ use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Location;
 use AdventureGame\Location\Portal;
 use AdventureGameMarkupLanguage\Hydrator\ContainerEntityHydrator;
+use AdventureGameMarkupLanguage\Hydrator\EventEntityHydrator;
 use AdventureGameMarkupLanguage\Hydrator\ItemEntityHydrator;
 use AdventureGameMarkupLanguage\Hydrator\LocationEntityHydrator;
 use AdventureGameMarkupLanguage\Hydrator\PortalEntityHydrator;
@@ -74,6 +82,7 @@ class SceneBuilder
         $this->buildPortals($hydrators);
         $this->buildLocations($hydrators);
         $this->buildTriggers($hydrators);
+        $this->buildEvents($hydrators);
     }
 
     private function buildItems(array $hydrators): void
@@ -126,6 +135,71 @@ class SceneBuilder
                 }
             }
         }
+    }
+
+    private function buildEvents(array $hydrators): void
+    {
+        foreach ($hydrators as $hydrator) {
+            if ($hydrator instanceof EventEntityHydrator) {
+                $event = $this->buildEvent($hydrator);
+                if ($event instanceof EventInterface) {
+                    $this->events[$event->getId()] = $event;
+                }
+            }
+        }
+    }
+
+    private function buildEvent(EventEntityHydrator $hydrator): ?EventInterface
+    {
+        $event = null;
+
+        switch ($hydrator->getType()) {
+            case 'ActivateItemEvent':
+                $trigger = $this->triggers[$hydrator->getTrigger()] ?? null;
+                if ($trigger instanceof TriggerInterface) {
+                    $event = new ActivateItemEvent(
+                        $trigger,
+                        $hydrator->getItem(),
+                        $hydrator->getLocation()
+                    );
+                }
+                break;
+            case 'DeactivateItemEvent':
+                $trigger = $this->triggers[$hydrator->getTrigger()] ?? null;
+                if ($trigger instanceof TriggerInterface) {
+                    $event = new DeactivateItemEvent(
+                        $trigger,
+                        $hydrator->getItem(),
+                        $hydrator->getLocation()
+                    );
+                }
+                break;
+            case 'HasActivatedItemEvent':
+                $trigger = $this->triggers[$hydrator->getTrigger()] ?? null;
+                if ($trigger instanceof TriggerInterface) {
+                    $event = new HasActivatedItemEvent(
+                        $trigger,
+                        $hydrator->getItem(),
+                        $hydrator->getLocation()
+                    );
+                }
+                break;
+            case 'EnterLocationEvent':
+                $trigger = $this->triggers[$hydrator->getTrigger()] ?? null;
+                if ($trigger instanceof TriggerInterface) {
+                    $event = new EnterLocationEvent(
+                        $trigger,
+                        $hydrator->getLocation()
+                    );
+                }
+                break;
+        }
+
+        if ($event instanceof EventInterface) {
+            $event->setId($hydrator->getId());
+        }
+
+        return $event;
     }
 
     private function buildTrigger(TriggerEntityHydrator $hydrator): ?TriggerInterface

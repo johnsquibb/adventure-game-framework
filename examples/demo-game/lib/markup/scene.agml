@@ -354,3 +354,79 @@ location=secretRoom
 destination=roomWestOfSpawn
 portal=doorFromWestRoomToSecretRoom
 uses=1
+
+# When the player activates the correct sequence of switches in house, unlock the cellar door.
+# Add events for each switch to ensure the trigger is executed no matter which switch the player
+# activates first, and to ensure the lock state occurs after when toggling new switches.
+[EVENT]
+id=activateFirstSwitchInHouse
+type=ActivateItemEvent
+trigger=activateSwitchesInHouse
+item=switch1
+location=houseInTown
+
+[EVENT]
+id=deactivateFirstSwitchInHouse
+type=DeactivateItemEvent
+trigger=activateSwitchesInHouse
+item=switch1
+location=houseInTown
+
+[EVENT]
+id=activateSecondSwitchInHouse
+type=ActivateItemEvent
+trigger=activateSwitchesInHouse
+item=switch2
+location=houseInTown
+
+[EVENT]
+id=deactivateSecondSwitchInHouse
+type=DeactivateItemEvent
+trigger=activateSwitchesInHouse
+item=switch2
+location=houseInTown
+
+[EVENT]
+id=activateThirdSwitchInHouse
+type=ActivateItemEvent
+trigger=activateSwitchesInHouse
+item=switch3
+location=houseInTown
+
+[EVENT]
+id=deactivateThirdSwitchInHouse
+type=DeactivateItemEvent
+trigger=activateSwitchesInHouse
+item=switch3
+location=houseInTown
+
+# When the player turns the flashlight on in the cellar, reveal the map to the secret room.
+[EVENT]
+id=activateFlashlightInCellar
+type=ActivateItemEvent
+trigger=flashlightActivatedInCellarToRevealMap
+item=flashlight
+location=cellar
+
+# Apply the same trigger on room entry when the flashlight is already activated.
+[EVENT]
+id=hasActivatedFlashlightInCellar
+type=HasActivatedItemEvent
+trigger=flashlightActivatedInCellarToRevealMap
+item=flashlight
+location=cellar
+
+# When reading the map, add the secret room as a new location.
+[EVENT]
+id=addSecretRoomToMapWhenReadMap
+type=ActivateItemEvent
+trigger=addSecretRoomToMap
+item=mapToSecretRoom
+location=*
+
+# Give the player a reward for entering the secret room.
+[EVENT]
+id=giveRewardWhenEnteringSecretRoom
+type=EnterLocationEvent
+trigger=giveSecretRoomReward
+location=secretRoom
