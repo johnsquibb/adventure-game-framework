@@ -327,6 +327,8 @@ tags=switch.three,switch
 The last in a series of three switches.
 There's no telling what activating it might do.
 
+### Triggers
+
 [TRIGGER]
 id=activateSwitchesInHouse
 type=ActivatorPortalLockTrigger
@@ -354,6 +356,8 @@ location=secretRoom
 destination=roomWestOfSpawn
 portal=doorFromWestRoomToSecretRoom
 uses=1
+
+### Events
 
 # When the player activates the correct sequence of switches in house, unlock the cellar door.
 # Add events for each switch to ensure the trigger is executed no matter which switch the player
