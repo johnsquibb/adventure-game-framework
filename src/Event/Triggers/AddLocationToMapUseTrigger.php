@@ -10,7 +10,7 @@ use AdventureGame\Response\Response;
 
 class AddLocationToMapUseTrigger extends FiniteUseTrigger
 {
-    protected array $entrances = [];
+    protected array $exits = [];
 
     public function __construct(protected Location $location, int $numberOfUses = 1)
     {
@@ -18,13 +18,13 @@ class AddLocationToMapUseTrigger extends FiniteUseTrigger
     }
 
     /**
-     * Add an entrance to the location.
-     * @param string $fromLocationId
+     * Add an exit to location.
+     * @param string $locationId
      * @param Portal $portal
      */
-    public function addEntrance(string $fromLocationId, Portal $portal): void
+    public function addExit(string $locationId, Portal $portal): void
     {
-        $this->entrances[$fromLocationId] = $portal;
+        $this->exits[$locationId] = $portal;
     }
 
     /**
@@ -39,7 +39,7 @@ class AddLocationToMapUseTrigger extends FiniteUseTrigger
             $this->triggerCount++;
         }
 
-        foreach ($this->entrances as $fromLocationId => $entrance) {
+        foreach ($this->exits as $fromLocationId => $entrance) {
             $fromLocation = $gameController->mapController->getLocationById($fromLocationId);
             if ($fromLocation instanceof Location) {
                 $fromLocation->addExit($entrance);

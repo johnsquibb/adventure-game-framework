@@ -326,3 +326,31 @@ tags=switch.three,switch
 [description]
 The last in a series of three switches.
 There's no telling what activating it might do.
+
+[TRIGGER]
+id=activateSwitchesInHouse
+type=ActivatorPortalLockTrigger
+comparisons=on,off,on
+activators=switch1,switch2,switch3
+portal=cellarDoorIn
+
+[TRIGGER]
+id=flashlightActivatedInCellarToRevealMap
+type=AddItemToLocationUseTrigger
+item=mapToSecretRoom
+uses=1
+
+[TRIGGER]
+id=giveSecretRoomReward
+type=AddItemToInventoryUseTrigger
+item=enteredSecretRoomReward
+uses=1
+
+[TRIGGER]
+id=addSecretRoomToMap
+type=AddLocationToMapUseTrigger
+location=secretRoom
+# Add door to this location leading to added room
+destination=roomWestOfSpawn
+portal=doorFromWestRoomToSecretRoom
+uses=1

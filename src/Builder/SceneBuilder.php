@@ -2,23 +2,35 @@
 
 namespace AdventureGame\Builder;
 
+use AdventureGame\Event\TriggerInterface;
+use AdventureGame\Event\Triggers\ActivatorPortalLockTrigger;
+use AdventureGame\Event\Triggers\AddItemToInventoryUseTrigger;
+use AdventureGame\Event\Triggers\AddItemToLocationUseTrigger;
+use AdventureGame\Event\Triggers\AddLocationToMapUseTrigger;
+use AdventureGame\Event\Triggers\Comparisons\ActivatedComparison;
 use AdventureGame\Item\Container;
 use AdventureGame\Item\ContainerItem;
 use AdventureGame\Item\Item;
+use AdventureGame\Item\ItemInterface;
 use AdventureGame\Location\Location;
 use AdventureGame\Location\Portal;
 use AdventureGameMarkupLanguage\Hydrator\ContainerEntityHydrator;
 use AdventureGameMarkupLanguage\Hydrator\ItemEntityHydrator;
 use AdventureGameMarkupLanguage\Hydrator\LocationEntityHydrator;
 use AdventureGameMarkupLanguage\Hydrator\PortalEntityHydrator;
+use AdventureGameMarkupLanguage\Hydrator\TriggerEntityHydrator;
 use AdventureGameMarkupLanguage\Transpiler;
 
 class SceneBuilder
 {
+    const ACTIVATOR_ACTIVATED = 'on';
+
     private array $items = [];
     private array $locations = [];
     private array $containers = [];
     private array $portals = [];
+    private array $triggers = [];
+    private array $events = [];
 
     public function __construct(private Transpiler $transpiler)
     {
@@ -27,6 +39,11 @@ class SceneBuilder
     public function getContainers(): array
     {
         return $this->containers;
+    }
+
+    public function getEvents(): array
+    {
+        return $this->events;
     }
 
     public function getItems(): array
@@ -44,6 +61,11 @@ class SceneBuilder
         return $this->portals;
     }
 
+    public function getTriggers(): array
+    {
+        return $this->triggers;
+    }
+
     public function transpileMarkup(string $markup)
     {
         $hydrators = $this->transpiler->transpile($markup);
@@ -51,6 +73,7 @@ class SceneBuilder
         $this->buildContainers($hydrators);
         $this->buildPortals($hydrators);
         $this->buildLocations($hydrators);
+        $this->buildTriggers($hydrators);
     }
 
     private function buildItems(array $hydrators): void
@@ -91,6 +114,96 @@ class SceneBuilder
                 $this->locations[$location->getId()] = $location;
             }
         }
+    }
+
+    private function buildTriggers(array $hydrators): void
+    {
+        foreach ($hydrators as $hydrator) {
+            if ($hydrator instanceof TriggerEntityHydrator) {
+                $trigger = $this->buildTrigger($hydrator);
+                if ($trigger instanceof TriggerInterface) {
+                    $this->triggers[$trigger->getId()] = $trigger;
+                }
+            }
+        }
+    }
+
+    private function buildTrigger(TriggerEntityHydrator $hydrator): ?TriggerInterface
+    {
+        $trigger = null;
+
+        switch ($hydrator->getType()) {
+            case 'ActivatorPortalLockTrigger':
+                $portal = $this->portals[$hydrator->getPortal()] ?? null;
+
+                if ($portal instanceof Portal) {
+                    $activators = $this->getActivators($hydrator->getActivators());
+                    $comparisons = $this->buildActivatedComparisons($hydrator->getComparisons());
+                    $trigger = new ActivatorPortalLockTrigger($activators, $comparisons, $portal);
+                }
+                break;
+            case 'AddItemToLocationUseTrigger':
+                $item = $this->items[$hydrator->getItem()] ?? null;
+                if ($item instanceof ItemInterface) {
+                    $trigger = new AddItemToLocationUseTrigger($item, $hydrator->getUses());
+                }
+                break;
+            case 'AddItemToInventoryUseTrigger':
+                $item = $this->items[$hydrator->getItem()] ?? null;
+                if ($item instanceof ItemInterface) {
+                    $trigger = new AddItemToInventoryUseTrigger($item, $hydrator->getUses());
+                }
+                break;
+            case 'AddLocationToMapUseTrigger':
+                $location = $this->locations[$hydrator->getLocation()] ?? null;
+                if ($location instanceof Location) {
+                    $trigger = new AddLocationToMapUseTrigger($location, $hydrator->getUses());
+
+                    // Add door leading from destination to the added location.
+                    $portal = $this->portals[$hydrator->getPortal()] ?? null;
+                    $destination = $this->locations[$hydrator->getDestination()] ?? null;
+                    if (isset($portal, $destination)) {
+                        $trigger->addExit($destination->getId(), $portal);
+                    }
+                }
+                break;
+        }
+
+        if ($trigger instanceof TriggerInterface) {
+            $trigger->setId($hydrator->getId());
+        }
+
+        return $trigger;
+    }
+
+    private function getActivators(array $activatorIds): array
+    {
+        $activators = [];
+
+        foreach ($activatorIds as $itemId) {
+            if (isset($this->items[$itemId])) {
+                $activators[] = $this->items[$itemId];
+            }
+
+            if (isset($this->containers[$itemId])) {
+                $activators[] = $this->containers[$itemId];
+            }
+        }
+
+        return $activators;
+    }
+
+    private function buildActivatedComparisons(array $values): array
+    {
+        $comparisons = [];
+
+        foreach ($values as $value) {
+            $comparisons[] = new ActivatedComparison(
+                strtolower($value) === self::ACTIVATOR_ACTIVATED
+            );
+        }
+
+        return $comparisons;
     }
 
     private function buildItem(ItemEntityHydrator $hydrator): Item

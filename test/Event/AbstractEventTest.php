@@ -20,6 +20,11 @@ abstract class AbstractEventTest extends FrameworkTest
             {
                 return $this->response;
             }
+
+            public function getId(): string
+            {
+                return 'mockId';
+            }
         };
     }
 }

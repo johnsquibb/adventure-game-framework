@@ -2,7 +2,7 @@
 
 namespace AdventureGame\Event;
 
-abstract class FiniteUseTrigger implements TriggerInterface
+abstract class FiniteUseTrigger extends AbstractTrigger
 {
     protected int $triggerCount = 0;
     protected int $numberOfUses = 1;
