@@ -1,4 +1,6 @@
-### Items
+####################################################################################################
+# Items
+####################################################################################################
 
 [ITEM]
 id=flashlight
@@ -63,8 +65,9 @@ tags=map
 A map detailing the location of a secret room. Some readable words are written on the map.
 [/description]
 
-### Keys
-
+####################################################################################################
+# Keys
+####################################################################################################
 [ITEM]
 id=keyToWoodenDoor
 name=Key to Wooden Door
@@ -75,7 +78,9 @@ tags=key to wooden door,key.keyToWoodenDoor,key
 A metal key that unlocks the wooden door at spawn.
 [/description]
 
-### Containers
+####################################################################################################
+# Containers
+####################################################################################################
 
 [CONTAINER]
 id=treasureChest
@@ -88,7 +93,9 @@ items=flashlight,keyToWoodenDoor
 A chest containing valuable treasure.
 [/description]
 
-### Exits
+####################################################################################################
+# Exits
+####################################################################################################
 
 [PORTAL]
 id=doorFromSpawnToWestRoom
@@ -238,7 +245,9 @@ destination=roomWestOfSpawn
 Exit to the east
 [/description]
 
-### Locations
+####################################################################################################
+# Locations
+####################################################################################################
 
 [LOCATION]
 id=spawn
@@ -326,7 +335,9 @@ exits=doorFromHallwayToCourtyard,entryFromHallwayToSpawn
 A hallway that leads south from spawn with a single exit to exterior courtyard.
 [/description]
 
-### Switches & Activators
+####################################################################################################
+# Switches & Activators
+####################################################################################################
 
 [ITEM]
 id=switch1
@@ -364,7 +375,9 @@ The last in a series of three switches.
 There's no telling what activating it might do.
 [/description]
 
-### Triggers
+####################################################################################################
+# Triggers
+####################################################################################################
 
 [TRIGGER]
 id=activateSwitchesInHouse
@@ -394,7 +407,9 @@ destination=roomWestOfSpawn
 portal=doorFromWestRoomToSecretRoom
 uses=1
 
-### Events
+####################################################################################################
+# Events
+####################################################################################################
 
 # When the player activates the correct sequence of switches in house, unlock the cellar door.
 # Add events for each switch to ensure the trigger is executed no matter which switch the player
