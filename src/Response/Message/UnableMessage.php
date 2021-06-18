@@ -59,7 +59,7 @@ class UnableMessage implements MessageInterface
             self::TYPE_ALREADY_DEACTIVATED => sprintf("'%s' is already deactivated", $this->name),
             self::TYPE_PORTAL_LOCKED => sprintf("'%s' is locked", $this->name),
             self::TYPE_PORTAL_NOT_LOCKABLE => sprintf("'%s' can't be locked", $this->name),
-            self::TYPE_PORTAL_NOT_UNLOCKABLE => sprintf("'%s' can't be locked", $this->name),
+            self::TYPE_PORTAL_NOT_UNLOCKABLE => sprintf("'%s' can't be unlocked", $this->name),
             self::TYPE_ITEM_NOT_IN_INVENTORY => sprintf("You don't have '%s'", $this->name),
             self::TYPE_ITEM_CANNOT_PUT_THERE => sprintf("You can't put '%s' there", $this->name),
             default => '',

@@ -29,6 +29,11 @@ class PlatformController
         $this->platformRegistry = $this->platformFactory->createPlatformRegistry();
     }
 
+    public function getPlatformRegistry(): PlatformRegistry
+    {
+        return $this->platformRegistry;
+    }
+
     /**
      * Run the game.
      * @param ClientControllerInterface $clientController

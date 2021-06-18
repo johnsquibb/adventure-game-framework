@@ -18,7 +18,8 @@
   },
   "scripts": {
     "test": "vendor/bin/phpunit test",
-    "example": "php examples/demo-game/main.php"
+    "example": "php examples/demo-game/main.php",
+    "example-test": "php examples/demo-game/test.php"
   },
   "require": {
     "ext-readline": "*",

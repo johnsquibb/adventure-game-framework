@@ -186,7 +186,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
 
         if (empty($items)) {
             $response = new Response();
-            $message = new InventoryMessage(InventoryMessage::TYPE_INVENTORY_EMPTY);
+            $message = new UnableMessage($tag, UnableMessage::TYPE_ITEM_NOT_IN_INVENTORY);
             $response->addMessage($message->toString());
             return $response;
         }

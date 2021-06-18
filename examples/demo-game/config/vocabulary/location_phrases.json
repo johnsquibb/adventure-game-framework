@@ -7,15 +7,21 @@
     "go through door": "move east",
     "enter door": "move east"
   },
+  "hallwayLeadingSouthFromSpawn": {
+    "enter hallway": "move north"
+  },
   "courtyard": {
     "head to town": "move south",
     "go down path": "move south",
+    "take path to town": "move south",
     "take path": "move south",
-    "go down steps": "move down"
+    "go down steps": "move down",
+    "go through front door": "move north"
   },
   "houseInTown": {
     "head away from town": "move north",
     "go up path": "move north",
+    "take path away from town": "move north",
     "take path": "move north"
   },
   "smallShed": {

@@ -278,7 +278,10 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
                 $message = $this->unlockEntityWithKey($portal, $key);
                 $response->addMessage($message);
             } else {
-                $message = new UnableMessage($keyTag, UnableMessage::TYPE_PORTAL_NOT_UNLOCKABLE);
+                $message = new UnableMessage(
+                    $portal->getName(),
+                    UnableMessage::TYPE_PORTAL_NOT_UNLOCKABLE
+                );
                 $response->addMessage($message->toString());
             }
             return $response;
@@ -343,7 +346,10 @@ class VerbNounPrepositionNounCommand extends AbstractCommand implements CommandI
                 $message = $this->lockEntityWithKey($portal, $key);
                 $response->addMessage($message);
             } else {
-                $message = new UnableMessage($keyTag, UnableMessage::TYPE_PORTAL_NOT_LOCKABLE);
+                $message = new UnableMessage(
+                    $portal->getName(),
+                    UnableMessage::TYPE_PORTAL_NOT_LOCKABLE
+                );
                 $response->addMessage($message->toString());
             }
             return $response;
