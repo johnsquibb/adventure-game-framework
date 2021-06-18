@@ -49,6 +49,7 @@ acquirable=yes
 tags=enter reward,reward.enter,reward
 [description]
 You did it! You made it into the secret room. This reward is proof of your achievement.
+[/description]
 
 [ITEM]
 id=mapToSecretRoom
@@ -60,6 +61,7 @@ activatable=yes
 tags=map
 [description]
 A map detailing the location of a secret room. Some readable words are written on the map.
+[/description]
 
 ### Keys
 
@@ -71,6 +73,7 @@ acquirable=yes
 tags=key to wooden door,key.keyToWoodenDoor,key
 [description]
 A metal key that unlocks the wooden door at spawn.
+[/description]
 
 ### Containers
 
@@ -83,6 +86,7 @@ tags=chest
 items=flashlight,keyToWoodenDoor
 [description]
 A chest containing valuable treasure.
+[/description]
 
 ### Exits
 
@@ -97,6 +101,7 @@ direction=west
 destination=roomWestOfSpawn
 [description]
 A heavy wooden door leading to the west.
+[/description]
 
 [PORTAL]
 id=doorFromWestRoomToSpawn
@@ -108,6 +113,7 @@ direction=east
 destination=spawn
 [description]
 A heavy wooden door leading back to spawn.
+[/description]
 
 [PORTAL]
 id=doorFromWestRoomToSecretRoom
@@ -117,6 +123,7 @@ direction=west
 destination=secretRoom
 [description]
 A secret door has been revealed to the west.
+[/description]
 
 [PORTAL]
 id=entryFromSpawnToHallway
@@ -126,6 +133,7 @@ direction=south
 destination=hallwayLeadingSouthFromSpawn
 [description]
 An entrance to a hallway leading south.
+[/description]
 
 [PORTAL]
 id=entryFromHallwayToSpawn
@@ -135,6 +143,7 @@ direction=north
 destination=spawn
 [description]
 An entrance to a hallway leading north.
+[/description]
 
 [PORTAL]
 id=doorFromHallwayToCourtyard
@@ -144,6 +153,7 @@ direction=south
 destination=courtyard
 [description]
 A door with a window\, through which you can see an exterior courtyard.
+[/description]
 
 [PORTAL]
 id=doorFromCourtyardToHallway
@@ -153,6 +163,7 @@ direction=north
 destination=hallwayLeadingSouthFromSpawn
 [description]
 A door that leads inside the house. It has a small stained glass window in the center.
+[/description]
 
 [PORTAL]
 id=pathFromCourtyardToTown
@@ -162,6 +173,7 @@ direction=south
 destination=houseInTown
 [description]
 A light walking path that leads south into the distance toward town.
+[/description]
 
 [PORTAL]
 id=stepsFromCourtyardToShed
@@ -171,6 +183,7 @@ direction=down
 destination=smallShed
 [description]
 Stone steps leading down to an open clearing with a small shed.
+[/description]
 
 [PORTAL]
 id=pathFromTownToCourtyard
@@ -180,6 +193,7 @@ direction=north
 destination=courtyard
 [description]
 A light walking path that leads north away from town.
+[/description]
 
 [PORTAL]
 id=cellarDoorIn
@@ -192,6 +206,7 @@ mutable=yes
 locked=yes
 [description]
 A door leading down into a cellar.
+[/description]
 
 [PORTAL]
 id=cellarDoorOut
@@ -201,6 +216,7 @@ direction=up
 destination=houseInTown
 [description]
 The way out of the cellar.
+[/description]
 
 [PORTAL]
 id=stepsFromShedToCourtyard
@@ -210,6 +226,7 @@ direction=up
 destination=courtyard
 [description]
 Stone steps leading up to a courtyard.
+[/description]
 
 [PORTAL]
 id=doorFromSecretRoomToRoomWestOfSpawn
@@ -219,17 +236,27 @@ direction=east
 destination=roomWestOfSpawn
 [description]
 Exit to the east
+[/description]
 
 ### Locations
 
 [LOCATION]
 id=spawn
-name=Player Spawn
+name=Welcome to Adventure Game Framework
 capacity=20
 items=treasureChest
 exits=doorFromSpawnToWestRoom,entryFromSpawnToHallway
 [description]
-This is the starting room.
+You are standing in the starting room.
+
+Move around and explore the game world by using simple commands like:
+
+- go north
+
+- open chest
+
+- take key from chest
+[/description]
 
 [LOCATION]
 id=secretRoom
@@ -239,6 +266,7 @@ items=secretLetter
 exits=doorFromSecretRoomToRoomWestOfSpawn
 [description]
 You have discovered a secret room.
+[/description]
 
 [LOCATION]
 id=cellar
@@ -248,6 +276,7 @@ exits=cellarDoorOut
 [description]
 A dark cellar with a low ceiling.
 It is difficult to see anything without some kind of light.
+[/description]
 
 [LOCATION]
 id=smallShed
@@ -256,6 +285,7 @@ capacity=10
 exits=stepsFromShedToCourtyard
 [description]
 A small shed with weathered siding and a small window.
+[/description]
 
 [LOCATION]
 id=houseInTown
@@ -265,6 +295,7 @@ exits=pathFromTownToCourtyard,cellarDoorIn
 items=switch1,switch2,switch3
 [description]
 A house belonging to someone. They don't appear to be home.
+[/description]
 
 [LOCATION]
 id=courtyard
@@ -274,6 +305,7 @@ exits=doorFromCourtyardToHallway,pathFromCourtyardToTown,stepsFromCourtyardToShe
 [description]
 A courtyard surrounds the entrance of the house.
 Hedges form a wall in three directions\, with a path leading away from the house toward town.
+[/description]
 
 [LOCATION]
 id=roomWestOfSpawn
@@ -283,6 +315,7 @@ items=
 exits=doorFromWestRoomToSpawn
 [description]
 There is nothing special about this room. It is just an ordinary room with walls.
+[/description]
 
 [LOCATION]
 id=hallwayLeadingSouthFromSpawn
@@ -291,6 +324,7 @@ capacity=5
 exits=doorFromHallwayToCourtyard,entryFromHallwayToSpawn
 [description]
 A hallway that leads south from spawn with a single exit to exterior courtyard.
+[/description]
 
 ### Switches & Activators
 
@@ -304,6 +338,7 @@ tags=switch.one,switch
 [description]
 The first in a series of three switches.
 There's no telling what activating it might do.
+[/description]
 
 [ITEM]
 id=switch2
@@ -315,6 +350,7 @@ tags=switch.two,switch
 [description]
 The second in a series of three switches.
 There's no telling what activating it might do.
+[/description]
 
 [ITEM]
 id=switch3
@@ -326,6 +362,7 @@ tags=switch.three,switch
 [description]
 The last in a series of three switches.
 There's no telling what activating it might do.
+[/description]
 
 ### Triggers
 

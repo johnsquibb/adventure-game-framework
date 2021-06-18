@@ -106,9 +106,10 @@ class ConsoleResponseDecorator
         $lines = [];
 
         if (!empty($location->getName())) {
-            $lines[] = $this->divider();
-            $lines[] = $location->getName();
-            $lines[] = $this->divider();
+            $name = $location->getName();
+            $lines[] = $this->divider(strlen($name));
+            $lines[] = $name;
+            $lines[] = $this->divider(strlen($name));
             $lines[] = $this->blank();
         }
 
@@ -128,12 +129,13 @@ class ConsoleResponseDecorator
     }
 
     /**
-     * Build a visible divider.
+     * Build a divider of defined width.
+     * @param int $width
      * @return string
      */
-    private function divider(): string
+    private function divider(int $width = self::DIVIDER_WIDTH): string
     {
-        return str_repeat(self::DIVIDER_CHARACTER, self::DIVIDER_WIDTH);
+        return str_repeat(self::DIVIDER_CHARACTER, $width);
     }
 
     /**
@@ -152,10 +154,11 @@ class ConsoleResponseDecorator
      */
     private function renderItems(array $items): array
     {
-        $lines = [];
+        $lines = [$this->blank()];
 
-        $lines[] = $this->blank();
-        $lines[] = "You see:";
+        $heading = 'Items';
+        $lines[] = $heading;
+        $lines[] = $this->divider(strlen($heading));
         $lines[] = $this->blank();
 
         foreach ($items as $description) {
@@ -229,6 +232,21 @@ class ConsoleResponseDecorator
     }
 
     /**
+     * Draw a heading with underline.
+     * @param string $text
+     * @return array
+     */
+    private function heading(string $text): array
+    {
+        return [
+            $this->blank(),
+            $text,
+            $this->divider(strlen($text)),
+            $this->blank()
+        ];
+    }
+
+    /**
      * Render the item summaries with suggested tags.
      * @param array $items
      * @return array
@@ -279,11 +297,7 @@ class ConsoleResponseDecorator
      */
     private function renderInventoryItems(array $items): array
     {
-        $lines = [];
-
-        $lines[] = $this->blank();
-        $lines[] = "You have:";
-        $lines[] = $this->blank();
+        $lines = $this->heading('Inventory');
 
         foreach ($items as $description) {
             if ($description instanceof ItemDescription) {
@@ -302,11 +316,7 @@ class ConsoleResponseDecorator
      */
     private function renderContainers(array $containers): array
     {
-        $lines = [];
-
-        $lines[] = $this->blank();
-        $lines[] = 'You see the following inside:';
-        $lines[] = $this->blank();
+        $lines = $this->heading('Contents');
 
         foreach ($containers as $description) {
             if ($description instanceof Description) {
@@ -351,11 +361,7 @@ class ConsoleResponseDecorator
      */
     private function renderExits(array $exits): array
     {
-        $lines = [];
-
-        $lines[] = $this->blank();
-        $lines[] = 'You see the following exits:';
-        $lines[] = $this->blank();
+        $lines = $this->heading('Exits');
 
         foreach ($exits as $description) {
             if ($description instanceof Description) {
@@ -374,7 +380,7 @@ class ConsoleResponseDecorator
      */
     private function renderMessage(array $message): array
     {
-        $lines = [];
+        $lines = [$this->blank()];
 
         if (!empty($message)) {
             foreach ($message as $line) {
