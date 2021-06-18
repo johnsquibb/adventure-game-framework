@@ -6,5 +6,19 @@
   "roomWestOfSpawn": {
     "go through door": "move east",
     "enter door": "move east"
+  },
+  "courtyard": {
+    "head to town": "move south",
+    "go down path": "move south",
+    "take path": "move south",
+    "go down steps": "move down"
+  },
+  "houseInTown": {
+    "head away from town": "move north",
+    "go up path": "move north",
+    "take path": "move north"
+  },
+  "smallShed": {
+    "go up steps": "move up"
   }
 }

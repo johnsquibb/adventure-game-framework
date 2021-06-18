@@ -7,7 +7,7 @@ use AdventureGameMarkupLanguage\Transpiler;
 
 global $platformManifest;
 
-// Example of using Adventure Game Markup Language (AGML) to create an item.
+// Build game world from markup files.
 global $libDirectory;
 $markup = file_get_contents($libDirectory . '/markup/scene.agml');
 
@@ -27,3 +27,9 @@ $events = $builder->getEvents();
 // Apply configuration.
 $platformManifest->setLocations($locations);
 $platformManifest->setEvents($events);
+
+// Add new vocabulary discovered during parsing.
+$builder->parseVocabulary();
+$phrases = $builder->getPhrases();
+$platformManifest->addNouns($builder->getNouns());
+$platformManifest->addPhrases($builder->getPhrases());

@@ -87,7 +87,7 @@ id=treasureChest
 name=Treasure Chest
 capacity=5
 acquirable=no
-tags=chest
+tags=chest,treasure chest
 items=flashlight,keyToWoodenDoor
 [description]
 A chest containing valuable treasure.
@@ -100,7 +100,7 @@ A chest containing valuable treasure.
 [PORTAL]
 id=doorFromSpawnToWestRoom
 name=Wooden Door
-tags=door
+tags=door,wooden door
 mutable=yes
 locked=yes
 key=keyToWoodenDoor
@@ -113,7 +113,7 @@ A heavy wooden door leading to the west.
 [PORTAL]
 id=doorFromWestRoomToSpawn
 name=Wooden Door
-tags=door
+tags=door,wooden door
 mutable=yes
 key=keyToWoodenDoor
 direction=east
@@ -123,19 +123,9 @@ A heavy wooden door leading back to spawn.
 [/description]
 
 [PORTAL]
-id=doorFromWestRoomToSecretRoom
-name=Secret Door
-tags=door
-direction=west
-destination=secretRoom
-[description]
-A secret door has been revealed to the west.
-[/description]
-
-[PORTAL]
 id=entryFromSpawnToHallway
 name=Hallway Entrance
-tags=hallway
+tags=hallway,hallway entrance
 direction=south
 destination=hallwayLeadingSouthFromSpawn
 [description]
@@ -145,7 +135,7 @@ An entrance to a hallway leading south.
 [PORTAL]
 id=entryFromHallwayToSpawn
 name=Hallway Entrance
-tags=hallway
+tags=hallway,hallway entrance
 direction=north
 destination=spawn
 [description]
@@ -155,7 +145,7 @@ An entrance to a hallway leading north.
 [PORTAL]
 id=doorFromHallwayToCourtyard
 name=Front door
-tags=door
+tags=door,front door
 direction=south
 destination=courtyard
 [description]
@@ -165,7 +155,7 @@ A door with a window\, through which you can see an exterior courtyard.
 [PORTAL]
 id=doorFromCourtyardToHallway
 name=Front door
-tags=door
+tags=door,front door
 direction=north
 destination=hallwayLeadingSouthFromSpawn
 [description]
@@ -175,7 +165,7 @@ A door that leads inside the house. It has a small stained glass window in the c
 [PORTAL]
 id=pathFromCourtyardToTown
 name=Path to Town
-tags=path
+tags=path,path to town
 direction=south
 destination=houseInTown
 [description]
@@ -185,7 +175,7 @@ A light walking path that leads south into the distance toward town.
 [PORTAL]
 id=stepsFromCourtyardToShed
 name=Steps Leading Down
-tags=steps
+tags=steps,steps down,steps leading down
 direction=down
 destination=smallShed
 [description]
@@ -205,7 +195,7 @@ A light walking path that leads north away from town.
 [PORTAL]
 id=cellarDoorIn
 name=Door to Cellar
-tags=door
+tags=door,door to cellar,cellar door
 direction=down
 destination=cellar
 mutable=yes
@@ -218,7 +208,7 @@ A door leading down into a cellar.
 [PORTAL]
 id=cellarDoorOut
 name=Cellar Door
-tags=door
+tags=door,door to cellar,cellar door
 direction=up
 destination=houseInTown
 [description]
@@ -228,7 +218,7 @@ The way out of the cellar.
 [PORTAL]
 id=stepsFromShedToCourtyard
 name=Steps Leading Up
-tags=steps
+tags=steps,steps up,steps leading up
 direction=up
 destination=courtyard
 [description]
@@ -236,9 +226,19 @@ Stone steps leading up to a courtyard.
 [/description]
 
 [PORTAL]
+id=doorFromWestRoomToSecretRoom
+name=Secret Door
+tags=door,secret door
+direction=west
+destination=secretRoom
+[description]
+A secret door has been revealed to the west.
+[/description]
+
+[PORTAL]
 id=doorFromSecretRoomToRoomWestOfSpawn
 name=Secret Door
-tags=door
+tags=door,secret door
 direction=east
 destination=roomWestOfSpawn
 [description]
@@ -345,7 +345,7 @@ name=Switch No. 1
 acquirable=no
 activatable=yes
 deactivatable=yes
-tags=switch.one,switch
+tags=switch.one,switch,first switch
 [description]
 The first in a series of three switches.
 There's no telling what activating it might do.
@@ -357,7 +357,7 @@ name=Switch No. 2
 acquirable=no
 activatable=yes
 deactivatable=yes
-tags=switch.two,switch
+tags=switch.two,switch,second switch
 [description]
 The second in a series of three switches.
 There's no telling what activating it might do.
@@ -369,7 +369,7 @@ name=Switch No. 3
 acquirable=no
 activatable=yes
 deactivatable=yes
-tags=switch.three,switch
+tags=switch.three,switch,third switch,last switch
 [description]
 The last in a series of three switches.
 There's no telling what activating it might do.

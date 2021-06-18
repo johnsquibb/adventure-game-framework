@@ -2,6 +2,7 @@
 
 namespace AdventureGame\Builder;
 
+use AdventureGame\Entity\TaggableEntityInterface;
 use AdventureGame\Event\EventInterface;
 use AdventureGame\Event\Events\ActivateItemEvent;
 use AdventureGame\Event\Events\DeactivateItemEvent;
@@ -45,8 +46,21 @@ class SceneBuilder
     private array $triggers = [];
     private array $events = [];
 
+    private array $nouns = [];
+    private array $phrases = [];
+
     public function __construct(private Transpiler $transpiler)
     {
+    }
+
+    public function getNouns(): array
+    {
+        return $this->nouns;
+    }
+
+    public function getPhrases(): array
+    {
+        return $this->phrases;
     }
 
     public function getContainers(): array
@@ -77,6 +91,51 @@ class SceneBuilder
     public function getTriggers(): array
     {
         return $this->triggers;
+    }
+
+    public function parseVocabulary(): void
+    {
+        foreach ($this->items as $item) {
+            if ($item instanceof TaggableEntityInterface) {
+                $this->parseTags($item->getTags());
+            }
+        }
+
+        foreach ($this->containers as $container) {
+            if ($container instanceof TaggableEntityInterface) {
+                $this->parseTags($container->getTags());
+            }
+        }
+
+        foreach ($this->portals as $portal) {
+            if ($portal instanceof TaggableEntityInterface) {
+                $this->parseTags($portal->getTags());
+            }
+        }
+    }
+
+    private function parseTags(array $tags): void
+    {
+        $firstNoun = null;
+
+        foreach ($tags as $tag) {
+            if (!stristr($tag, ' ')) {
+                // The first noun encountered will be used to map any found phrases.
+                if (!isset($firstNoun)) {
+                    $firstNoun = $tag;
+                }
+                $this->nouns[] = $tag;
+            }
+        }
+
+        // Map any phrases to first noun.
+        if (isset($firstNoun)) {
+            foreach ($tags as $tag) {
+                if (stristr($tag, ' ')) {
+                    $this->phrases[$tag] = $firstNoun;
+                }
+            }
+        }
     }
 
     /**

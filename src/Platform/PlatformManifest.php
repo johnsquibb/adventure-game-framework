@@ -83,6 +83,13 @@ class PlatformManifest
         $this->nouns = $nouns;
     }
 
+    public function addNouns(array $nouns): void
+    {
+        foreach ($nouns as $noun) {
+            $this->nouns[] = $noun;
+        }
+    }
+
     public function getPhrases(): array
     {
         return $this->phrases;
@@ -91,6 +98,12 @@ class PlatformManifest
     public function setPhrases(array $phrases): void
     {
         $this->phrases = $phrases;
+    }
+
+    public function addPhrases(array $phrases) {
+        foreach ($phrases as $key => $phrase) {
+            $this->phrases[$key] = $phrase;
+        }
     }
 
     public function getPlayerInventoryCapacity(): int
