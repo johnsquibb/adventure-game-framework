@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/johnsquibb/adventure-game-markup-language.git",
-                "reference": "3c73e5ae1491fc9c8d9782fb092ed29640718f47"
+                "reference": "7595defe31f3f3b281c9c842e406d55652b8c2ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/johnsquibb/adventure-game-markup-language/zipball/3c73e5ae1491fc9c8d9782fb092ed29640718f47",
-                "reference": "3c73e5ae1491fc9c8d9782fb092ed29640718f47",
+                "url": "https://api.github.com/repos/johnsquibb/adventure-game-markup-language/zipball/7595defe31f3f3b281c9c842e406d55652b8c2ee",
+                "reference": "7595defe31f3f3b281c9c842e406d55652b8c2ee",
                 "shasum": ""
             },
             "require-dev": {
@@ -48,7 +48,7 @@
                 "source": "https://github.com/johnsquibb/adventure-game-markup-language/tree/main",
                 "issues": "https://github.com/johnsquibb/adventure-game-markup-language/issues"
             },
-            "time": "2021-06-17T14:57:30+00:00"
+            "time": "2021-06-18T11:37:49+00:00"
         }
     ],
     "packages-dev": [
