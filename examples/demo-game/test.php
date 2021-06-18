@@ -65,9 +65,13 @@ $tests = [
     new InventoryTest('read letter', ['secretLetter']),
 ];
 
-$robotController = new TestClientController(
+$testClient = new TestClientController(
     $platformController->getPlatformRegistry(),
     $tests
 );
 
-$platformController->run($robotController);
+if (isset($argv[1])) {
+    $testClient->setWaitTimeMilliseconds((int)$argv[1]);
+}
+
+$platformController->run($testClient);

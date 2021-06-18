@@ -19,10 +19,13 @@ use Exception;
 class TestClientController implements ClientControllerInterface
 {
     const MESSAGE_TESTS_COMPLETE = 'Tests complete.';
-    const TEST_DELAY_MS = 50;
+    const TEST_DELAY_MILLISECONDS = 2000;
 
     private TerminalIO $terminal;
     private array $inputHistory = [];
+
+    // How long to wait between each test.
+    private $waitTimeMilliseconds = self::TEST_DELAY_MILLISECONDS;
 
     // Game controller runs a command to show the spawn location details, offset to accommodate.
     private int $counter = -1;
@@ -99,9 +102,14 @@ class TestClientController implements ClientControllerInterface
         return $input;
     }
 
+    public function setWaitTimeMilliseconds(int $waitTimeMilliseconds): void
+    {
+        $this->waitTimeMilliseconds = $waitTimeMilliseconds;
+    }
+
     private function wait(): void
     {
-        usleep(self::TEST_DELAY_MS * 1000);
+        usleep($this->waitTimeMilliseconds * 1000);
     }
 
     /**
