@@ -23,12 +23,6 @@
   },
   "require": {
     "ext-readline": "*",
-    "johnsquibb/adventure-game-markup-language": "dev-main"
-  },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url":  "git@github.com:johnsquibb/adventure-game-markup-language.git"
-    }
-  ]
+    "johnsquibb/adventure-game-markup-language": "0.1.0-alpha"
+  }
 }

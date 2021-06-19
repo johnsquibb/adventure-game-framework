@@ -94,7 +94,6 @@ class CommandParser
         if (isset($this->locationPhrases[$locationId])) {
             foreach ($this->locationPhrases[$locationId] as $match => $phrase) {
                 $input = str_ireplace($match, $phrase, $input);
-                var_dump($input);
             }
         }
         if ($locationId === 'courtyard') {
