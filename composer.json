@@ -1,7 +1,7 @@
 {
   "name": "johnsquibb/adventure-game-framework",
   "type": "project",
-  "description": "A lightweight framework for building text adventures",
+  "description": "A PHP framework for console text adventure games.",
   "license": "MIT",
   "autoload": {
     "psr-4": {
