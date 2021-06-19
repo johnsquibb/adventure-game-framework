@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "398e1b522946b95cfd06b22c2f05aafe",
+    "content-hash": "5276794b3771f7984a7aa3490fcd7efd",
     "packages": [
         {
             "name": "johnsquibb/adventure-game-markup-language",
@@ -1845,6 +1845,7 @@
                     "type": "github"
                 }
             ],
+            "abandoned": true,
             "time": "2020-09-28T06:45:17+00:00"
         },
         {
