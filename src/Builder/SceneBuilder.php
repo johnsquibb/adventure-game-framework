@@ -14,6 +14,7 @@ use AdventureGame\Event\Triggers\AddItemToInventoryUseTrigger;
 use AdventureGame\Event\Triggers\AddItemToLocationUseTrigger;
 use AdventureGame\Event\Triggers\AddLocationToMapUseTrigger;
 use AdventureGame\Event\Triggers\Comparisons\ActivatedComparison;
+use AdventureGame\Event\Triggers\RemoveItemFromLocationUseTrigger;
 use AdventureGame\Item\Container;
 use AdventureGame\Item\ContainerItem;
 use AdventureGame\Item\Item;
@@ -342,6 +343,7 @@ class SceneBuilder
     /**
      * Build triggers.
      * @param array $hydrators
+     * @throws Exception
      */
     private function buildTriggers(array $hydrators): void
     {
@@ -381,6 +383,12 @@ class SceneBuilder
                     $trigger = new AddItemToLocationUseTrigger($item, $hydrator->getUses());
                 }
                 break;
+            case 'RemoveItemFromLocationUseTrigger':
+                $item = $this->items[$hydrator->getItem()] ?? null;
+                if ($item instanceof ItemInterface) {
+                    $trigger = new RemoveItemFromLocationUseTrigger($item, $hydrator->getUses());
+                }
+                break;
             case 'AddItemToInventoryUseTrigger':
                 $item = $this->items[$hydrator->getItem()] ?? null;
                 if ($item instanceof ItemInterface) {
@@ -400,6 +408,8 @@ class SceneBuilder
                     }
                 }
                 break;
+            default:
+                throw new Exception(sprintf('Invalid trigger type: "%s"', $hydrator->getType()));
         }
 
         if ($trigger instanceof TriggerInterface) {

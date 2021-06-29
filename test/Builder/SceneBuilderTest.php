@@ -10,6 +10,7 @@ use AdventureGame\Location\Portal;
 use AdventureGameMarkupLanguage\Lexer;
 use AdventureGameMarkupLanguage\Parser;
 use AdventureGameMarkupLanguage\Transpiler;
+use Exception;
 use PHPUnit\Framework\TestCase;
 
 class SceneBuilderTest extends TestCase
@@ -290,5 +291,108 @@ class SceneBuilderTest extends TestCase
 
         $this->assertEquals('doorFromOneToTwo', $locations['one']->getExits()[0]->getId());
         $this->assertEquals('doorFromTwoToOne', $locations['two']->getExits()[0]->getId());
+    }
+
+    public function testTranspileMarkupGetEventsAndTriggers()
+    {
+        $fixture = <<<END
+        [ITEM]
+        id=testItem
+        name=Test Item
+        
+        [TRIGGER]
+        type=AddItemToLocationUseTrigger
+        id=testTrigger
+        item=testItem
+        uses=1
+        
+        [EVENT]
+        type=ActivateItemEvent
+        id=activateItemTest
+        trigger=testTrigger
+        item=*
+        location=*
+        END;
+
+        $builder = new SceneBuilder(new Transpiler(new Lexer(), new Parser()));
+        $builder->transpileMarkup($fixture);
+
+        $events = $builder->getEvents();
+        $this->assertCount(1, $events);
+        $this->assertArrayHasKey('activateItemTest', $events);
+        $this->assertEquals('activateItemTest', $events['activateItemTest']->getId());
+    }
+
+    public function testTranspileMarkupInvalidTriggerThrowsException()
+    {
+        $fixture = <<<END
+        [ITEM]
+        id=testItem
+        name=Test Item
+        
+        [TRIGGER]
+        type=NotAValidTriggerType
+        id=testTrigger
+        item=testItem
+        uses=1
+        
+        [EVENT]
+        type=ActivateItemEvent
+        id=activateItemTest
+        trigger=testTrigger
+        item=*
+        location=*
+        END;
+
+        $builder = new SceneBuilder(new Transpiler(new Lexer(), new Parser()));
+
+        $this->expectException(Exception::class);
+        $builder->transpileMarkup($fixture);
+    }
+
+    public function testTranspileMarkupGetMultipleEventsAndTriggers()
+    {
+        $fixture = <<<END
+        [ITEM]
+        id=testItem
+        name=Test Item
+        
+        [TRIGGER]
+        type=AddItemToLocationUseTrigger
+        id=testTrigger
+        item=testItem
+        uses=1
+        
+        [TRIGGER]
+        type=RemoveItemFromLocationUseTrigger
+        id=testTrigger2
+        item=testItem
+        uses=1
+        
+        [EVENT]
+        type=ActivateItemEvent
+        id=activateItemTest
+        trigger=testTrigger
+        item=*
+        location=*
+        
+        [EVENT]
+        type=ActivateItemEvent
+        id=activateItemTest2
+        trigger=testTrigger2
+        item=*
+        location=*
+        END;
+
+        $builder = new SceneBuilder(new Transpiler(new Lexer(), new Parser()));
+        $builder->transpileMarkup($fixture);
+
+        $events = $builder->getEvents();
+        $this->assertCount(2, $events);
+        $this->assertArrayHasKey('activateItemTest', $events);
+        $this->assertEquals('activateItemTest', $events['activateItemTest']->getId());
+
+        $this->assertArrayHasKey('activateItemTest2', $events);
+        $this->assertEquals('activateItemTest2', $events['activateItemTest2']->getId());
     }
 }
