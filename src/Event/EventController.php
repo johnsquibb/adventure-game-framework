@@ -32,8 +32,10 @@ class EventController
     public function processActivateItemEvents(
         GameController $gameController,
         string $itemId
-    ): ?Response {
+    ): Response {
         $locationId = $gameController->mapController->getPlayerLocation()->getId();
+
+        $response = new Response();
 
         foreach ($this->events as $event) {
             if (
@@ -41,11 +43,14 @@ class EventController
                 && $event->matchItemId($itemId)
                 && $event->matchLocationId($locationId)
             ) {
-                return $event->trigger($gameController);
+                $triggerResponse = $event->trigger($gameController);
+                if ($triggerResponse) {
+                    $response->addMessages($triggerResponse->getMessages());
+                }
             }
         }
 
-        return null;
+        return $response;
     }
 
     /**
@@ -58,8 +63,10 @@ class EventController
     public function processDeactivateItemEvents(
         GameController $gameController,
         string $itemId
-    ): ?Response {
+    ): Response {
         $locationId = $gameController->mapController->getPlayerLocation()->getId();
+
+        $response = new Response();
 
         foreach ($this->events as $event) {
             if (
@@ -67,11 +74,14 @@ class EventController
                 && $event->matchItemId($itemId)
                 && $event->matchLocationId($locationId)
             ) {
-                return $event->trigger($gameController);
+                $triggerResponse = $event->trigger($gameController);
+                if ($triggerResponse) {
+                    $response->addMessages($triggerResponse->getMessages());
+                }
             }
         }
 
-        return null;
+        return $response;
     }
 
     /**
@@ -81,9 +91,11 @@ class EventController
      * @return Response|null
      * @throws PlayerLocationNotSetException
      */
-    public function processDropItemEvents(GameController $gameController, string $itemId): ?Response
+    public function processDropItemEvents(GameController $gameController, string $itemId): Response
     {
         $locationId = $gameController->mapController->getPlayerLocation()->getId();
+
+        $response = new Response();
 
         foreach ($this->events as $event) {
             if (
@@ -91,11 +103,14 @@ class EventController
                 && $event->matchItemId($itemId)
                 && $event->matchLocationId($locationId)
             ) {
-                return $event->trigger($gameController);
+                $triggerResponse = $event->trigger($gameController);
+                if ($triggerResponse) {
+                    $response->addMessages($triggerResponse->getMessages());
+                }
             }
         }
 
-        return null;
+        return $response;
     }
 
     /**
@@ -107,17 +122,22 @@ class EventController
     public function processEnterLocationEvents(
         GameController $gameController,
         string $locationId
-    ): ?Response {
+    ): Response {
+        $response = new Response();
+
         foreach ($this->events as $event) {
             if (
                 $event instanceof EnterLocationEvent
                 && $event->matchLocationId($locationId)
             ) {
-                return $event->trigger($gameController);
+                $triggerResponse = $event->trigger($gameController);
+                if ($triggerResponse) {
+                    $response->addMessages($triggerResponse->getMessages());
+                }
             }
         }
 
-        return null;
+        return $response;
     }
 
     /**
@@ -129,17 +149,22 @@ class EventController
     public function processExitLocationEvents(
         GameController $gameController,
         string $locationId
-    ): ?Response {
+    ): Response {
+        $response = new Response();
+
         foreach ($this->events as $event) {
             if (
                 $event instanceof ExitLocationEvent
                 && $event->matchLocationId($locationId)
             ) {
-                return $event->trigger($gameController);
+                $triggerResponse = $event->trigger($gameController);
+                if ($triggerResponse) {
+                    $response->addMessages($triggerResponse->getMessages());
+                }
             }
         }
 
-        return null;
+        return $response;
     }
 
     /**
@@ -152,8 +177,10 @@ class EventController
     public function processHasActivatedItemEvents(
         GameController $gameController,
         string $itemId
-    ): ?Response {
+    ): Response {
         $locationId = $gameController->mapController->getPlayerLocation()->getId();
+
+        $response = new Response();
 
         foreach ($this->events as $event) {
             if (
@@ -161,11 +188,14 @@ class EventController
                 && $event->matchItemId($itemId)
                 && $event->matchLocationId($locationId)
             ) {
-                return $event->trigger($gameController);
+                $triggerResponse = $event->trigger($gameController);
+                if ($triggerResponse) {
+                    $response->addMessages($triggerResponse->getMessages());
+                }
             }
         }
 
-        return null;
+        return $response;
     }
 
     /**
@@ -175,9 +205,11 @@ class EventController
      * @return Response|null
      * @throws PlayerLocationNotSetException
      */
-    public function processTakeItemEvents(GameController $gameController, string $itemId): ?Response
+    public function processTakeItemEvents(GameController $gameController, string $itemId): Response
     {
         $locationId = $gameController->mapController->getPlayerLocation()->getId();
+
+        $response = new Response();
 
         foreach ($this->events as $event) {
             if (
@@ -185,10 +217,13 @@ class EventController
                 && $event->matchItemId($itemId)
                 && $event->matchLocationId($locationId)
             ) {
-                return $event->trigger($gameController);
+                $triggerResponse = $event->trigger($gameController);
+                if ($triggerResponse) {
+                    $response->addMessages($triggerResponse->getMessages());
+                }
             }
         }
 
-        return null;
+        return $response;
     }
 }

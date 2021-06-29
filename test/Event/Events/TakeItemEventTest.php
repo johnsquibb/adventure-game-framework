@@ -36,7 +36,7 @@ class TakeItemEventTest extends AbstractEventTest
         $gameController->mapController->setPlayerLocationById('test-location-id');
         $gameController->eventController->addEvent($event);
 
-        $this->assertSame(
+        $this->assertEquals(
             $mockResponse,
             $gameController->eventController->processTakeItemEvents(
                 $gameController,
