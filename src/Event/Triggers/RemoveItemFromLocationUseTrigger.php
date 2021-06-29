@@ -8,7 +8,7 @@ use AdventureGame\Game\GameController;
 use AdventureGame\Item\ItemInterface;
 use AdventureGame\Response\Response;
 
-class AddItemToLocationUseTrigger extends FiniteUseTrigger
+class RemoveItemFromLocationUseTrigger extends FiniteUseTrigger
 {
     public function __construct(protected ItemInterface $item, int $numberOfUses = 1)
     {
@@ -16,7 +16,7 @@ class AddItemToLocationUseTrigger extends FiniteUseTrigger
     }
 
     /**
-     * Add item to player location.
+     * Remove item from player location.
      * @param GameController $gameController
      * @return Response|null
      * @throws PlayerLocationNotSetException
@@ -24,11 +24,11 @@ class AddItemToLocationUseTrigger extends FiniteUseTrigger
     public function execute(GameController $gameController): ?Response
     {
         if ($this->triggerCount < $this->numberOfUses) {
-            $gameController->mapController->addItem($this->item);
+            $gameController->mapController->removeItem($this->item);
             $this->triggerCount++;
 
             $response = new Response();
-            $response->addMessage("Revealed \"{$this->item->getName()}\".");
+            $response->addMessage("Removed \"{$this->item->getName()}\".");
             return $response;
         }
 

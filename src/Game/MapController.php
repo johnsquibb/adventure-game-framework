@@ -34,6 +34,18 @@ class MapController
     }
 
     /**
+     * Remove an item to the current player location.
+     * @param ItemInterface $item
+     * @return void
+     * @throws PlayerLocationNotSetException
+     */
+    public function removeItem(ItemInterface $item): void
+    {
+        $location = $this->getPlayerLocation();
+        $location->getContainer()->removeItemById($item->getId());
+    }
+
+    /**
      * The current location of the player, if set.
      * @return Location
      * @throws PlayerLocationNotSetException
