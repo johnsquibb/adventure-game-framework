@@ -159,6 +159,11 @@ class TestClientController implements ClientControllerInterface
         }
     }
 
+    /**
+     * Display and throw test error.
+     * @param string $message
+     * @throws TestErrorException
+     */
     private function errorTest(string $message): void
     {
         $this->streamMessages(
@@ -167,7 +172,8 @@ class TestClientController implements ClientControllerInterface
                 sprintf('TEST INDEX: %d', $this->counter)
             ]
         );
-        exit;
+
+        throw new TestErrorException('');
     }
 
     private function checkMovementTest(LocationTest $test)

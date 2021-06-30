@@ -3,6 +3,7 @@
 use AdventureGame\Client\Test\InventoryTest;
 use AdventureGame\Client\Test\LocationTest;
 use AdventureGame\Client\TestClientController;
+use AdventureGame\Client\TestErrorException;
 use AdventureGame\Client\TestsCompleteException;
 use AdventureGame\Platform\PlatformController;
 use AdventureGame\Platform\PlatformFactory;
@@ -79,5 +80,8 @@ try {
     $platformController->run($testClient);
 } catch (TestsCompleteException $e) {
     echo "\n\n", $e->getMessage(), "\n\n";
+    exit;
+} catch (TestErrorException $e) {
+    echo "\nTest Error!\n\n";
     exit;
 }
