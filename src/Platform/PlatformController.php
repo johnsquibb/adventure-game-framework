@@ -3,6 +3,7 @@
 namespace AdventureGame\Platform;
 
 use AdventureGame\Client\ClientControllerInterface;
+use AdventureGame\Command\Commands\AbstractCommand;
 use AdventureGame\Command\Exception\InvalidCommandException;
 use AdventureGame\Command\Exception\InvalidTokenException;
 use AdventureGame\Command\Exception\InvalidTokensLengthException;
@@ -10,6 +11,7 @@ use AdventureGame\Command\Exception\LoadGameException;
 use AdventureGame\Command\Exception\StartNewGameException;
 use AdventureGame\Game\Exception\InvalidExitException;
 use AdventureGame\Game\Exception\InvalidSaveDirectoryException;
+use AdventureGame\Game\Exception\PlayerLocationNotSetException;
 use AdventureGame\Game\GameController;
 use AdventureGame\Response\Message\GameManagementMessage;
 use AdventureGame\Response\Response;
@@ -37,33 +39,28 @@ class PlatformController
     /**
      * Run the game.
      * @param ClientControllerInterface $clientController
-     * @throws InvalidTokensLengthException|InvalidSaveDirectoryException
+     * @throws InvalidTokensLengthException|InvalidSaveDirectoryException|PlayerLocationNotSetException
      */
     public function run(ClientControllerInterface $clientController): void
     {
         try {
             $this->runGameLoop($clientController);
         } catch (StartNewGameException) {
-            // Rebuild initial game state and re-run.
-            $this->platformFactory->clearRegistry();
-            $this->platformRegistry = $this->platformFactory->createPlatformRegistry();
-            $this->run($clientController);
+            $this->startNewGame($clientController);
         } catch (LoadGameException) {
-            $gameController = $this->platformRegistry->gameController;
-            $response = $this->loadGame($gameController);
-            $clientController->processResponse($response);
-            $this->run($clientController);
+            $this->resumeSavedGame($clientController);
         }
     }
 
     /**
      * Enter the main game loop. This will run until an exit condition is reached.
      * @param ClientControllerInterface $clientController
+     * @throws PlayerLocationNotSetException
      */
     private function runGameLoop(ClientControllerInterface $clientController): void
     {
         // On game load, show the current location.
-        $response = $this->processInput('look');
+        $response = $this->processInput(AbstractCommand::COMMAND_EXAMINE);
         $clientController->processResponse($response);
 
         for (; ;) {
@@ -76,9 +73,39 @@ class PlatformController
     }
 
     /**
+     * Clear registry and start a new game.
+     * @param ClientControllerInterface $clientController
+     * @throws InvalidSaveDirectoryException
+     * @throws InvalidTokensLengthException
+     * @throws PlayerLocationNotSetException
+     */
+    private function startNewGame(ClientControllerInterface $clientController): void
+    {
+        $this->platformFactory->clearRegistry();
+        $this->platformRegistry = $this->platformFactory->createPlatformRegistry();
+        $this->run($clientController);
+    }
+
+    /**
+     * Load a game from save and resume.
+     * @param ClientControllerInterface $clientController
+     * @throws InvalidSaveDirectoryException
+     * @throws InvalidTokensLengthException
+     * @throws PlayerLocationNotSetException
+     */
+    private function resumeSavedGame(ClientControllerInterface $clientController): void
+    {
+        $gameController = $this->platformRegistry->gameController;
+        $response = $this->loadGame($gameController);
+        $clientController->processResponse($response);
+        $this->run($clientController);
+    }
+
+    /**
      * Process user input.
      * @param string $input
      * @return Response
+     * @throws PlayerLocationNotSetException
      */
     private function processInput(string $input): Response
     {
@@ -90,9 +117,9 @@ class PlatformController
             }
 
             return $response;
-        } catch (InvalidCommandException | InvalidTokenException | InvalidTokensLengthException $e) {
+        } catch (InvalidCommandException | InvalidTokenException | InvalidTokensLengthException) {
             return $this->invalidCommandMessage();
-        } catch (InvalidExitException $e) {
+        } catch (InvalidExitException) {
             return $this->invalidExitMessage();
         }
     }
@@ -105,7 +132,7 @@ class PlatformController
     {
         $response = new Response();
 
-        $response->addMessage("Be more specific.");
+        $response->addMessage("can't do that.");
         return $response;
     }
 
