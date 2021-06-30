@@ -16,6 +16,7 @@ use AdventureGame\Location\Location;
 use AdventureGame\Location\Portal;
 use AdventureGame\Response\Description;
 use AdventureGame\Response\ItemDescription;
+use AdventureGame\Response\ListOfItems;
 use AdventureGame\Response\Message\ContainerMessage;
 use AdventureGame\Response\Message\InventoryMessage;
 use AdventureGame\Response\Message\ItemMessage;
@@ -385,6 +386,11 @@ abstract class AbstractCommand
                 );
                 $response->addMessage($itemMessage->toString());
                 return $response;
+            }
+
+            if (count($items) > 1) {
+                $listOfItems = new ListOfItems($items, ListOfItems::ACTION_TAKE);
+                return $listOfItems->getResponse();
             }
 
             return $this->takeItemsFromContainer($gameController, $itemTag, $container, $items);
