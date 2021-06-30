@@ -2,11 +2,9 @@
 
 namespace AdventureGame\Test\Event\Events;
 
-use AdventureGame\Event\AbstractInventoryEvent;
 use AdventureGame\Event\Events\ActivateItemEvent;
 use AdventureGame\Event\Triggers\AddItemToLocationUseTrigger;
 use AdventureGame\Event\Triggers\RemoveItemFromLocationUseTrigger;
-use AdventureGame\Item\AbstractItem;
 use AdventureGame\Item\Container;
 use AdventureGame\Item\Item;
 use AdventureGame\Location\Location;

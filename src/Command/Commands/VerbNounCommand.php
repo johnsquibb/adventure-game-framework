@@ -280,6 +280,7 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
      * @param GameController $gameController
      * @param string $tag
      * @return Response|null
+     * @throws PlayerLocationNotSetException
      */
     private function deactivateItemsByTagInPlayerInventory(
         GameController $gameController,

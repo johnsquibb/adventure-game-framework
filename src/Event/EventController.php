@@ -26,7 +26,7 @@ class EventController
      * Process activate item events.
      * @param GameController $gameController
      * @param string $itemId
-     * @return Response|null
+     * @return Response
      * @throws PlayerLocationNotSetException
      */
     public function processActivateItemEvents(
@@ -57,7 +57,7 @@ class EventController
      * Process deactivate item events.
      * @param GameController $gameController
      * @param string $itemId
-     * @return Response|null
+     * @return Response
      * @throws PlayerLocationNotSetException
      */
     public function processDeactivateItemEvents(
@@ -88,7 +88,7 @@ class EventController
      * Process drop item events for current player location.
      * @param GameController $gameController
      * @param string $itemId
-     * @return Response|null
+     * @return Response
      * @throws PlayerLocationNotSetException
      */
     public function processDropItemEvents(GameController $gameController, string $itemId): Response
@@ -117,7 +117,7 @@ class EventController
      * Process enter location events.
      * @param GameController $gameController
      * @param string $locationId
-     * @return Response|null
+     * @return Response
      */
     public function processEnterLocationEvents(
         GameController $gameController,
@@ -144,7 +144,7 @@ class EventController
      * Process exit location events
      * @param GameController $gameController
      * @param string $locationId
-     * @return Response|null
+     * @return Response
      */
     public function processExitLocationEvents(
         GameController $gameController,
@@ -171,7 +171,7 @@ class EventController
      * Process has activated item events.
      * @param GameController $gameController
      * @param string $itemId
-     * @return Response|null
+     * @return Response
      * @throws PlayerLocationNotSetException
      */
     public function processHasActivatedItemEvents(
@@ -202,7 +202,7 @@ class EventController
      * Process take item events for current player location.
      * @param GameController $gameController
      * @param string $itemId
-     * @return Response|null
+     * @return Response
      * @throws PlayerLocationNotSetException
      */
     public function processTakeItemEvents(GameController $gameController, string $itemId): Response
