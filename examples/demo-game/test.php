@@ -3,6 +3,7 @@
 use AdventureGame\Client\Test\InventoryTest;
 use AdventureGame\Client\Test\LocationTest;
 use AdventureGame\Client\TestClientController;
+use AdventureGame\Client\TestsCompleteException;
 use AdventureGame\Platform\PlatformController;
 use AdventureGame\Platform\PlatformFactory;
 use AdventureGame\Platform\PlatformManifest;
@@ -74,4 +75,9 @@ if (isset($argv[1])) {
     $testClient->setWaitTimeMilliseconds((int)$argv[1]);
 }
 
-$platformController->run($testClient);
+try {
+    $platformController->run($testClient);
+} catch (TestsCompleteException $e) {
+    echo "\n\n", $e->getMessage(), "\n\n";
+    exit;
+}

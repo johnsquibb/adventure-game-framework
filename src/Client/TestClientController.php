@@ -84,13 +84,13 @@ class TestClientController implements ClientControllerInterface
     /**
      * Get user input from console.
      * @return string
+     * @throws TestsCompleteException
      */
     public function getInput(): string
     {
         $test = $this->getTest();
         if ($test === null) {
-            $this->streamMessage(self::MESSAGE_TESTS_COMPLETE);
-            exit;
+            throw new TestsCompleteException(self::MESSAGE_TESTS_COMPLETE);
         }
 
         $input = $test->getInput();
