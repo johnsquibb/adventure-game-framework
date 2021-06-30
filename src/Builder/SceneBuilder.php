@@ -117,19 +117,18 @@ class SceneBuilder
 
     private function parseTags(array $tags): void
     {
+        // Any tags with spaces in them are mapped as phrases to the first tag without spaces.
         $firstNoun = null;
-
         foreach ($tags as $tag) {
             if (!stristr($tag, ' ')) {
-                // The first noun encountered will be used to map any found phrases.
                 if (!isset($firstNoun)) {
                     $firstNoun = $tag;
                 }
+                // All tags without spaces are valid nouns.
                 $this->nouns[] = $tag;
             }
         }
 
-        // Map any phrases to first noun.
         if (isset($firstNoun)) {
             foreach ($tags as $tag) {
                 if (stristr($tag, ' ')) {
