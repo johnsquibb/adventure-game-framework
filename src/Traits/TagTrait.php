@@ -14,7 +14,7 @@ trait TagTrait
     public function hasTag(string $tag): bool
     {
         foreach ($this->tags as $match) {
-            if (strtolower($match) === $tag) {
+            if (strtolower($match) === strtolower($tag)) {
                 return true;
             }
         }

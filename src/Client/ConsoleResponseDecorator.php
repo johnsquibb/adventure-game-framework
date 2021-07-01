@@ -113,6 +113,7 @@ class ConsoleResponseDecorator
             $lines[] = $this->blank();
         }
 
+        // TODO vet summary is unused, remove.
         if (!empty($location->getSummary())) {
             $lines[] = $location->getSummary();
             $lines[] = $this->blank();
@@ -191,6 +192,7 @@ class ConsoleResponseDecorator
             $lines[] = $name;
         }
 
+        // TODO vet summary is unused, remove.
         if (!empty($item->getSummary())) {
             $lines[] = $this->tab() . $item->getSummary();
         }
@@ -341,6 +343,7 @@ class ConsoleResponseDecorator
             $lines[] = $this->bullet() . $this->space() . $entity->getName();
         }
 
+        // TODO vet summary is unused, remove.
         if (!empty($entity->getSummary())) {
             $lines[] = $this->tab() . $entity->getSummary();
         }
