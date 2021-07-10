@@ -723,7 +723,8 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         }
 
         $message = new UnableMessage(
-            $portal->getName(), UnableMessage::TYPE_MISSING_KEY
+            $portal->getName(),
+            UnableMessage::TYPE_MISSING_KEY
         );
 
         return $message->toString();
@@ -747,7 +748,8 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         }
 
         $message = new UnableMessage(
-            $containerItem->getName(), UnableMessage::TYPE_MISSING_KEY
+            $containerItem->getName(),
+            UnableMessage::TYPE_MISSING_KEY
         );
 
         return $message->toString();
@@ -833,7 +835,8 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         }
 
         $message = new UnableMessage(
-            $portal->getName(), UnableMessage::TYPE_MISSING_KEY
+            $portal->getName(),
+            UnableMessage::TYPE_MISSING_KEY
         );
 
         return $message->toString();
@@ -857,7 +860,8 @@ class VerbNounCommand extends AbstractCommand implements CommandInterface
         }
 
         $message = new UnableMessage(
-            $containerItem->getName(), UnableMessage::TYPE_MISSING_KEY
+            $containerItem->getName(),
+            UnableMessage::TYPE_MISSING_KEY
         );
 
         return $message->toString();

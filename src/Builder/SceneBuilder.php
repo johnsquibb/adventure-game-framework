@@ -38,7 +38,7 @@ use Exception;
  */
 class SceneBuilder
 {
-    const ACTIVATOR_ACTIVATED = 'on';
+    public const ACTIVATOR_ACTIVATED = 'on';
 
     private array $items = [];
     private array $locations = [];

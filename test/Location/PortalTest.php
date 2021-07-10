@@ -34,7 +34,12 @@ class PortalTest extends TestCase
         $destinationLocationId = 'test-room';
 
         $door = new Portal(
-            $id, $name, [$description], [$direction], $direction, $destinationLocationId
+            $id,
+            $name,
+            [$description],
+            [$direction],
+            $direction,
+            $destinationLocationId
         );
 
         $this->assertFalse($door->getMutable());

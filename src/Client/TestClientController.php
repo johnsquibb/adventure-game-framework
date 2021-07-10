@@ -18,8 +18,8 @@ use Exception;
  */
 class TestClientController implements ClientControllerInterface
 {
-    const MESSAGE_TESTS_COMPLETE = 'Tests complete.';
-    const TEST_DELAY_MILLISECONDS = 2000;
+    public const MESSAGE_TESTS_COMPLETE = 'Tests complete.';
+    public const TEST_DELAY_MILLISECONDS = 2000;
 
     private TerminalIO $terminal;
     private array $inputHistory = [];

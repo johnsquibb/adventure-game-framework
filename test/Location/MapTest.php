@@ -22,7 +22,8 @@ class MapTest extends TestCase
             'test-location',
             'Test Location',
             ['Test Description'],
-            new Container(), []
+            new Container(),
+            []
         );
         $locations = [$location];
 

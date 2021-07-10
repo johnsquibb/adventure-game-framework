@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use AdventureGame\Client\Test\InventoryTest;
 use AdventureGame\Client\Test\LocationTest;
@@ -60,7 +62,8 @@ $tests = [
     new LocationTest('read map', 'roomWestOfSpawn'),
     new LocationTest('go west', 'secretRoom'),
     new InventoryTest(
-        'inventory', ['keyToWoodenDoor', 'mapToSecretRoom', 'enteredSecretRoomReward']
+        'inventory',
+        ['keyToWoodenDoor', 'mapToSecretRoom', 'enteredSecretRoomReward']
     ),
     new InventoryTest('drop everything', []),
     new InventoryTest('take letter', ['secretLetter']),

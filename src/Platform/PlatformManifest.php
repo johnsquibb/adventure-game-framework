@@ -100,7 +100,8 @@ class PlatformManifest
         $this->phrases = $phrases;
     }
 
-    public function addPhrases(array $phrases) {
+    public function addPhrases(array $phrases)
+    {
         foreach ($phrases as $key => $phrase) {
             $this->phrases[$key] = $phrase;
         }

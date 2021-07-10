@@ -13,7 +13,9 @@ class VerbPrepositionNounCommandTest extends FrameworkTest
         $gameController = $this->createGameController();
 
         $command = new VerbPrepositionNounCommand(
-            'examine', 'at', 'test'
+            'examine',
+            'at',
+            'test'
         );
         $response = $command->process($gameController);
         $this->assertNotNull($response);

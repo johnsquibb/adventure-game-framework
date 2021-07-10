@@ -36,7 +36,8 @@ class LocationTest extends TestCase
             '',
             [],
             ['north'],
-            'north', 'test-room'
+            'north',
+            'test-room'
         );
         $exits = [$portal];
 

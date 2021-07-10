@@ -97,7 +97,7 @@ class CommandParser
             }
         }
         if ($locationId === 'courtyard') {
-           // exit;
+            // exit;
         }
         return $this->normalizeString($input);
     }
